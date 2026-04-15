@@ -1,0 +1,46 @@
+title: Reading Clues
+story: fever-dream
+description: Verify all readable objects provide their clue text
+
+---
+
+# Intake form in receiving room
+> read form
+[OK: contains "reduced perception"]
+
+# Go to treatment room for the faded note
+> east
+[OK: contains "Corridor"]
+
+> east
+[OK: contains "Treatment Room"]
+
+> read note
+[OK: contains "corrective lenses"]
+
+# Go back to receiving room for spectacles
+> west
+[OK: contains "Corridor"]
+
+> west
+[OK: contains_any "Receiving" "Fluorescent"]
+
+> take spectacles
+[OK: contains "Taken"]
+
+> wear spectacles
+[OK: contains_any "spectacles" "lenses" "clarity"]
+
+> east
+[OK: contains "Corridor"]
+
+> down
+[OK: contains "Stairwell"]
+
+> south
+[OK: contains "Laboratory"]
+
+# Lab plaque has valve instructions
+> read plaque
+[OK: contains "LEFT drains"]
+[OK: contains "RIGHT floods"]

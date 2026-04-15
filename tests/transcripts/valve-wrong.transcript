@@ -1,0 +1,56 @@
+title: Wrong Valve (Flood Death)
+story: fever-dream
+description: Turning the valve right floods the cistern (game over)
+
+---
+
+# Speed-run to the cistern
+> take spectacles
+[OK: contains "Taken"]
+
+> wear spectacles
+[OK: contains_any "spectacles" "lenses" "clarity"]
+
+> east
+[OK: contains "Corridor"]
+
+> down
+[OK: contains "Stairwell"]
+
+> take wrench
+[OK: contains "Taken"]
+
+> south
+[OK: contains "Laboratory"]
+
+> break glass case with wrench
+[OK: contains "shatters"]
+
+> east
+[OK: contains "Cold Storage"]
+
+> unlock cabinet with brass key
+[OK: contains_any "unlock" "Unlock" "open"]
+
+> open cabinet
+[OK: contains_any "open" "Open"]
+
+> take fungus
+[OK: contains_any "Taken" "take" "fungus"]
+
+> west
+[OK: contains "Laboratory"]
+
+> eat fungus
+[OK: contains_any "nothing" "everything" "clarity" "ripple"]
+
+> south
+[OK: contains "Cistern"]
+
+# Turn valve the WRONG way
+> turn valve right
+[OK: contains_any "surges" "flood" "rises" "water" "stop"]
+
+# Can't go down after flooding
+> down
+[OK: not contains "Source"]

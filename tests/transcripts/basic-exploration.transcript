@@ -1,0 +1,44 @@
+title: Basic Exploration
+story: fever-dream
+description: Verify rooms, scenery, and items exist; movement works
+
+---
+
+# Starting room
+> look
+[OK: contains "Fluorescent tubes"]
+[OK: contains "long counter"]
+
+# Examine scenery
+> examine counter
+[OK: contains "linoleum"]
+
+# Intake form
+> read form
+[OK: contains "reduced perception"]
+
+# Can take spectacles
+> take spectacles
+[OK: contains "Taken"]
+
+# Move east
+> east
+[OK: contains "Corridor"]
+[OK: contains "white"]
+
+# Treatment room
+> east
+[OK: contains "Treatment Room"]
+[OK: contains "reclining chair"]
+
+# Read the faded note
+> read note
+[OK: contains "corrective lenses"]
+
+# Go back
+> west
+[OK: contains "Corridor"]
+
+# Can't go down without spectacles
+> down
+[OK: not contains "Stairwell"]

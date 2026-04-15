@@ -1,0 +1,75 @@
+title: Puzzle Chain Guards
+story: fever-dream
+description: Verify puzzle gates block correctly and error messages work
+
+---
+
+# Can't break glass case without wrench
+> look
+[OK: contains "Fluorescent tubes"]
+
+> take spectacles
+[OK: contains "Taken"]
+
+> wear spectacles
+[OK: contains_any "spectacles" "lenses" "clarity"]
+
+> east
+[OK: contains "Corridor"]
+
+> down
+[OK: contains "Stairwell"]
+
+# Go straight to lab without picking up wrench
+> south
+[OK: contains "Laboratory"]
+
+# Try to break glass case barehanded
+> break glass case
+[OK: contains_any "bare hands" "knuckles" "break it"]
+
+# Go back for wrench
+> north
+[OK: contains "Stairwell"]
+
+> take wrench
+[OK: contains "Taken"]
+
+> south
+[OK: contains "Laboratory"]
+
+# Now break works
+> break glass case with wrench
+[OK: contains "shatters"]
+
+# Can't break it again
+> break glass case
+[OK: contains_any "already" "shattered" "fragments"]
+
+# Can't go south without eating fungus
+> south
+[OK: not contains "Cistern"]
+
+# Need to get fungus first
+> east
+[OK: contains "Cold Storage"]
+
+> unlock cabinet with brass key
+[OK: contains_any "unlock" "Unlock" "open"]
+
+> open cabinet
+[OK: contains_any "open" "Open" "dish" "fungus"]
+
+> take fungus
+[OK: contains_any "Taken" "take" "fungus"]
+
+# Go back to lab and eat
+> west
+[OK: contains "Laboratory"]
+
+> eat fungus
+[OK: contains_any "nothing" "everything" "clarity" "ripple"]
+
+# Now south works
+> south
+[OK: contains "Cistern"]

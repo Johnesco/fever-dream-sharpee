@@ -1,0 +1,24 @@
+title: Spectacles Gate
+story: fever-dream
+description: Verify wearing spectacles opens the down exit
+
+---
+
+# Start in receiving room
+> look
+[OK: contains "Receiving Room"]
+
+# Take and wear spectacles
+> take spectacles
+[OK: contains "Taken"]
+
+> wear spectacles
+[OK: contains_any "wear" "put on" "Worn" "spectacles"]
+
+# Go to corridor
+> east
+[OK: contains "Corridor"]
+
+# Now down should work
+> down
+[OK: contains "Stairwell"]
