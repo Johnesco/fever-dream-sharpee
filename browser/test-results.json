@@ -1,0 +1,979 @@
+{
+  "storyId": "fever-dream-sharpee",
+  "timestamp": "2026-04-18T06:02:56.054Z",
+  "transcripts": [
+    {
+      "file": "basic-exploration.transcript",
+      "title": "Basic Exploration",
+      "description": "Verify rooms, scenery, and items exist; movement works",
+      "commands": [
+        {
+          "lineNumber": 8,
+          "input": "look",
+          "output": "Fever Dream\nBy John Googol\n\nType HELP for instructions.\n\nReceiving Room\n\nFluorescent tubes buzz overhead, one flickering at the far end. A long counter divides the room — scuffed linoleum on your side, dark wood on the other. A door leads east.\n\nYou can see fluorescent tubes, long counter, intake form, spectacles here.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "Fluorescent tubes"
+            },
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "long counter"
+            }
+          ],
+          "comment": "Starting room"
+        },
+        {
+          "lineNumber": 13,
+          "input": "examine counter",
+          "output": "Waist-high, dividing the room. Your side is scuffed linoleum. The far side is dark wood, polished once but not recently.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "linoleum"
+            }
+          ],
+          "comment": "Examine scenery"
+        },
+        {
+          "lineNumber": 17,
+          "input": "read form",
+          "output": "Intake form reads:\nPatient exhibits reduced perception. Corrective lenses issued.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "reduced perception"
+            }
+          ],
+          "comment": "Intake form"
+        },
+        {
+          "lineNumber": 21,
+          "input": "take spectacles",
+          "output": "Taken.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "Taken"
+            }
+          ],
+          "comment": "Can take spectacles"
+        },
+        {
+          "lineNumber": 25,
+          "input": "east",
+          "output": "Corridor\n\nA long hallway tiled in white. Several tiles are cracked, revealing raw concrete beneath. The receiving room is west. The treatment room is east.\n\nYou can see white tiles here.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "Corridor"
+            },
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "white"
+            }
+          ],
+          "comment": "Move east"
+        },
+        {
+          "lineNumber": 30,
+          "input": "east",
+          "output": "Treatment Room\n\nA reclining chair bolted to the floor, surrounded by drainage channels cut into the concrete. Instrument trays line the east wall. A faded note is pinned to the wall. The corridor is west.\n\nYou can see reclining chair, instrument trays, faded note here.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "Treatment Room"
+            },
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "reclining chair"
+            }
+          ],
+          "comment": "Treatment room"
+        },
+        {
+          "lineNumber": 35,
+          "input": "read note",
+          "output": "Faded note reads:\nRe: access to the lower level. What you cannot see is still there. The corrective lenses are not optional. They are the first step.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "corrective lenses"
+            }
+          ],
+          "comment": "Read the faded note"
+        },
+        {
+          "lineNumber": 39,
+          "input": "west",
+          "output": "Corridor\n\nA long hallway tiled in white. Several tiles are cracked, revealing raw concrete beneath. The receiving room is west. The treatment room is east.\n\nYou can see white tiles here.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "Corridor"
+            }
+          ],
+          "comment": "Go back"
+        },
+        {
+          "lineNumber": 43,
+          "input": "down",
+          "output": "You can't go that way.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-not-contains",
+              "passed": true,
+              "value": "Stairwell"
+            }
+          ],
+          "comment": "Can't go down without spectacles"
+        }
+      ],
+      "summary": {
+        "passed": 9,
+        "failed": 0,
+        "skipped": 0,
+        "duration": 233
+      }
+    },
+    {
+      "file": "puzzle-chain.transcript",
+      "title": "Puzzle Chain Guards",
+      "description": "Verify puzzle gates block correctly and error messages work",
+      "commands": [
+        {
+          "lineNumber": 8,
+          "input": "look",
+          "output": "Fever Dream\nBy John Googol\n\nType HELP for instructions.\n\nReceiving Room\n\nFluorescent tubes buzz overhead, one flickering at the far end. A long counter divides the room — scuffed linoleum on your side, dark wood on the other. A door leads east.\n\nYou can see fluorescent tubes, long counter, intake form, spectacles here.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "Fluorescent tubes"
+            }
+          ],
+          "comment": "Can't break glass case without wrench"
+        },
+        {
+          "lineNumber": 11,
+          "input": "take spectacles",
+          "output": "Taken.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "Taken"
+            }
+          ]
+        },
+        {
+          "lineNumber": 14,
+          "input": "wear spectacles",
+          "output": "You put on spectacles.\nYou settle the spectacles on your nose. The lenses are thick, heavy. The room sharpens at its edges — details you missed before push forward into clarity.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains-any",
+              "passed": true
+            }
+          ]
+        },
+        {
+          "lineNumber": 17,
+          "input": "east",
+          "output": "Corridor\n\nA long hallway tiled in white. Several tiles are cracked, revealing raw concrete beneath. The receiving room is west. The treatment room is east.\n\nYou can see white tiles, trapdoor here.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "Corridor"
+            }
+          ]
+        },
+        {
+          "lineNumber": 20,
+          "input": "down",
+          "output": "Stairwell\n\nConcrete steps descend to a landing. The air turns cold and damp. Pipes run along the ceiling, sweating with condensation. The trapdoor opens above. A passage continues south to the laboratory.\n\nYou can see sweating pipes, pipe wrench here.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "Stairwell"
+            }
+          ]
+        },
+        {
+          "lineNumber": 24,
+          "input": "south",
+          "output": "Laboratory\n\nA long room lined with workbenches and glass-fronted cabinets. Everything is labeled in the same careful handwriting. The stairwell is north. A heavy door leads east to cold storage.\n\nYou can see workbenches, lab plaque, glass case here.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "Laboratory"
+            }
+          ],
+          "comment": "Go straight to lab without picking up wrench"
+        },
+        {
+          "lineNumber": 28,
+          "input": "break glass case",
+          "output": "You rap your knuckles against the glass. It holds. You cannot break it with your bare hands.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains-any",
+              "passed": true
+            }
+          ],
+          "comment": "Try to break glass case barehanded"
+        },
+        {
+          "lineNumber": 32,
+          "input": "north",
+          "output": "Stairwell\n\nConcrete steps descend to a landing. The air turns cold and damp. Pipes run along the ceiling, sweating with condensation. The trapdoor opens above. A passage continues south to the laboratory.\n\nYou can see sweating pipes, pipe wrench here.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "Stairwell"
+            }
+          ],
+          "comment": "Go back for wrench"
+        },
+        {
+          "lineNumber": 35,
+          "input": "take wrench",
+          "output": "Taken.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "Taken"
+            }
+          ]
+        },
+        {
+          "lineNumber": 38,
+          "input": "south",
+          "output": "Laboratory\n\nA long room lined with workbenches and glass-fronted cabinets. Everything is labeled in the same careful handwriting. The stairwell is north. A heavy door leads east to cold storage.\n\nYou can see workbenches, lab plaque, glass case here.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "Laboratory"
+            }
+          ]
+        },
+        {
+          "lineNumber": 42,
+          "input": "break glass case with wrench",
+          "output": "You swing the wrench. The glass shatters cleanly. The brass key drops into your hand.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "shatters"
+            }
+          ],
+          "comment": "Now break works"
+        },
+        {
+          "lineNumber": 46,
+          "input": "break glass case",
+          "output": "The case is already shattered. Only fragments remain.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains-any",
+              "passed": true
+            }
+          ],
+          "comment": "Can't break it again"
+        },
+        {
+          "lineNumber": 50,
+          "input": "south",
+          "output": "You can't go that way.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-not-contains",
+              "passed": true,
+              "value": "Cistern"
+            }
+          ],
+          "comment": "Can't go south without eating fungus"
+        },
+        {
+          "lineNumber": 54,
+          "input": "east",
+          "output": "Cold Storage\n\nThe temperature drops immediately. Your breath fogs. Racks of specimen jars line the walls, filled with amber fluid. A heavy metal cabinet stands against the far wall, marked with a snowflake. The laboratory is west.\n\nYou can see specimen jars, metal cabinet here.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "Cold Storage"
+            }
+          ],
+          "comment": "Need to get fungus first"
+        },
+        {
+          "lineNumber": 57,
+          "input": "unlock cabinet with brass key",
+          "output": "You unlock metal cabinet with brass key.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains-any",
+              "passed": true
+            }
+          ]
+        },
+        {
+          "lineNumber": 60,
+          "input": "open cabinet",
+          "output": "You open metal cabinet.\nInside the metal cabinet you see glass dish, grey fungus.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains-any",
+              "passed": true
+            }
+          ]
+        },
+        {
+          "lineNumber": 63,
+          "input": "take fungus",
+          "output": "You take grey fungus from metal cabinet.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains-any",
+              "passed": true
+            }
+          ]
+        },
+        {
+          "lineNumber": 67,
+          "input": "west",
+          "output": "Laboratory\n\nA long room lined with workbenches and glass-fronted cabinets. Everything is labeled in the same careful handwriting. The stairwell is north. A heavy door leads east to cold storage.\n\nYou can see workbenches, lab plaque, glass case here.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "Laboratory"
+            }
+          ],
+          "comment": "Go back to lab and eat"
+        },
+        {
+          "lineNumber": 70,
+          "input": "eat fungus",
+          "output": "You eat grey fungus.\n",
+          "passed": false,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains-any",
+              "passed": false
+            }
+          ]
+        },
+        {
+          "lineNumber": 74,
+          "input": "south",
+          "output": "Cistern\n\nThe chamber is alive. The bricks are teeth in a circular jaw. The dark water below is a throat, swallowing and unswallowing in slow rhythm. The pipes overhead are arteries, pulsing with something that is not water. An iron valve grows from the north wall like a bone spur. Beside it, a sign hangs from the flesh of the wall. The passage back north climbs toward the laboratory.\n\nYou can see dark water, iron valve, instructional sign, drainage grate here.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "Cistern"
+            }
+          ],
+          "comment": "Now south works"
+        }
+      ],
+      "summary": {
+        "passed": 19,
+        "failed": 1,
+        "skipped": 0,
+        "duration": 206
+      }
+    },
+    {
+      "file": "reading-clues.transcript",
+      "title": "Reading Clues",
+      "description": "Verify all readable objects provide their clue text",
+      "commands": [
+        {
+          "lineNumber": 8,
+          "input": "read form",
+          "output": "Fever Dream\nBy John Googol\n\nType HELP for instructions.\n\nIntake form reads:\nPatient exhibits reduced perception. Corrective lenses issued.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "reduced perception"
+            }
+          ],
+          "comment": "Intake form in receiving room"
+        },
+        {
+          "lineNumber": 12,
+          "input": "east",
+          "output": "Corridor\n\nA long hallway tiled in white. Several tiles are cracked, revealing raw concrete beneath. The receiving room is west. The treatment room is east.\n\nYou can see white tiles here.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "Corridor"
+            }
+          ],
+          "comment": "Go to treatment room for the faded note"
+        },
+        {
+          "lineNumber": 15,
+          "input": "east",
+          "output": "Treatment Room\n\nA reclining chair bolted to the floor, surrounded by drainage channels cut into the concrete. Instrument trays line the east wall. A faded note is pinned to the wall. The corridor is west.\n\nYou can see reclining chair, instrument trays, faded note here.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "Treatment Room"
+            }
+          ]
+        },
+        {
+          "lineNumber": 18,
+          "input": "read note",
+          "output": "Faded note reads:\nRe: access to the lower level. What you cannot see is still there. The corrective lenses are not optional. They are the first step.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "corrective lenses"
+            }
+          ]
+        },
+        {
+          "lineNumber": 22,
+          "input": "west",
+          "output": "Corridor\n\nA long hallway tiled in white. Several tiles are cracked, revealing raw concrete beneath. The receiving room is west. The treatment room is east.\n\nYou can see white tiles here.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "Corridor"
+            }
+          ],
+          "comment": "Go back to receiving room for spectacles"
+        },
+        {
+          "lineNumber": 25,
+          "input": "west",
+          "output": "Receiving Room\n\nFluorescent tubes buzz overhead, one flickering at the far end. A long counter divides the room — scuffed linoleum on your side, dark wood on the other. A door leads east.\n\nYou can see fluorescent tubes, long counter, intake form, spectacles here.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains-any",
+              "passed": true
+            }
+          ]
+        },
+        {
+          "lineNumber": 28,
+          "input": "take spectacles",
+          "output": "Taken.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "Taken"
+            }
+          ]
+        },
+        {
+          "lineNumber": 31,
+          "input": "wear spectacles",
+          "output": "You put on spectacles.\nYou settle the spectacles on your nose. The lenses are thick, heavy. The room sharpens at its edges — details you missed before push forward into clarity.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains-any",
+              "passed": true
+            }
+          ]
+        },
+        {
+          "lineNumber": 34,
+          "input": "east",
+          "output": "Corridor\n\nA long hallway tiled in white. Several tiles are cracked, revealing raw concrete beneath. The receiving room is west. The treatment room is east.\n\nYou can see white tiles, trapdoor here.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "Corridor"
+            }
+          ]
+        },
+        {
+          "lineNumber": 37,
+          "input": "down",
+          "output": "Stairwell\n\nConcrete steps descend to a landing. The air turns cold and damp. Pipes run along the ceiling, sweating with condensation. The trapdoor opens above. A passage continues south to the laboratory.\n\nYou can see sweating pipes, pipe wrench here.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "Stairwell"
+            }
+          ]
+        },
+        {
+          "lineNumber": 40,
+          "input": "south",
+          "output": "Laboratory\n\nA long room lined with workbenches and glass-fronted cabinets. Everything is labeled in the same careful handwriting. The stairwell is north. A heavy door leads east to cold storage.\n\nYou can see workbenches, lab plaque, glass case here.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "Laboratory"
+            }
+          ]
+        },
+        {
+          "lineNumber": 44,
+          "input": "read plaque",
+          "output": "Lab plaque reads:\nCISTERN MAINTENANCE — Valve operation: LEFT drains. RIGHT floods. Do not operate without authorization.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "LEFT drains"
+            },
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "RIGHT floods"
+            }
+          ],
+          "comment": "Lab plaque has valve instructions"
+        }
+      ],
+      "summary": {
+        "passed": 12,
+        "failed": 0,
+        "skipped": 0,
+        "duration": 79
+      }
+    },
+    {
+      "file": "spectacles-gate.transcript",
+      "title": "Spectacles Gate",
+      "description": "Verify wearing spectacles opens the down exit",
+      "commands": [
+        {
+          "lineNumber": 8,
+          "input": "look",
+          "output": "Fever Dream\nBy John Googol\n\nType HELP for instructions.\n\nReceiving Room\n\nFluorescent tubes buzz overhead, one flickering at the far end. A long counter divides the room — scuffed linoleum on your side, dark wood on the other. A door leads east.\n\nYou can see fluorescent tubes, long counter, intake form, spectacles here.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "Receiving Room"
+            }
+          ],
+          "comment": "Start in receiving room"
+        },
+        {
+          "lineNumber": 12,
+          "input": "take spectacles",
+          "output": "Taken.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "Taken"
+            }
+          ],
+          "comment": "Take and wear spectacles"
+        },
+        {
+          "lineNumber": 15,
+          "input": "wear spectacles",
+          "output": "You put on spectacles.\nYou settle the spectacles on your nose. The lenses are thick, heavy. The room sharpens at its edges — details you missed before push forward into clarity.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains-any",
+              "passed": true
+            }
+          ]
+        },
+        {
+          "lineNumber": 19,
+          "input": "east",
+          "output": "Corridor\n\nA long hallway tiled in white. Several tiles are cracked, revealing raw concrete beneath. The receiving room is west. The treatment room is east.\n\nYou can see white tiles, trapdoor here.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "Corridor"
+            }
+          ],
+          "comment": "Go to corridor"
+        },
+        {
+          "lineNumber": 23,
+          "input": "down",
+          "output": "Stairwell\n\nConcrete steps descend to a landing. The air turns cold and damp. Pipes run along the ceiling, sweating with condensation. The trapdoor opens above. A passage continues south to the laboratory.\n\nYou can see sweating pipes, pipe wrench here.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "Stairwell"
+            }
+          ],
+          "comment": "Now down should work"
+        }
+      ],
+      "summary": {
+        "passed": 5,
+        "failed": 0,
+        "skipped": 0,
+        "duration": 50
+      }
+    },
+    {
+      "file": "valve-wrong.transcript",
+      "title": "Wrong Valve (Flood Death)",
+      "description": "Turning the valve right floods the cistern (game over)",
+      "commands": [
+        {
+          "lineNumber": 8,
+          "input": "take spectacles",
+          "output": "Fever Dream\nBy John Googol\n\nType HELP for instructions.\n\nTaken.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "Taken"
+            }
+          ],
+          "comment": "Speed-run to the cistern"
+        },
+        {
+          "lineNumber": 11,
+          "input": "wear spectacles",
+          "output": "You put on spectacles.\nYou settle the spectacles on your nose. The lenses are thick, heavy. The room sharpens at its edges — details you missed before push forward into clarity.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains-any",
+              "passed": true
+            }
+          ]
+        },
+        {
+          "lineNumber": 14,
+          "input": "east",
+          "output": "Corridor\n\nA long hallway tiled in white. Several tiles are cracked, revealing raw concrete beneath. The receiving room is west. The treatment room is east.\n\nYou can see white tiles, trapdoor here.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "Corridor"
+            }
+          ]
+        },
+        {
+          "lineNumber": 17,
+          "input": "down",
+          "output": "Stairwell\n\nConcrete steps descend to a landing. The air turns cold and damp. Pipes run along the ceiling, sweating with condensation. The trapdoor opens above. A passage continues south to the laboratory.\n\nYou can see sweating pipes, pipe wrench here.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "Stairwell"
+            }
+          ]
+        },
+        {
+          "lineNumber": 20,
+          "input": "take wrench",
+          "output": "Taken.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "Taken"
+            }
+          ]
+        },
+        {
+          "lineNumber": 23,
+          "input": "south",
+          "output": "Laboratory\n\nA long room lined with workbenches and glass-fronted cabinets. Everything is labeled in the same careful handwriting. The stairwell is north. A heavy door leads east to cold storage.\n\nYou can see workbenches, lab plaque, glass case here.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "Laboratory"
+            }
+          ]
+        },
+        {
+          "lineNumber": 26,
+          "input": "break glass case with wrench",
+          "output": "You swing the wrench. The glass shatters cleanly. The brass key drops into your hand.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "shatters"
+            }
+          ]
+        },
+        {
+          "lineNumber": 29,
+          "input": "east",
+          "output": "Cold Storage\n\nThe temperature drops immediately. Your breath fogs. Racks of specimen jars line the walls, filled with amber fluid. A heavy metal cabinet stands against the far wall, marked with a snowflake. The laboratory is west.\n\nYou can see specimen jars, metal cabinet here.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "Cold Storage"
+            }
+          ]
+        },
+        {
+          "lineNumber": 32,
+          "input": "unlock cabinet with brass key",
+          "output": "You unlock metal cabinet with brass key.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains-any",
+              "passed": true
+            }
+          ]
+        },
+        {
+          "lineNumber": 35,
+          "input": "open cabinet",
+          "output": "You open metal cabinet.\nInside the metal cabinet you see glass dish, grey fungus.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains-any",
+              "passed": true
+            }
+          ]
+        },
+        {
+          "lineNumber": 38,
+          "input": "take fungus",
+          "output": "You take grey fungus from metal cabinet.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains-any",
+              "passed": true
+            }
+          ]
+        },
+        {
+          "lineNumber": 41,
+          "input": "west",
+          "output": "Laboratory\n\nA long room lined with workbenches and glass-fronted cabinets. Everything is labeled in the same careful handwriting. The stairwell is north. A heavy door leads east to cold storage.\n\nYou can see workbenches, lab plaque, glass case here.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "Laboratory"
+            }
+          ]
+        },
+        {
+          "lineNumber": 44,
+          "input": "eat fungus",
+          "output": "You eat grey fungus.\n",
+          "passed": false,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains-any",
+              "passed": false
+            }
+          ]
+        },
+        {
+          "lineNumber": 47,
+          "input": "south",
+          "output": "Cistern\n\nThe chamber is alive. The bricks are teeth in a circular jaw. The dark water below is a throat, swallowing and unswallowing in slow rhythm. The pipes overhead are arteries, pulsing with something that is not water. An iron valve grows from the north wall like a bone spur. Beside it, a sign hangs from the flesh of the wall. The passage back north climbs toward the laboratory.\n\nYou can see dark water, iron valve, instructional sign, drainage grate here.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains",
+              "passed": true,
+              "value": "Cistern"
+            }
+          ]
+        },
+        {
+          "lineNumber": 51,
+          "input": "turn valve right",
+          "output": "You turn the valve right. A deep groan echoes through the pipes.\n\nThe water surges in. It does not stop. It rises past your waist, your chest, your chin. The last thing you see is the ceiling, dark and receding.\n\nThe water fills the chamber. It does not stop.\n*** You have died ***\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-contains-any",
+              "passed": true
+            }
+          ],
+          "comment": "Turn valve the WRONG way"
+        },
+        {
+          "lineNumber": 55,
+          "input": "down",
+          "output": "You can't go that way.\n",
+          "passed": true,
+          "skipped": false,
+          "assertions": [
+            {
+              "type": "ok-not-contains",
+              "passed": true,
+              "value": "Source"
+            }
+          ],
+          "comment": "Can't go down after flooding"
+        }
+      ],
+      "summary": {
+        "passed": 15,
+        "failed": 1,
+        "skipped": 0,
+        "duration": 143
+      }
+    }
+  ],
+  "summary": {
+    "totalPassed": 60,
+    "totalFailed": 2,
+    "totalSkipped": 0,
+    "totalDuration": 711
+  }
+}
