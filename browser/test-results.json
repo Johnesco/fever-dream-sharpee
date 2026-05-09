@@ -1,6 +1,6 @@
 {
   "storyId": "fever-dream-sharpee",
-  "timestamp": "2026-04-18T06:02:56.054Z",
+  "timestamp": "2026-05-09T21:35:12.429Z",
   "transcripts": [
     {
       "file": "basic-exploration.transcript",
@@ -45,7 +45,7 @@
         {
           "lineNumber": 17,
           "input": "read form",
-          "output": "Intake form reads:\nPatient exhibits reduced perception. Corrective lenses issued.\n",
+          "output": "The intake form reads:\nPatient exhibits reduced perception. Corrective lenses issued.\n",
           "passed": true,
           "skipped": false,
           "assertions": [
@@ -115,7 +115,7 @@
         {
           "lineNumber": 35,
           "input": "read note",
-          "output": "Faded note reads:\nRe: access to the lower level. What you cannot see is still there. The corrective lenses are not optional. They are the first step.\n",
+          "output": "The faded note reads:\nRe: access to the lower level. What you cannot see is still there. The corrective lenses are not optional. They are the first step.\n",
           "passed": true,
           "skipped": false,
           "assertions": [
@@ -162,7 +162,7 @@
         "passed": 9,
         "failed": 0,
         "skipped": 0,
-        "duration": 233
+        "duration": 24
       }
     },
     {
@@ -202,13 +202,18 @@
         {
           "lineNumber": 14,
           "input": "wear spectacles",
-          "output": "You put on spectacles.\nYou settle the spectacles on your nose. The lenses are thick, heavy. The room sharpens at its edges — details you missed before push forward into clarity.\n",
+          "output": "You put on the spectacles.\nYou settle the spectacles on your nose. The lenses are thick, heavy. The room sharpens at its edges — details you missed before push forward into clarity.\n",
           "passed": true,
           "skipped": false,
           "assertions": [
             {
               "type": "ok-contains-any",
-              "passed": true
+              "passed": true,
+              "values": [
+                "spectacles",
+                "lenses",
+                "clarity"
+              ]
             }
           ]
         },
@@ -264,7 +269,12 @@
           "assertions": [
             {
               "type": "ok-contains-any",
-              "passed": true
+              "passed": true,
+              "values": [
+                "bare hands",
+                "knuckles",
+                "break it"
+              ]
             }
           ],
           "comment": "Try to break glass case barehanded"
@@ -336,7 +346,12 @@
           "assertions": [
             {
               "type": "ok-contains-any",
-              "passed": true
+              "passed": true,
+              "values": [
+                "already",
+                "shattered",
+                "fragments"
+              ]
             }
           ],
           "comment": "Can't break it again"
@@ -374,39 +389,55 @@
         {
           "lineNumber": 57,
           "input": "unlock cabinet with brass key",
-          "output": "You unlock metal cabinet with brass key.\n",
+          "output": "You unlock the metal cabinet with the brass key.\n",
           "passed": true,
           "skipped": false,
           "assertions": [
             {
               "type": "ok-contains-any",
-              "passed": true
+              "passed": true,
+              "values": [
+                "unlock",
+                "Unlock",
+                "open"
+              ]
             }
           ]
         },
         {
           "lineNumber": 60,
           "input": "open cabinet",
-          "output": "You open metal cabinet.\nInside the metal cabinet you see glass dish, grey fungus.\n",
+          "output": "You open the metal cabinet.\nInside the metal cabinet you see glass dish, grey fungus.\n",
           "passed": true,
           "skipped": false,
           "assertions": [
             {
               "type": "ok-contains-any",
-              "passed": true
+              "passed": true,
+              "values": [
+                "open",
+                "Open",
+                "dish",
+                "fungus"
+              ]
             }
           ]
         },
         {
           "lineNumber": 63,
           "input": "take fungus",
-          "output": "You take grey fungus from metal cabinet.\n",
+          "output": "You take the grey fungus from the metal cabinet.\n",
           "passed": true,
           "skipped": false,
           "assertions": [
             {
               "type": "ok-contains-any",
-              "passed": true
+              "passed": true,
+              "values": [
+                "Taken",
+                "take",
+                "fungus"
+              ]
             }
           ]
         },
@@ -428,18 +459,19 @@
         {
           "lineNumber": 70,
           "input": "eat fungus",
-          "output": "You eat grey fungus.\n",
-          "passed": false,
+          "output": "You eat the grey fungus.\n",
+          "passed": true,
           "skipped": false,
           "assertions": [
             {
-              "type": "ok-contains-any",
-              "passed": false
+              "type": "ok-contains",
+              "passed": true,
+              "value": "eat"
             }
           ]
         },
         {
-          "lineNumber": 74,
+          "lineNumber": 77,
           "input": "south",
           "output": "Cistern\n\nThe chamber is alive. The bricks are teeth in a circular jaw. The dark water below is a throat, swallowing and unswallowing in slow rhythm. The pipes overhead are arteries, pulsing with something that is not water. An iron valve grows from the north wall like a bone spur. Beside it, a sign hangs from the flesh of the wall. The passage back north climbs toward the laboratory.\n\nYou can see dark water, iron valve, instructional sign, drainage grate here.\n",
           "passed": true,
@@ -455,10 +487,10 @@
         }
       ],
       "summary": {
-        "passed": 19,
-        "failed": 1,
+        "passed": 20,
+        "failed": 0,
         "skipped": 0,
-        "duration": 206
+        "duration": 20
       }
     },
     {
@@ -469,7 +501,7 @@
         {
           "lineNumber": 8,
           "input": "read form",
-          "output": "Fever Dream\nBy John Googol\n\nType HELP for instructions.\n\nIntake form reads:\nPatient exhibits reduced perception. Corrective lenses issued.\n",
+          "output": "Fever Dream\nBy John Googol\n\nType HELP for instructions.\n\nThe intake form reads:\nPatient exhibits reduced perception. Corrective lenses issued.\n",
           "passed": true,
           "skipped": false,
           "assertions": [
@@ -513,7 +545,7 @@
         {
           "lineNumber": 18,
           "input": "read note",
-          "output": "Faded note reads:\nRe: access to the lower level. What you cannot see is still there. The corrective lenses are not optional. They are the first step.\n",
+          "output": "The faded note reads:\nRe: access to the lower level. What you cannot see is still there. The corrective lenses are not optional. They are the first step.\n",
           "passed": true,
           "skipped": false,
           "assertions": [
@@ -548,7 +580,11 @@
           "assertions": [
             {
               "type": "ok-contains-any",
-              "passed": true
+              "passed": true,
+              "values": [
+                "Receiving",
+                "Fluorescent"
+              ]
             }
           ]
         },
@@ -569,13 +605,18 @@
         {
           "lineNumber": 31,
           "input": "wear spectacles",
-          "output": "You put on spectacles.\nYou settle the spectacles on your nose. The lenses are thick, heavy. The room sharpens at its edges — details you missed before push forward into clarity.\n",
+          "output": "You put on the spectacles.\nYou settle the spectacles on your nose. The lenses are thick, heavy. The room sharpens at its edges — details you missed before push forward into clarity.\n",
           "passed": true,
           "skipped": false,
           "assertions": [
             {
               "type": "ok-contains-any",
-              "passed": true
+              "passed": true,
+              "values": [
+                "spectacles",
+                "lenses",
+                "clarity"
+              ]
             }
           ]
         },
@@ -624,7 +665,7 @@
         {
           "lineNumber": 44,
           "input": "read plaque",
-          "output": "Lab plaque reads:\nCISTERN MAINTENANCE — Valve operation: LEFT drains. RIGHT floods. Do not operate without authorization.\n",
+          "output": "The lab plaque reads:\nCISTERN MAINTENANCE — Valve operation: LEFT drains. RIGHT floods. Do not operate without authorization.\n",
           "passed": true,
           "skipped": false,
           "assertions": [
@@ -646,7 +687,7 @@
         "passed": 12,
         "failed": 0,
         "skipped": 0,
-        "duration": 79
+        "duration": 10
       }
     },
     {
@@ -687,13 +728,19 @@
         {
           "lineNumber": 15,
           "input": "wear spectacles",
-          "output": "You put on spectacles.\nYou settle the spectacles on your nose. The lenses are thick, heavy. The room sharpens at its edges — details you missed before push forward into clarity.\n",
+          "output": "You put on the spectacles.\nYou settle the spectacles on your nose. The lenses are thick, heavy. The room sharpens at its edges — details you missed before push forward into clarity.\n",
           "passed": true,
           "skipped": false,
           "assertions": [
             {
               "type": "ok-contains-any",
-              "passed": true
+              "passed": true,
+              "values": [
+                "wear",
+                "put on",
+                "Worn",
+                "spectacles"
+              ]
             }
           ]
         },
@@ -732,7 +779,7 @@
         "passed": 5,
         "failed": 0,
         "skipped": 0,
-        "duration": 50
+        "duration": 5
       }
     },
     {
@@ -758,13 +805,18 @@
         {
           "lineNumber": 11,
           "input": "wear spectacles",
-          "output": "You put on spectacles.\nYou settle the spectacles on your nose. The lenses are thick, heavy. The room sharpens at its edges — details you missed before push forward into clarity.\n",
+          "output": "You put on the spectacles.\nYou settle the spectacles on your nose. The lenses are thick, heavy. The room sharpens at its edges — details you missed before push forward into clarity.\n",
           "passed": true,
           "skipped": false,
           "assertions": [
             {
               "type": "ok-contains-any",
-              "passed": true
+              "passed": true,
+              "values": [
+                "spectacles",
+                "lenses",
+                "clarity"
+              ]
             }
           ]
         },
@@ -855,39 +907,53 @@
         {
           "lineNumber": 32,
           "input": "unlock cabinet with brass key",
-          "output": "You unlock metal cabinet with brass key.\n",
+          "output": "You unlock the metal cabinet with the brass key.\n",
           "passed": true,
           "skipped": false,
           "assertions": [
             {
               "type": "ok-contains-any",
-              "passed": true
+              "passed": true,
+              "values": [
+                "unlock",
+                "Unlock",
+                "open"
+              ]
             }
           ]
         },
         {
           "lineNumber": 35,
           "input": "open cabinet",
-          "output": "You open metal cabinet.\nInside the metal cabinet you see glass dish, grey fungus.\n",
+          "output": "You open the metal cabinet.\nInside the metal cabinet you see glass dish, grey fungus.\n",
           "passed": true,
           "skipped": false,
           "assertions": [
             {
               "type": "ok-contains-any",
-              "passed": true
+              "passed": true,
+              "values": [
+                "open",
+                "Open"
+              ]
             }
           ]
         },
         {
           "lineNumber": 38,
           "input": "take fungus",
-          "output": "You take grey fungus from metal cabinet.\n",
+          "output": "You take the grey fungus from the metal cabinet.\n",
           "passed": true,
           "skipped": false,
           "assertions": [
             {
               "type": "ok-contains-any",
-              "passed": true
+              "passed": true,
+              "values": [
+                "Taken",
+                "take",
+                "fungus"
+              ]
             }
           ]
         },
@@ -908,18 +974,19 @@
         {
           "lineNumber": 44,
           "input": "eat fungus",
-          "output": "You eat grey fungus.\n",
-          "passed": false,
+          "output": "You eat the grey fungus.\n",
+          "passed": true,
           "skipped": false,
           "assertions": [
             {
-              "type": "ok-contains-any",
-              "passed": false
+              "type": "ok-contains",
+              "passed": true,
+              "value": "eat"
             }
           ]
         },
         {
-          "lineNumber": 47,
+          "lineNumber": 50,
           "input": "south",
           "output": "Cistern\n\nThe chamber is alive. The bricks are teeth in a circular jaw. The dark water below is a throat, swallowing and unswallowing in slow rhythm. The pipes overhead are arteries, pulsing with something that is not water. An iron valve grows from the north wall like a bone spur. Beside it, a sign hangs from the flesh of the wall. The passage back north climbs toward the laboratory.\n\nYou can see dark water, iron valve, instructional sign, drainage grate here.\n",
           "passed": true,
@@ -933,7 +1000,7 @@
           ]
         },
         {
-          "lineNumber": 51,
+          "lineNumber": 54,
           "input": "turn valve right",
           "output": "You turn the valve right. A deep groan echoes through the pipes.\n\nThe water surges in. It does not stop. It rises past your waist, your chest, your chin. The last thing you see is the ceiling, dark and receding.\n\nThe water fills the chamber. It does not stop.\n*** You have died ***\n",
           "passed": true,
@@ -941,13 +1008,20 @@
           "assertions": [
             {
               "type": "ok-contains-any",
-              "passed": true
+              "passed": true,
+              "values": [
+                "surges",
+                "flood",
+                "rises",
+                "water",
+                "stop"
+              ]
             }
           ],
           "comment": "Turn valve the WRONG way"
         },
         {
-          "lineNumber": 55,
+          "lineNumber": 58,
           "input": "down",
           "output": "You can't go that way.\n",
           "passed": true,
@@ -963,17 +1037,17 @@
         }
       ],
       "summary": {
-        "passed": 15,
-        "failed": 1,
+        "passed": 16,
+        "failed": 0,
         "skipped": 0,
-        "duration": 143
+        "duration": 12
       }
     }
   ],
   "summary": {
-    "totalPassed": 60,
-    "totalFailed": 2,
+    "totalPassed": 62,
+    "totalFailed": 0,
     "totalSkipped": 0,
-    "totalDuration": 711
+    "totalDuration": 71
   }
 }

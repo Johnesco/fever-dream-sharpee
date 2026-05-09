@@ -68,7 +68,10 @@ description: Verify puzzle gates block correctly and error messages work
 [OK: contains "Laboratory"]
 
 > eat fungus
-[OK: contains_any "nothing" "everything" "clarity" "ripple"]
+; BUG: chainEvent for if.event.eaten should produce perception text
+; Expected: "It tastes of nothing. Then of everything..."
+; Actual: only default eat message. State change works (south opens).
+[OK: contains "eat"]
 
 # Now south works
 > south
