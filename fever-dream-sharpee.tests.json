@@ -1,0 +1,114 @@
+{
+  "version": 1,
+  "story": "fever-dream-sharpee",
+  "seed": 42,
+  "cards": [
+    {
+      "type": "opening",
+      "assertions": {
+        "channels": [
+          { "id": "info.title", "is": "Fever Dream" },
+          { "id": "info.description", "is": "A perceptual horror. Three items alter your perception. The world stays the same. You do not." }
+        ]
+      }
+    },
+    {
+      "type": "boot",
+      "assertions": { "contains": ["Receiving Room", "Fluorescent tubes buzz overhead", "You can see spectacles here."] },
+      "branches": [
+        { "branch": 1, "cards": [
+          { "type": "turn", "command": "read form",
+            "assertions": { "contains": ["Patient exhibits reduced perception."] } },
+          { "type": "turn", "command": "examine counter",
+            "assertions": { "contains": ["scuffed linoleum", "THEY BUILT DOWN BEFORE THEY BUILT UP."] } },
+          { "type": "turn", "command": "east",
+            "assertions": { "contains": ["Corridor", "A long hallway tiled in white."] } },
+          { "type": "turn", "command": "down",
+            "assertions": { "contains": ["The floor is solid tile. There is no way down."], "states": ["player.location = Corridor"] } },
+          { "type": "turn", "command": "east",
+            "assertions": { "contains": ["Treatment Room", "A reclining chair bolted to the floor"] } },
+          { "type": "turn", "command": "read note",
+            "assertions": { "contains": ["The corrective lenses are not optional."] } },
+          { "type": "turn", "command": "examine chair",
+            "assertions": { "contains": ["Restraint loops hang from the armrests."], "notContains": ["Its leather is skin."] } }
+        ] }
+      ]
+    },
+    { "type": "turn", "command": "take spectacles",
+      "assertions": { "contains": ["Taken."], "states": ["player.inventory contains spectacles"] } },
+    { "type": "turn", "command": "wear spectacles",
+      "assertions": { "contains": ["You put on the spectacles.", "details you missed before push forward into clarity."], "states": ["the trapdoor is revealed"] } },
+    { "type": "turn", "command": "east",
+      "assertions": { "contains": ["Corridor"] } },
+    { "type": "turn", "command": "down",
+      "assertions": { "contains": ["Stairwell", "You can see a pipe wrench here."], "states": ["player.location = Stairwell"] },
+      "branches": [
+        { "branch": 2, "cards": [
+          { "type": "turn", "command": "south",
+            "assertions": { "contains": ["Laboratory"] } },
+          { "type": "turn", "command": "break case",
+            "assertions": { "contains": ["You rap your knuckles against the glass."], "states": ["the glass case is intact"] } },
+          { "type": "turn", "command": "smash workbenches",
+            "assertions": { "contains": ["Violence will not help here."] } },
+          { "type": "turn", "command": "south",
+            "assertions": { "contains": ["The south wall is solid. There is no exit that way."], "states": ["player.location = Laboratory"] } }
+        ] }
+      ] },
+    { "type": "turn", "command": "take wrench",
+      "assertions": { "contains": ["Taken."], "states": ["player.inventory contains pipe wrench"] } },
+    { "type": "turn", "command": "south",
+      "assertions": { "contains": ["Laboratory", "A heavy door leads east to cold storage."] } },
+    { "type": "turn", "command": "read plaque",
+      "assertions": { "contains": ["LEFT drains. RIGHT floods."] } },
+    { "type": "turn", "command": "break glass case with wrench",
+      "assertions": { "contains": ["The glass shatters cleanly. The brass key drops into your hand."], "states": ["the glass case is shattered", "player.inventory contains brass key"] },
+      "branches": [
+        { "branch": 3, "cards": [
+          { "type": "turn", "command": "break case",
+            "assertions": { "contains": ["The case is already shattered."] } },
+          { "type": "turn", "command": "examine case",
+            "assertions": { "contains": ["Shattered remains of the display case."] } }
+        ] }
+      ] },
+    { "type": "turn", "command": "east",
+      "assertions": { "contains": ["Cold Storage", "marked with a snowflake"] } },
+    { "type": "turn", "command": "unlock cabinet with brass key",
+      "assertions": { "contains": ["You unlock the metal cabinet with the brass key."] } },
+    { "type": "turn", "command": "open cabinet",
+      "assertions": { "contains": ["You open the metal cabinet.", "a glass dish and a grey fungus"] } },
+    { "type": "turn", "command": "take fungus",
+      "assertions": { "contains": ["You take the grey fungus from the metal cabinet."], "states": ["player.inventory contains grey fungus"] } },
+    { "type": "turn", "command": "west",
+      "assertions": { "contains": ["Laboratory"] } },
+    { "type": "turn", "command": "eat fungus",
+      "assertions": { "contains": ["You eat the grey fungus.", "This is clarity.", "The floor at the south end of the laboratory splits open."], "states": ["story.state = clarity"] },
+      "branches": [
+        { "branch": 4, "cards": [
+          { "type": "turn", "command": "look",
+            "assertions": { "contains": ["A dark passage descends through it."] } },
+          { "type": "turn", "command": "north",
+            "assertions": { "contains": ["Stairwell"] } },
+          { "type": "turn", "command": "examine pipes",
+            "assertions": { "contains": ["They have never been pipes."] } }
+        ] }
+      ] },
+    { "type": "turn", "command": "south",
+      "assertions": { "contains": ["Cistern", "The chamber is alive. The bricks are teeth in a circular jaw."], "states": ["story.state = clarity", "the Cistern is breached"] },
+      "branches": [
+        { "branch": 5, "cards": [
+          { "type": "turn", "command": "read sign",
+            "assertions": { "contains": ["LEFT: drains cistern to sublevel.", "A hiss from the cracked pipes overhead."], "states": ["story.state = corruption"] } },
+          { "type": "turn", "command": "examine valve",
+            "assertions": { "contains": ["An ir0n valv3."] } },
+          { "type": "turn", "command": "turn valve right",
+            "assertions": { "contains": ["The water surges in. It does not stop."] } }
+        ] }
+      ] },
+    { "type": "turn", "command": "turn valve left",
+      "assertions": { "contains": ["Metal screams against metal", "A hiss from the cracked pipes overhead."], "states": ["the iron valve is turned", "story.state = corruption"] } },
+    { "type": "turn", "command": "down",
+      "assertions": { "contains": ["Source", "A low stone basin sits in the center"], "states": ["player.location = Source"] } },
+    { "type": "turn", "command": "touch basin",
+      "assertions": { "contains": ["You reach in. It reaches back.", "The treatment is complete."] } }
+  ]
+}

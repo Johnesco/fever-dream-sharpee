@@ -1,29 +1,37 @@
 {
-  "name": "fever-dream",
-  "version": "1.0.0",
+  "name": "fever-dream-sharpee",
+  "version": "2.0.0",
   "description": "A perceptual horror. Three items alter your perception. The world stays the same. You do not.",
-  "main": "dist/index.js",
+  "private": true,
   "scripts": {
-    "build": "tsc",
-    "build:browser": "npx sharpee build-browser",
-    "dev": "tsc --watch"
+    "build": "sharpee build",
+    "build:browser": "sharpee build --browser",
+    "test": "sharpee test",
+    "play": "sharpee play"
+  },
+  "sharpee": {
+    "title": "Fever Dream",
+    "author": "John Googol"
   },
   "dependencies": {
-    "@sharpee/core": "^0.9.111",
-    "@sharpee/engine": "^0.9.111",
-    "@sharpee/helpers": "^0.9.111",
-    "@sharpee/media": "^0.9.111",
-    "@sharpee/platform-browser": "^0.9.111",
-    "@sharpee/plugin-scheduler": "^0.9.111",
-    "@sharpee/sharpee": "^0.9.111",
-    "@sharpee/stdlib": "^0.9.111",
-    "@sharpee/world-model": "^0.9.111"
+    "@sharpee/sharpee": "^5.0.0",
+    "@sharpee/chord": "^5.0.0",
+    "@sharpee/story-loader": "^5.0.0",
+    "@sharpee/engine": "^5.0.0",
+    "@sharpee/parser-en-us": "^5.0.0",
+    "@sharpee/lang-en-us": "^5.0.0",
+    "@sharpee/stdlib": "^5.0.0",
+    "@sharpee/platform-browser": "^5.0.0"
   },
   "devDependencies": {
-    "@sharpee/transcript-tester": "^0.9.111",
-    "esbuild": "^0.20.0",
-    "typescript": "^5.3.3"
+    "@sharpee/devkit": "^5.3.0",
+    "esbuild": "^0.20.0"
   },
+  "keywords": [
+    "interactive-fiction",
+    "sharpee",
+    "chord"
+  ],
   "author": "John Googol",
   "license": "MIT"
 }

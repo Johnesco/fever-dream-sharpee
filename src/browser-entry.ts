@@ -1,407 +1,208 @@
 /**
- * Fever Dream — Browser Entry Point
+ * Browser entry point for An interactive fiction adventure — a Chord (`.story`) project.
  *
- * Connects the story engine to the browser UI and drives
- * the CSS overlay system via semantic events.
- *
- * Zone detection:  world.getLocation() → ROOM_ZONES → data-zone on body
- * Perception sync: PerceptionStateTrait → data-perception on body
- * Event effects:   engine 'event' listener → CSS class toggles + overlays
+ * The bundle carries the story already COMPILED: the build stamps `story-ir.ts`
+ * beside this file, so boot is Story IR → story-loader → engine, with no fetch
+ * and no compiler on the page. That is what lets a published zip run from
+ * `file://` — `fetch()` cannot read a `file://` URL, so a page that loaded its
+ * own story over the network worked on a server and died on a double-click.
+ * Add any story-specific channel/audio renderers before `client.start()`.
  */
 
-import { GameEngine } from '@sharpee/engine';
+import { GameEngine, type Story } from '@sharpee/engine';
 import { WorldModel, EntityType } from '@sharpee/world-model';
 import { Parser } from '@sharpee/parser-en-us';
 import { LanguageProvider } from '@sharpee/lang-en-us';
 import { PerceptionService } from '@sharpee/stdlib';
-import { renderToString } from '@sharpee/text-service';
-import { AudioManager } from '@sharpee/platform-browser';
-import { story } from './index.js';
-import { PerceptionStateTrait, ROOM_ZONES } from './perception.js';
-import type { Zone } from './perception.js';
+import { BrowserClient, BROWSER_CAPABILITIES, ThemeManager } from '@sharpee/platform-browser';
+import { createStory } from '@sharpee/story-loader';
+import { STORY_VERSION, ENGINE_VERSION, BUILD_DATE } from './version.js';
+// The story's TypeScript hatches (ADR-259 D1/D2), generated beside this file
+// at build time exactly as version.ts is. Empty for a pure-IR story.
+import { hatchModules } from './hatch-modules.js';
+// The compiled story, generated beside this file at build time the same way.
+import { storyIR } from './story-ir.js';
 
-// ─── DOM References ────────────────────────────────────────────
+const THEME_STORAGE_KEY = 'fever-dream-sharpee-theme';
+ThemeManager.applyEarlyTheme(THEME_STORAGE_KEY);
 
-let statusLocation: HTMLElement | null;
-let statusScore: HTMLElement | null;
-let textContent: HTMLElement | null;
-let mainWindow: HTMLElement | null;
-let commandInput: HTMLInputElement | null;
+/**
+ * The IDE's pinned play seed (ADR-299 D5), or undefined on a published page.
+ * Read per call, not cached: restart reboots re-run the boot path and must
+ * see whatever the embedding surface set for this load.
+ */
+function pinnedPlaySeed(): number | undefined {
+  const seed = (globalThis as { __SHARPEE_PLAY_SEED__?: unknown }).__SHARPEE_PLAY_SEED__;
+  return typeof seed === 'number' ? seed : undefined;
+}
 
-// ─── Game State ────────────────────────────────────────────────
+/**
+ * Outcome forcings for this boot (ADR-299 D5), or undefined on a published
+ * page. The Sharpee IDE sets this global when replaying a forced branch of the
+ * skein, so the live story reproduces the counterfactual the author asked for
+ * rather than whatever the pinned seed would have drawn.
+ *
+ * The host passes ALREADY-STRUCTURED specs (`RandomForceSpec`), not the
+ * `point[#occurrence]=CLASS` header text: parsing that grammar is
+ * transcript-tester's job, and a second copy of it shipped inside every built
+ * page is a copy that drifts. Read per call — a restart reboot re-runs the
+ * boot path and must see whatever the surface set for this load.
+ */
+function pinnedPlayForces(): unknown[] {
+  const forces = (globalThis as { __SHARPEE_PLAY_FORCES__?: unknown }).__SHARPEE_PLAY_FORCES__;
+  return Array.isArray(forces) ? forces : [];
+}
 
-let engine: GameEngine;
-let world: WorldModel;
-let commandHistory: string[] = [];
-let historyIndex = -1;
-let currentTurn = 0;
-let currentScore = 0;
-let currentZone: Zone | null = null;
-const audioManager = new AudioManager();
+/**
+ * Applies the IDE's forcings to a freshly built engine.
+ *
+ * Forces are session state, never save state (ADR-293 D9), so they are loaded
+ * per boot rather than restored. A malformed or unknown force is the engine's
+ * typed load error; it surfaces on the page's console rather than killing the
+ * boot, because a published page can never reach this path and an authoring
+ * surface is better off running unforced-but-visible than blank.
+ */
+function applyPinnedPlayForces(engine: GameEngine): void {
+  const specs = pinnedPlayForces();
+  if (specs.length === 0) return;
+  try {
+    const random = engine.getRandomService();
+    random.clearForces();
+    random.loadForces(specs as Parameters<typeof random.loadForces>[0]);
+  } catch (error) {
+    console.error('[sharpee] could not apply the IDE play forcings:', error);
+  }
+}
 
-// ─── Engine Initialization ─────────────────────────────────────
+/**
+ * Build the story from the IR embedded in this bundle.
+ *
+ * There is no compile step and no diagnostics path here on purpose: the build
+ * ran the load-time gates before it emitted the IR (ADR-251 imports are
+ * resolved there too), so a gate failure cannot reach a player's browser. It
+ * fails the build instead, which is where an author can act on it.
+ */
+function loadStory(): Story {
+  const playSeed = pinnedPlaySeed();
+  // A pure-IR story gets an empty map and is unaffected; a hatched story
+  // gets its author-written modules, bound by the loader against the same
+  // paths the `.story` declares (ADR-259 D2).
+  // The chord evaluator's stream (`one chance in <n>`, `randomly`) derives
+  // from the session seed (ADR-293 D1) — omitting it leaves chord draws
+  // clock-seeded even when the engine runs pinned (the author-game.ts
+  // precedent, re-learned here in ADR-299 Phase 5).
+  return createStory(storyIR, {
+    hatchModules,
+    ...(playSeed !== undefined ? { seed: playSeed } : {}),
+  }) as unknown as Story;
+}
 
-function initializeGame(): void {
-  world = new WorldModel();
+/**
+ * The one BrowserClient for this page. Constructed on first boot and
+ * reused across restart reboots (ADR-248): the client owns the DOM
+ * wiring, which must not be re-bound per boot.
+ */
+let client: BrowserClient | null = null;
+
+async function start(): Promise<void> {
+  // Fresh build per boot (ADR-248): a restart reboot re-runs start() and gets
+  // a fully fresh story built from the same embedded IR.
+  let story: Story;
+  try {
+    story = loadStory();
+  } catch (error) {
+    const target = document.getElementById('text-content');
+    const message = error instanceof Error ? error.message : String(error);
+    if (target) {
+      const pre = document.createElement('pre');
+      pre.textContent = message;
+      target.appendChild(pre);
+    }
+    throw error;
+  }
+
+  if (!client) {
+    const author = story.config.author;
+    // Author channels (ADR-318 D11 / ADR-310 D12): the IDE's testing page
+    // sets this global before any client script runs, flipping the
+    // `authorChannels` capability so the `character` channel's per-NPC rows
+    // ride the turn feed. A published page never defines it — player
+    // profiles keep authorChannels false and the channel layer never
+    // produces the rows (Acceptance 8).
+    const authorChannels = (globalThis as { __SHARPEE_AUTHOR_CHANNELS__?: unknown })
+      .__SHARPEE_AUTHOR_CHANNELS__ === true;
+    client = new BrowserClient({
+      storagePrefix: 'fever-dream-sharpee-',
+      ...(authorChannels
+        ? { clientCapabilities: { ...BROWSER_CAPABILITIES, authorChannels: true } }
+        : {}),
+      // ADR-248: RESTART reboots by re-running this entry's boot path.
+      reboot: () => start(),
+      defaultTheme: 'modern-dark',
+      themes: [
+        { id: 'modern-dark', name: 'Modern Dark' },
+        { id: 'retro-terminal', name: 'Retro Terminal' },
+        { id: 'paper', name: 'Paper' },
+        { id: 'system-6', name: 'System 6' },
+      ],
+      storyInfo: {
+        title: story.config.title,
+        description: story.config.description || '',
+        authors: Array.isArray(author) ? author.join(', ') : author,
+        version: STORY_VERSION,
+        engineVersion: ENGINE_VERSION,
+        buildDate: BUILD_DATE,
+      },
+    });
+
+    client.initialize({
+      statusLocation: document.getElementById('location-name'),
+      statusScore: document.getElementById('score-turns'),
+      textContent: document.getElementById('text-content'),
+      mainWindow: document.getElementById('main-window'),
+      commandInput: document.getElementById('command-input') as HTMLInputElement,
+      saveDialog: document.getElementById('save-dialog') as HTMLDialogElement,
+      restoreDialog: document.getElementById('restore-dialog') as HTMLDialogElement,
+      startupDialog: document.getElementById('startup-dialog') as HTMLDialogElement,
+      saveNameInput: document.getElementById('save-name-input') as HTMLInputElement,
+      saveSlotsListEl: document.getElementById('save-slots-list'),
+      restoreSlotsListEl: document.getElementById('restore-slots-list'),
+      noSavesMessage: document.getElementById('no-saves-message'),
+      startupSaveInfo: document.getElementById('startup-save-info'),
+      menuBar: document.getElementById('menu-bar'),
+    });
+  }
+
+  const world = new WorldModel();
   const player = world.createEntity('player', EntityType.ACTOR);
   world.setPlayer(player.id);
 
   const language = new LanguageProvider();
   const parser = new Parser(language);
-
-  if (story.extendParser) {
-    story.extendParser(parser);
-  }
-  if (story.extendLanguage) {
-    story.extendLanguage(language);
-  }
+  if (story.extendParser) story.extendParser(parser);
+  if (story.extendLanguage) story.extendLanguage(language);
 
   const perceptionService = new PerceptionService();
-
-  engine = new GameEngine({
-    world,
-    player,
-    parser,
-    language,
-    perceptionService,
+  // Pinned play seed (ADR-299 D5): the Sharpee IDE's play surface sets this
+  // global before any client script runs, so every boot — including restart
+  // reboots, which re-run start() — executes at the skein's one pinned seed.
+  // A published page never defines it and boots at the clock as before.
+  const playSeed = pinnedPlaySeed();
+  // The seed rides EngineConfig (options.config.seed) — a top-level `seed`
+  // on the options object is silently ignored by the GameEngine constructor.
+  const engine = new GameEngine({
+    world, player, parser, language, perceptionService,
+    ...(playSeed !== undefined ? { config: { seed: playSeed } } : {}),
   });
+  // Before any turn runs — including the client's own boot `look`, which may
+  // itself reach a forced point.
+  applyPinnedPlayForces(engine);
 
-  // ── Text Output ──
-  engine.on('text:output', (blocks, turn) => {
-    displayText(renderToString(blocks));
-    currentTurn = turn;
-    updateStatusLine();
-    syncZone();
-    syncPerception();
-  });
-
-  // ── Event Listener: CSS Effects + Audio ──
-  engine.on('event', (event: any) => {
-    const type = event.type as string;
-
-    // Forward audio events to shared AudioManager
-    if (type.startsWith('audio.')) {
-      audioManager.handleAudioEvent(event as { type: string; data: any });
-    }
-
-    // Score tracking
-    if (type === 'game.score_changed' && event.data) {
-      currentScore = event.data.newScore ?? currentScore;
-      updateStatusLine();
-    }
-
-    // Story events → CSS class triggers
-    switch (type) {
-      case 'story.event.spectacles-worn':
-        triggerEventAnimation('event-spectacles', 800);
-        break;
-
-      case 'story.event.glass-break':
-        triggerEventAnimation('event-glass-break', 600);
-        break;
-
-      case 'story.event.fungus-consumed':
-        triggerEventAnimation('event-fungus-consumed', 6000);
-        // Perception state starts the 40s container warp (slow onset)
-        setTimeout(() => syncPerception(), 2000);
-        // Per-character wave kicks in as the warp builds (~5s into container anim)
-        setTimeout(() => applyTripChars(), 7000);
-        // Remove per-character wrapping as trip winds down
-        setTimeout(() => removeTripChars(), 22000);
-        break;
-
-      case 'story.event.spray-exposure':
-        triggerEventAnimation('event-spray-exposure', 1500);
-        setTimeout(() => syncPerception(), 1600);
-        break;
-
-      case 'story.event.valve-drain':
-        triggerEventAnimation('event-valve-drain', 2000);
-        break;
-
-      case 'story.event.valve-flood':
-        triggerEventAnimation('event-valve-flood', 3000);
-        break;
-
-      case 'story.event.basin-touch':
-        triggerEventAnimation('event-basin-touch', 3000);
-        break;
-
-      case 'story.event.game-end':
-        // Disable input after game ends
-        setTimeout(() => {
-          if (commandInput) {
-            commandInput.disabled = true;
-            commandInput.placeholder = event.data?.won ? 'The treatment is complete.' : 'Game over.';
-          }
-        }, event.data?.won ? 3200 : 3200);
-        break;
-    }
-  });
-
+  client.connectEngine(engine, world);
   engine.setStory(story);
-}
+  engine.registerSaveRestoreHooks(client.getSaveRestoreHooks());
 
-// ─── CSS Effect System ─────────────────────────────────────────
-
-/**
- * Add a CSS class to body for the animation duration, then remove it.
- */
-function triggerEventAnimation(className: string, durationMs: number): void {
-  document.body.classList.add(className);
-  setTimeout(() => {
-    document.body.classList.remove(className);
-  }, durationMs);
-}
-
-/**
- * Wrap visible text characters in spans for per-character wave animation.
- * Each non-whitespace character gets a .trip-char span with --i for
- * staggered animation-delay, creating a visible wave across text.
- */
-function applyTripChars(): void {
-  if (!textContent) return;
-
-  const walker = document.createTreeWalker(textContent, NodeFilter.SHOW_TEXT);
-  const textNodes: Text[] = [];
-  let node: Text | null;
-  while ((node = walker.nextNode() as Text | null)) {
-    if (node.textContent && node.textContent.trim()) {
-      textNodes.push(node);
-    }
-  }
-
-  let charIndex = 0;
-  for (const textNode of textNodes) {
-    const text = textNode.textContent || '';
-    const fragment = document.createDocumentFragment();
-    for (const char of text) {
-      if (char === ' ' || char === '\n' || char === '\r' || char === '\t') {
-        fragment.appendChild(document.createTextNode(char));
-      } else {
-        const span = document.createElement('span');
-        span.className = 'trip-char';
-        span.style.setProperty('--i', String(charIndex % 200));
-        span.textContent = char;
-        fragment.appendChild(span);
-        charIndex++;
-      }
-    }
-    textNode.parentNode?.replaceChild(fragment, textNode);
-  }
-}
-
-/**
- * Remove trip-char spans, restoring normal text flow.
- */
-function removeTripChars(): void {
-  if (!textContent) return;
-  const spans = textContent.querySelectorAll('.trip-char');
-  spans.forEach((span) => {
-    const text = document.createTextNode(span.textContent || '');
-    span.parentNode?.replaceChild(text, span);
-  });
-  textContent.normalize();
-}
-
-/**
- * Sync the data-zone attribute on body to the player's current room.
- */
-function syncZone(): void {
-  const player = world.getPlayer();
-  if (!player) return;
-
-  const locationId = world.getLocation(player.id);
-  if (!locationId) return;
-
-  const zone = ROOM_ZONES[locationId];
-  if (zone && zone !== currentZone) {
-    currentZone = zone;
-
-    // Use view-transition if available
-    if (document.startViewTransition) {
-      document.startViewTransition(() => {
-        document.body.setAttribute('data-zone', zone);
-      });
-    } else {
-      document.body.setAttribute('data-zone', zone);
-    }
-  }
-}
-
-/**
- * Sync the data-perception attribute to the player's perception state.
- */
-function syncPerception(): void {
-  const player = world.getPlayer();
-  if (!player) return;
-
-  const perception = player.get(PerceptionStateTrait);
-  if (!perception) return;
-
-  document.body.setAttribute('data-perception', perception.state);
-}
-
-// ─── DOM Setup ─────────────────────────────────────────────────
-
-function setupDOM(): void {
-  statusLocation = document.getElementById('location-name');
-  statusScore = document.getElementById('score-turns');
-  textContent = document.getElementById('text-content');
-  mainWindow = document.getElementById('main-window');
-  commandInput = document.getElementById('command-input') as HTMLInputElement;
-
-  if (!commandInput) {
-    console.error('Command input element not found');
-    return;
-  }
-
-  commandInput.addEventListener('keydown', (e: KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleCommand();
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      navigateHistory(-1);
-    } else if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      navigateHistory(1);
-    }
-  });
-
-  // Focus input on click anywhere
-  document.addEventListener('click', () => {
-    if (commandInput && !commandInput.disabled) {
-      commandInput.focus();
-    }
-  });
-}
-
-// ─── Command Handling ──────────────────────────────────────────
-
-async function handleCommand(): Promise<void> {
-  if (!commandInput) return;
-
-  const command = commandInput.value.trim();
-  if (!command) return;
-
-  audioManager.unlock();
-  commandHistory.push(command);
-  historyIndex = commandHistory.length;
-  commandInput.value = '';
-
-  displayCommand(command);
-
-  try {
-    await engine.executeTurn(command);
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    displayText(`[Error: ${message}]`);
-  }
-}
-
-function navigateHistory(direction: number): void {
-  if (!commandInput) return;
-
-  const newIndex = historyIndex + direction;
-  if (newIndex < 0) return;
-
-  if (newIndex >= commandHistory.length) {
-    historyIndex = commandHistory.length;
-    commandInput.value = '';
-    return;
-  }
-
-  historyIndex = newIndex;
-  commandInput.value = commandHistory[historyIndex];
-  commandInput.setSelectionRange(
-    commandInput.value.length,
-    commandInput.value.length,
-  );
-}
-
-// ─── Text Display ──────────────────────────────────────────────
-
-function displayText(text: string): void {
-  if (!textContent) return;
-
-  const paragraphs = text.split(/\n\n+/);
-
-  for (const para of paragraphs) {
-    const trimmed = para.trim();
-    if (trimmed) {
-      const p = document.createElement('p');
-      p.style.whiteSpace = 'pre-line';
-      p.textContent = trimmed;
-      textContent.appendChild(p);
-    }
-  }
-
-  scrollToBottom();
-}
-
-function displayCommand(command: string): void {
-  if (!textContent) return;
-
-  const div = document.createElement('div');
-  div.className = 'command-echo';
-  div.textContent = `> ${command}`;
-  textContent.appendChild(div);
-
-  scrollToBottom();
-}
-
-// ─── Status Line ───────────────────────────────────────────────
-
-function updateStatusLine(): void {
-  const player = world.getPlayer();
-  let locationName = '';
-
-  if (player) {
-    const locationId = world.getLocation(player.id);
-    if (locationId) {
-      const room = world.getEntity(locationId);
-      if (room) {
-        locationName = room.name || 'Unknown';
-      }
-    }
-  }
-
-  if (statusLocation) {
-    statusLocation.textContent = locationName;
-  }
-
-  if (statusScore) {
-    statusScore.textContent = `Turns: ${currentTurn}`;
-  }
-}
-
-function scrollToBottom(): void {
-  if (mainWindow) {
-    mainWindow.scrollTop = mainWindow.scrollHeight;
-  }
-}
-
-// ─── Start ─────────────────────────────────────────────────────
-
-async function start(): Promise<void> {
-  try {
-    setupDOM();
-    initializeGame();
-
-    await engine.start();
-    await engine.executeTurn('look');
-
-    // Sync initial zone
-    syncZone();
-    syncPerception();
-
-    if (commandInput) {
-      commandInput.focus();
-    }
-  } catch (error) {
-    console.error('=== STARTUP ERROR ===', error);
-    displayText(`[Startup Error: ${error}]`);
-  }
+  await client.start();
 }
 
 if (document.readyState === 'loading') {
