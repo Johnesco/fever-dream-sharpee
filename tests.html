@@ -5,95 +5,2099 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Fever Dream (Sharpee) &mdash; tests</title>
 <style>
-:root { --bg: #101418; --fg: #d8dee6; --muted: #7f8b99; --line: #232b35; --pass: #6fcf7f; --fail: #ff7a7a; --cmd: #8fd3ff; }
+:root { --bg: #101418; --fg: #d8dee6; --muted: #7f8b99; --line: #232b35; --pass: #6fcf7f; --pass-bg: rgba(111,207,127,.12);
+  --fail: #ff7a7a; --fail-bg: rgba(255,122,122,.14); --warn: #e0b458; --accent: #8fd3ff; --code-bg: #161c23; --hover: #1a2129;
+  --hl-bg: rgba(255,232,138,.3); --hl-fg: #ffe88a; --room: #c49ee0; --ui-font: Georgia, "Times New Roman", serif; --mono: ui-monospace, Consolas, monospace; }
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.5 Georgia, "Times New Roman", serif; }
-.wrap { max-width: 860px; margin: 0 auto; padding: 24px 20px 60px; }
-header { border-bottom: 1px solid var(--line); padding-bottom: 12px; margin-bottom: 20px; color: var(--muted); font-family: ui-monospace, Consolas, monospace; font-size: 13px; }
-header strong { color: var(--fg); font-size: 18px; display: block; font-family: Georgia, serif; }
-.summary { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 8px; }
-.status { font-weight: bold; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.5 var(--ui-font); }
+.wrap { max-width: 980px; margin: 0 auto; padding: 24px 20px 60px; }
+h1 { font-size: 20px; margin: 0 0 4px; }
+.subtitle { color: var(--muted); font: 13px var(--mono); margin-bottom: 14px; }
+.summary { display: flex; flex-wrap: wrap; gap: 12px 24px; border: 1px solid var(--line); border-radius: 6px; padding: 10px 14px; margin-bottom: 10px; background: var(--code-bg); }
+.summary .item { display: flex; align-items: baseline; gap: 6px; }
+.summary .num { font: bold 18px var(--mono); }
+.summary .pass-num { color: var(--pass); } .summary .fail-num { color: var(--fail); }
+.summary .label { color: var(--muted); font: 12px var(--mono); text-transform: uppercase; letter-spacing: .06em; }
 .status.PASS { color: var(--pass); } .status.FAIL { color: var(--fail); }
-h2 { font-size: 14px; font-family: ui-monospace, Consolas, monospace; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin: 28px 0 10px; }
-.card { border-left: 3px solid var(--line); padding: 6px 0 6px 14px; margin: 0 0 14px; }
-.card.fail { border-left-color: var(--fail); }
-.cmd { font-family: ui-monospace, Consolas, monospace; color: var(--cmd); }
-pre.out { white-space: pre-wrap; margin: 6px 0; font: inherit; color: var(--fg); opacity: .92; }
-ul.asserts { list-style: none; margin: 4px 0 0; padding: 0; font-family: ui-monospace, Consolas, monospace; font-size: 13px; }
-ul.asserts li.pass { color: var(--pass); } ul.asserts li.fail { color: var(--fail); }
+.games { font: 13px var(--mono); color: var(--muted); margin-bottom: 14px; display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin: 0 0 6px; font: 13px var(--mono); }
+.controls button, button.match-toggle { font: 12px var(--mono); color: var(--fg); background: var(--code-bg); border: 1px solid var(--line); border-radius: 4px; padding: 3px 8px; cursor: pointer; }
+.controls button:hover, button.match-toggle:hover { background: var(--hover); }
+.controls input[type=search] { font: 13px var(--mono); color: var(--fg); background: var(--code-bg); border: 1px solid var(--line); border-radius: 4px; padding: 4px 8px; min-width: 260px; }
+.controls label { display: flex; gap: 6px; align-items: center; cursor: pointer; }
+.controls .hint { color: var(--muted); font-size: 12px; }
+h2 { font-size: 13px; font-family: var(--mono); color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin: 24px 0 10px; }
+table.lines { border-collapse: collapse; width: 100%; font: 13px var(--mono); }
+table.lines th, table.lines td { text-align: left; padding: 4px 8px; border-bottom: 1px solid var(--line); }
+table.lines th { color: var(--muted); font-weight: normal; }
+table.lines th.num, table.lines td.num { text-align: right; }
+table.lines td.pass { color: var(--pass); } table.lines td.fail { color: var(--fail); }
+table.lines a, .line-note a, .fork a { color: var(--accent); text-decoration: none; }
+table.lines a:hover, .line-note a:hover, .fork a:hover { text-decoration: underline; }
+details.test { border: 1px solid var(--line); border-radius: 6px; margin: 0 0 12px; background: var(--code-bg); }
+summary { cursor: pointer; list-style: none; }
+summary::-webkit-details-marker { display: none; }
+summary.test-summary { display: flex; gap: 10px; align-items: center; padding: 8px 12px; font: 14px var(--mono); }
+summary.test-summary::before { content: "\25B8"; color: var(--muted); width: 1em; }
+details.test[open] > summary.test-summary::before { content: "\25BE"; }
+.glyph.pass { color: var(--pass); } .glyph.fail { color: var(--fail); } .glyph.skip { color: var(--muted); }
+.test-name { font-weight: bold; }
+.test-summary-meta { color: var(--muted); margin-left: auto; font-size: 12px; text-align: right; }
+.test-body { border-top: 1px solid var(--line); }
+.line-note { padding: 6px 12px; color: var(--muted); font: 12px var(--mono); border-bottom: 1px solid var(--line); }
+.line-note code { color: var(--accent); }
+ul.transcript { list-style: none; margin: 0; padding: 0; }
+li.turn { border-bottom: 1px solid var(--line); }
+li.turn:last-child { border-bottom: 0; }
+summary.turn-row { display: grid; grid-template-columns: 4.5em minmax(10em, 1fr) minmax(6em, auto) auto 5em; gap: 10px; align-items: baseline; padding: 5px 12px; font: 13px var(--mono); }
+summary.turn-row:hover { background: var(--hover); }
+details.turn-detail[data-status="fail"] > summary.turn-row { background: var(--fail-bg); }
+.turn-tcount { color: var(--muted); }
+.turn-cmd { color: var(--accent); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.turn-room { color: var(--room); font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.turn-inv { color: var(--muted); font-size: 12px; text-align: right; }
+.turn-asserts { text-align: right; }
+.turn-asserts .pass, .fork .pass { color: var(--pass); } .turn-asserts .fail, .fork .fail { color: var(--fail); } .turn-asserts .skip { color: var(--muted); }
+.turn-body { padding: 6px 12px 10px 5.5em; }
+pre.turn-response { white-space: pre-wrap; margin: 4px 0 8px; font: inherit; color: var(--fg); }
+pre.turn-response.empty { color: var(--muted); font-style: italic; }
+.hl.hl-active { background: var(--hl-bg); color: var(--hl-fg); box-shadow: 0 0 0 1px var(--hl-fg); border-radius: 2px; }
+.hl.hl-active.hl-fail { background: var(--fail-bg); color: var(--fail); box-shadow: 0 0 0 1px var(--fail); }
+details.turn-extras > summary { font: 12px var(--mono); color: var(--muted); padding: 2px 0; }
+details.turn-extras > summary::before { content: "\25B8 "; }
+details.turn-extras[open] > summary::before { content: "\25BE "; }
+.turn-extras-body { padding: 4px 0 0 1em; }
+h4 { margin: 8px 0 4px; font: 12px var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.note { color: var(--muted); font: 12px var(--mono); }
+ul.assertions { list-style: none; margin: 0; padding: 0; font: 13px var(--mono); }
+ul.assertions li { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; padding: 2px 0; }
+ul.assertions li.pass > .label::before { content: "\2713 "; color: var(--pass); }
+ul.assertions li.fail > .label::before { content: "\2717 "; color: var(--fail); }
+ul.assertions .kind { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .05em; min-width: 7em; }
+ul.assertions .label { white-space: pre-wrap; }
+ul.assertions .message { flex-basis: 100%; color: var(--fail); padding-left: 7.7em; white-space: pre-wrap; }
+button.match-toggle.active { background: var(--hl-bg); color: var(--hl-fg); border-color: var(--hl-fg); }
+li.fail button.match-toggle.active { background: var(--fail-bg); color: var(--fail); border-color: var(--fail); }
+dl.kv { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; margin: 0; font: 13px var(--mono); }
+dl.kv dt { color: var(--muted); } dl.kv dd { margin: 0; }
+details.raw > summary { font: 12px var(--mono); color: var(--muted); margin-top: 8px; }
+details.raw > summary::before { content: "\25B8 "; } details.raw[open] > summary::before { content: "\25BE "; }
+pre.raw-json { font: 12px/1.4 var(--mono); background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 8px 10px; overflow: auto; max-height: 26em; margin: 4px 0; }
+.fork { padding: 2px 12px 6px 5.5em; font: 12px var(--mono); color: var(--muted); }
+body.failures-only li.turn[data-status="pass"], body.failures-only li.turn[data-status="skip"], body.failures-only details.test[data-status="pass"] { display: none; }
+li.turn.filtered-out, details.test.filtered-out { display: none; }
+@media (max-width: 640px) { summary.turn-row { grid-template-columns: 3.5em 1fr auto; } .turn-room, .turn-inv { display: none; } .turn-body, .fork { padding-left: 12px; } }
 </style>
 </head>
 <body>
-<div class="wrap">
-<header>
-  <strong>Fever Dream (Sharpee) &mdash; test report</strong>
-  <div class="summary">
-    <span class="status PASS">PASS</span>
-    <span>39/39 cards</span>
-    <span>75/75 assertions</span>
-    <span>fever-dream-sharpee.tests.json</span>
-    <span>Sharpee 5.3.0 · Chord 3.6.0</span>
-    <span>2026-09-08 00:18</span>
-  </div>
-</header>
-<section class="line"><h2>opening-receiving-room</h2><article class="card pass"><div class="cmd">&#9989; &gt; opening</div><ul class="asserts"><li class="pass">&#10003; channel info.title is &quot;Fever Dream&quot;</li><li class="pass">&#10003; channel info.description is &quot;A perceptual horror. Three items alter your perception. The world stays the same. You do not.&quot;</li></ul></article><article class="card pass"><div class="cmd">&#9989; &gt; look</div><pre class="out">Receiving Room
-Fluorescent tubes buzz overhead, one flickering at the far end. A long counter divides the room — scuffed linoleum on your side, dark wood on the other. A door leads east.
+<div class="wrap"><h1>Fever Dream (Sharpee) &mdash; test report</h1><div class="subtitle">6 lines &middot; 39 cards &middot; 75 assertions &middot; 208 ms</div><div class="summary"><div class="item"><span class="num status PASS">PASS</span></div><div class="item"><span class="num pass-num">6</span><span class="label">lines passed</span></div><div class="item"><span class="num ">0</span><span class="label">lines failed</span></div><div class="item"><span class="num pass-num">39</span><span class="label">cards passed</span></div><div class="item"><span class="num ">0</span><span class="label">cards failed</span></div><div class="item"><span class="num pass-num">75</span><span class="label">of 75 assertions</span></div><div class="item"><span class="num">208</span><span class="label">ms</span></div></div><div class="games"><span class="relpath">fever-dream-sharpee.tests.json</span><span class="seed">seed 42</span><span>Sharpee 5.3.0 · Chord 3.6.0</span><span>generated 2026-09-08 18:29</span><span>0 unreached &middot; 0 skipped &middot; 0 errors</span></div><div class="controls"><button type="button" id="expand-all">Expand all</button><button type="button" id="collapse-all">Collapse all</button><label><input type="checkbox" id="failures-only"> failures only</label><input type="search" id="filter" placeholder="filter cards: command, prose, checks, room, item" aria-label="filter cards"><span class="hint" id="filter-hint"></span></div><h2>Lines</h2><table class="lines"><thead><tr><th>line</th><th>forks from</th><th class="num">cards</th><th class="num">passed</th><th class="num">failed</th><th class="num">ms</th></tr></thead><tbody><tr class="pass"><td><a href="#line-0">opening-receiving-room</a></td><td>&mdash;</td><td class="num">20</td><td class="num pass">20</td><td class="num ">0</td><td class="num">124</td></tr><tr class="pass"><td><a href="#line-1">receiving-room · read form</a></td><td>opening-receiving-room &middot; T:1 look</td><td class="num">7</td><td class="num pass">7</td><td class="num ">0</td><td class="num">31</td></tr><tr class="pass"><td><a href="#line-2">stairwell · south</a></td><td>opening-receiving-room &middot; T:5 down</td><td class="num">4</td><td class="num pass">4</td><td class="num ">0</td><td class="num">22</td></tr><tr class="pass"><td><a href="#line-3">laboratory · break case</a></td><td>opening-receiving-room &middot; T:9 break glass case with wrench</td><td class="num">2</td><td class="num pass">2</td><td class="num ">0</td><td class="num">9</td></tr><tr class="pass"><td><a href="#line-4">laboratory · look</a></td><td>opening-receiving-room &middot; T:15 eat fungus</td><td class="num">3</td><td class="num pass">3</td><td class="num ">0</td><td class="num">10</td></tr><tr class="pass"><td><a href="#line-5">cistern · read sign</a></td><td>opening-receiving-room &middot; T:16 south</td><td class="num">3</td><td class="num pass">3</td><td class="num ">0</td><td class="num">12</td></tr></tbody></table><h2>Tests</h2><div class="tests"><details class="test" id="line-0" data-status="pass" open><summary class="test-summary"><span class="glyph pass">&#10003;</span><span class="test-name">opening-receiving-room</span><span class="test-summary-meta">main line &middot; 20 cards &middot; 20/20 &#10003; &middot; 124 ms</span></summary><div class="test-body"><ul class="transcript"><li class="turn" data-status="pass"><details class="turn-detail" data-status="pass"><summary class="turn-row"><span class="turn-tcount">&mdash;</span><span class="turn-cmd">&gt; (opening)</span><span class="turn-room"></span><span class="turn-inv" title="carrying nothing"></span><span class="turn-asserts"><span class="pass">&#10003; 2/2</span></span></summary><div class="turn-body"><pre class="turn-response empty">(the opening card checks what the client shows before play; no prose)</pre><details class="turn-extras"><summary class="turn-extras-summary">2 checks &#10003; &middot; raw</summary><div class="turn-extras-body"><h4>Checks</h4><ul class="assertions"><li class="pass"><span class="kind">channel</span><span class="label">info.title is &quot;Fever Dream&quot;</span></li><li class="pass"><span class="kind">channel</span><span class="label">info.description is &quot;A perceptual horror. Three items alter your perception. The world stays the same. You do not.&quot;</span></li></ul><details class="raw"><summary>Raw: the runner record and the authored card</summary><pre class="raw-json">{
+  &quot;schemaVersion&quot;: 2,
+  &quot;seq&quot;: 2,
+  &quot;elapsedMs&quot;: 105,
+  &quot;type&quot;: &quot;command-result&quot;,
+  &quot;file&quot;: &quot;opening-receiving-room&quot;,
+  &quot;line&quot;: 0,
+  &quot;input&quot;: &quot;(opening)&quot;,
+  &quot;passed&quot;: true,
+  &quot;expectedFailure&quot;: false,
+  &quot;skipped&quot;: false,
+  &quot;actualOutput&quot;: &quot;&quot;,
+  &quot;assertionResults&quot;: [
+    {
+      &quot;description&quot;: &quot;channel info.title is \&quot;Fever Dream\&quot;&quot;,
+      &quot;passed&quot;: true
+    },
+    {
+      &quot;description&quot;: &quot;channel info.description is \&quot;A perceptual horror. Three items alter your perception. The world stays the same. You do not.\&quot;&quot;,
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre><pre class="raw-json">{
+  &quot;type&quot;: &quot;opening&quot;,
+  &quot;assertions&quot;: {
+    &quot;channels&quot;: [
+      {
+        &quot;id&quot;: &quot;info.title&quot;,
+        &quot;is&quot;: &quot;Fever Dream&quot;
+      },
+      {
+        &quot;id&quot;: &quot;info.description&quot;,
+        &quot;is&quot;: &quot;A perceptual horror. Three items alter your perception. The world stays the same. You do not.&quot;
+      }
+    ]
+  }
+}</pre></details></div></details></div></details></li><li class="turn" data-status="pass"><details class="turn-detail" data-status="pass"><summary class="turn-row"><span class="turn-tcount">T:1</span><span class="turn-cmd">&gt; look  (boot)</span><span class="turn-room">Receiving Room</span><span class="turn-inv" title="carrying nothing"></span><span class="turn-asserts"><span class="pass">&#10003; 3/3</span></span></summary><div class="turn-body"><pre class="turn-response"><span class="hl" data-asserts="0">Receiving Room</span>
+<span class="hl" data-asserts="1">Fluorescent tubes buzz overhead</span>, one flickering at the far end. A long counter divides the room — scuffed linoleum on your side, dark wood on the other. A door leads east.
 
-You can see spectacles here.</pre><ul class="asserts"><li class="pass">&#10003; contains &quot;Receiving Room&quot;</li><li class="pass">&#10003; contains &quot;Fluorescent tubes buzz overhead&quot;</li><li class="pass">&#10003; contains &quot;You can see spectacles here.&quot;</li></ul></article><article class="card pass"><div class="cmd">&#9989; &gt; take spectacles</div><pre class="out">Taken.</pre><ul class="asserts"><li class="pass">&#10003; contains &quot;Taken.&quot;</li><li class="pass">&#10003; state player.inventory contains spectacles</li></ul></article><article class="card pass"><div class="cmd">&#9989; &gt; wear spectacles</div><pre class="out">You put on the spectacles.
+<span class="hl" data-asserts="2">You can see spectacles here.</span></pre><details class="turn-extras"><summary class="turn-extras-summary">3 checks &#10003; &middot; Receiving Room &middot; 0 carried &middot; raw</summary><div class="turn-extras-body"><h4>Checks</h4><ul class="assertions"><li class="pass"><span class="kind">contains</span><span class="label">Receiving Room</span><button type="button" class="match-toggle" data-assertion-idx="0">show</button></li><li class="pass"><span class="kind">contains</span><span class="label">Fluorescent tubes buzz overhead</span><button type="button" class="match-toggle" data-assertion-idx="1">show</button></li><li class="pass"><span class="kind">contains</span><span class="label">You can see spectacles here.</span><button type="button" class="match-toggle" data-assertion-idx="2">show</button></li></ul><h4>World after this turn</h4><dl class="kv"><dt>Location</dt><dd>Receiving Room</dd><dt>Carrying</dt><dd>nothing</dd></dl><details class="raw"><summary>Raw: the runner record and the authored card</summary><pre class="raw-json">{
+  &quot;schemaVersion&quot;: 2,
+  &quot;seq&quot;: 3,
+  &quot;elapsedMs&quot;: 105,
+  &quot;type&quot;: &quot;command-result&quot;,
+  &quot;file&quot;: &quot;opening-receiving-room&quot;,
+  &quot;line&quot;: 0,
+  &quot;input&quot;: &quot;look&quot;,
+  &quot;passed&quot;: true,
+  &quot;expectedFailure&quot;: false,
+  &quot;skipped&quot;: false,
+  &quot;actualOutput&quot;: &quot;Receiving Room\nFluorescent tubes buzz overhead, one flickering at the far end. A long counter divides the room — scuffed linoleum on your side, dark wood on the other. A door leads east.\n\nYou can see spectacles here.&quot;,
+  &quot;turn&quot;: 1,
+  &quot;world&quot;: {
+    &quot;location&quot;: {
+      &quot;name&quot;: &quot;Receiving Room&quot;,
+      &quot;token&quot;: &quot;reception&quot;
+    },
+    &quot;inventory&quot;: []
+  },
+  &quot;assertionResults&quot;: [
+    {
+      &quot;description&quot;: &quot;contains \&quot;Receiving Room\&quot;&quot;,
+      &quot;passed&quot;: true
+    },
+    {
+      &quot;description&quot;: &quot;contains \&quot;Fluorescent tubes buzz overhead\&quot;&quot;,
+      &quot;passed&quot;: true
+    },
+    {
+      &quot;description&quot;: &quot;contains \&quot;You can see spectacles here.\&quot;&quot;,
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre><pre class="raw-json">{
+  &quot;type&quot;: &quot;boot&quot;,
+  &quot;assertions&quot;: {
+    &quot;contains&quot;: [
+      &quot;Receiving Room&quot;,
+      &quot;Fluorescent tubes buzz overhead&quot;,
+      &quot;You can see spectacles here.&quot;
+    ]
+  },
+  &quot;branches&quot;: &quot;[1 branch(es), rendered as their own lines]&quot;
+}</pre></details></div></details></div></details><div class="fork">&#8627; branch <a href="#line-1">receiving-room · read form</a> &middot; 7 cards <span class="pass">&#10003;</span></div></li><li class="turn" data-status="pass"><details class="turn-detail" data-status="pass"><summary class="turn-row"><span class="turn-tcount">T:2</span><span class="turn-cmd">&gt; take spectacles</span><span class="turn-room">Receiving Room</span><span class="turn-inv" title="spectacles">1 carried</span><span class="turn-asserts"><span class="pass">&#10003; 2/2</span></span></summary><div class="turn-body"><pre class="turn-response"><span class="hl" data-asserts="0">Taken.</span></pre><details class="turn-extras"><summary class="turn-extras-summary">2 checks &#10003; &middot; Receiving Room &middot; 1 carried &middot; raw</summary><div class="turn-extras-body"><h4>Checks</h4><ul class="assertions"><li class="pass"><span class="kind">contains</span><span class="label">Taken.</span><button type="button" class="match-toggle" data-assertion-idx="0">show</button></li><li class="pass"><span class="kind">state</span><span class="label">player.inventory contains spectacles</span></li></ul><h4>World after this turn</h4><dl class="kv"><dt>Location</dt><dd>Receiving Room</dd><dt>Carrying</dt><dd>spectacles</dd></dl><details class="raw"><summary>Raw: the runner record and the authored card</summary><pre class="raw-json">{
+  &quot;schemaVersion&quot;: 2,
+  &quot;seq&quot;: 4,
+  &quot;elapsedMs&quot;: 116,
+  &quot;type&quot;: &quot;command-result&quot;,
+  &quot;file&quot;: &quot;opening-receiving-room&quot;,
+  &quot;line&quot;: 0,
+  &quot;input&quot;: &quot;take spectacles&quot;,
+  &quot;passed&quot;: true,
+  &quot;expectedFailure&quot;: false,
+  &quot;skipped&quot;: false,
+  &quot;actualOutput&quot;: &quot;Taken.&quot;,
+  &quot;turn&quot;: 2,
+  &quot;world&quot;: {
+    &quot;location&quot;: {
+      &quot;name&quot;: &quot;Receiving Room&quot;,
+      &quot;token&quot;: &quot;reception&quot;
+    },
+    &quot;inventory&quot;: [
+      {
+        &quot;name&quot;: &quot;spectacles&quot;,
+        &quot;token&quot;: &quot;glasses&quot;
+      }
+    ]
+  },
+  &quot;assertionResults&quot;: [
+    {
+      &quot;description&quot;: &quot;contains \&quot;Taken.\&quot;&quot;,
+      &quot;passed&quot;: true
+    },
+    {
+      &quot;description&quot;: &quot;state player.inventory contains spectacles&quot;,
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre><pre class="raw-json">{
+  &quot;type&quot;: &quot;turn&quot;,
+  &quot;command&quot;: &quot;take spectacles&quot;,
+  &quot;assertions&quot;: {
+    &quot;contains&quot;: [
+      &quot;Taken.&quot;
+    ],
+    &quot;states&quot;: [
+      &quot;player.inventory contains spectacles&quot;
+    ]
+  }
+}</pre></details></div></details></div></details></li><li class="turn" data-status="pass"><details class="turn-detail" data-status="pass"><summary class="turn-row"><span class="turn-tcount">T:3</span><span class="turn-cmd">&gt; wear spectacles</span><span class="turn-room">Receiving Room</span><span class="turn-inv" title="spectacles">1 carried</span><span class="turn-asserts"><span class="pass">&#10003; 3/3</span></span></summary><div class="turn-body"><pre class="turn-response"><span class="hl" data-asserts="0">You put on the spectacles.</span>
 
-You settle the spectacles on your nose. The lenses are thick, heavy. The room sharpens at its edges — details you missed before push forward into clarity.</pre><ul class="asserts"><li class="pass">&#10003; contains &quot;You put on the spectacles.&quot;</li><li class="pass">&#10003; contains &quot;details you missed before push forward into clarity.&quot;</li><li class="pass">&#10003; state the trapdoor is revealed</li></ul></article><article class="card pass"><div class="cmd">&#9989; &gt; east</div><pre class="out">Corridor
-A long hallway tiled in white. Several tiles are cracked, revealing raw concrete beneath. The receiving room is west. The treatment room is east.</pre><ul class="asserts"><li class="pass">&#10003; contains &quot;Corridor&quot;</li></ul></article><article class="card pass"><div class="cmd">&#9989; &gt; down</div><pre class="out">Stairwell
+You settle the spectacles on your nose. The lenses are thick, heavy. The room sharpens at its edges — <span class="hl" data-asserts="1">details you missed before push forward into clarity.</span></pre><details class="turn-extras"><summary class="turn-extras-summary">3 checks &#10003; &middot; Receiving Room &middot; 1 carried &middot; raw</summary><div class="turn-extras-body"><h4>Checks</h4><ul class="assertions"><li class="pass"><span class="kind">contains</span><span class="label">You put on the spectacles.</span><button type="button" class="match-toggle" data-assertion-idx="0">show</button></li><li class="pass"><span class="kind">contains</span><span class="label">details you missed before push forward into clarity.</span><button type="button" class="match-toggle" data-assertion-idx="1">show</button></li><li class="pass"><span class="kind">state</span><span class="label">the trapdoor is revealed</span></li></ul><h4>World after this turn</h4><dl class="kv"><dt>Location</dt><dd>Receiving Room</dd><dt>Carrying</dt><dd>spectacles</dd></dl><details class="raw"><summary>Raw: the runner record and the authored card</summary><pre class="raw-json">{
+  &quot;schemaVersion&quot;: 2,
+  &quot;seq&quot;: 5,
+  &quot;elapsedMs&quot;: 125,
+  &quot;type&quot;: &quot;command-result&quot;,
+  &quot;file&quot;: &quot;opening-receiving-room&quot;,
+  &quot;line&quot;: 0,
+  &quot;input&quot;: &quot;wear spectacles&quot;,
+  &quot;passed&quot;: true,
+  &quot;expectedFailure&quot;: false,
+  &quot;skipped&quot;: false,
+  &quot;actualOutput&quot;: &quot;You put on the spectacles.\n\nYou settle the spectacles on your nose. The lenses are thick, heavy. The room sharpens at its edges — details you missed before push forward into clarity.&quot;,
+  &quot;turn&quot;: 3,
+  &quot;world&quot;: {
+    &quot;location&quot;: {
+      &quot;name&quot;: &quot;Receiving Room&quot;,
+      &quot;token&quot;: &quot;reception&quot;
+    },
+    &quot;inventory&quot;: [
+      {
+        &quot;name&quot;: &quot;spectacles&quot;,
+        &quot;token&quot;: &quot;glasses&quot;
+      }
+    ]
+  },
+  &quot;assertionResults&quot;: [
+    {
+      &quot;description&quot;: &quot;contains \&quot;You put on the spectacles.\&quot;&quot;,
+      &quot;passed&quot;: true
+    },
+    {
+      &quot;description&quot;: &quot;contains \&quot;details you missed before push forward into clarity.\&quot;&quot;,
+      &quot;passed&quot;: true
+    },
+    {
+      &quot;description&quot;: &quot;state the trapdoor is revealed&quot;,
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre><pre class="raw-json">{
+  &quot;type&quot;: &quot;turn&quot;,
+  &quot;command&quot;: &quot;wear spectacles&quot;,
+  &quot;assertions&quot;: {
+    &quot;contains&quot;: [
+      &quot;You put on the spectacles.&quot;,
+      &quot;details you missed before push forward into clarity.&quot;
+    ],
+    &quot;states&quot;: [
+      &quot;the trapdoor is revealed&quot;
+    ]
+  }
+}</pre></details></div></details></div></details></li><li class="turn" data-status="pass"><details class="turn-detail" data-status="pass"><summary class="turn-row"><span class="turn-tcount">T:4</span><span class="turn-cmd">&gt; east</span><span class="turn-room">Corridor</span><span class="turn-inv" title="spectacles">1 carried</span><span class="turn-asserts"><span class="pass">&#10003; 1/1</span></span></summary><div class="turn-body"><pre class="turn-response"><span class="hl" data-asserts="0">Corridor</span>
+A long hallway tiled in white. Several tiles are cracked, revealing raw concrete beneath. The receiving room is west. The treatment room is east.</pre><details class="turn-extras"><summary class="turn-extras-summary">1 check &#10003; &middot; Corridor &middot; 1 carried &middot; raw</summary><div class="turn-extras-body"><h4>Checks</h4><ul class="assertions"><li class="pass"><span class="kind">contains</span><span class="label">Corridor</span><button type="button" class="match-toggle" data-assertion-idx="0">show</button></li></ul><h4>World after this turn</h4><dl class="kv"><dt>Location</dt><dd>Corridor</dd><dt>Carrying</dt><dd>spectacles</dd></dl><details class="raw"><summary>Raw: the runner record and the authored card</summary><pre class="raw-json">{
+  &quot;schemaVersion&quot;: 2,
+  &quot;seq&quot;: 6,
+  &quot;elapsedMs&quot;: 130,
+  &quot;type&quot;: &quot;command-result&quot;,
+  &quot;file&quot;: &quot;opening-receiving-room&quot;,
+  &quot;line&quot;: 0,
+  &quot;input&quot;: &quot;east&quot;,
+  &quot;passed&quot;: true,
+  &quot;expectedFailure&quot;: false,
+  &quot;skipped&quot;: false,
+  &quot;actualOutput&quot;: &quot;Corridor\nA long hallway tiled in white. Several tiles are cracked, revealing raw concrete beneath. The receiving room is west. The treatment room is east.&quot;,
+  &quot;turn&quot;: 4,
+  &quot;world&quot;: {
+    &quot;location&quot;: {
+      &quot;name&quot;: &quot;Corridor&quot;,
+      &quot;token&quot;: &quot;hallway&quot;
+    },
+    &quot;inventory&quot;: [
+      {
+        &quot;name&quot;: &quot;spectacles&quot;,
+        &quot;token&quot;: &quot;glasses&quot;
+      }
+    ]
+  },
+  &quot;assertionResults&quot;: [
+    {
+      &quot;description&quot;: &quot;contains \&quot;Corridor\&quot;&quot;,
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre><pre class="raw-json">{
+  &quot;type&quot;: &quot;turn&quot;,
+  &quot;command&quot;: &quot;east&quot;,
+  &quot;assertions&quot;: {
+    &quot;contains&quot;: [
+      &quot;Corridor&quot;
+    ]
+  }
+}</pre></details></div></details></div></details></li><li class="turn" data-status="pass"><details class="turn-detail" data-status="pass"><summary class="turn-row"><span class="turn-tcount">T:5</span><span class="turn-cmd">&gt; down</span><span class="turn-room">Stairwell</span><span class="turn-inv" title="spectacles">1 carried</span><span class="turn-asserts"><span class="pass">&#10003; 3/3</span></span></summary><div class="turn-body"><pre class="turn-response"><span class="hl" data-asserts="0">Stairwell</span>
 Concrete steps descend to a landing. The air turns cold and damp. Pipes run along the ceiling, sweating with condensation. The trapdoor opens above. A passage continues south to the laboratory.
 
-You can see a pipe wrench here.</pre><ul class="asserts"><li class="pass">&#10003; contains &quot;Stairwell&quot;</li><li class="pass">&#10003; contains &quot;You can see a pipe wrench here.&quot;</li><li class="pass">&#10003; state player.location = Stairwell</li></ul></article><article class="card pass"><div class="cmd">&#9989; &gt; take wrench</div><pre class="out">Taken.</pre><ul class="asserts"><li class="pass">&#10003; contains &quot;Taken.&quot;</li><li class="pass">&#10003; state player.inventory contains pipe wrench</li></ul></article><article class="card pass"><div class="cmd">&#9989; &gt; south</div><pre class="out">Laboratory
-A long room lined with workbenches and glass-fronted cabinets. Everything is labeled in the same careful handwriting. The stairwell is north. A heavy door leads east to cold storage.</pre><ul class="asserts"><li class="pass">&#10003; contains &quot;Laboratory&quot;</li><li class="pass">&#10003; contains &quot;A heavy door leads east to cold storage.&quot;</li></ul></article><article class="card pass"><div class="cmd">&#9989; &gt; read plaque</div><pre class="out">CISTERN MAINTENANCE — Valve operation: LEFT drains. RIGHT floods. Do not operate without authorization.</pre><ul class="asserts"><li class="pass">&#10003; contains &quot;LEFT drains. RIGHT floods.&quot;</li></ul></article><article class="card pass"><div class="cmd">&#9989; &gt; break glass case with wrench</div><pre class="out">You swing the wrench. The glass shatters cleanly. The brass key drops into your hand.</pre><ul class="asserts"><li class="pass">&#10003; contains &quot;The glass shatters cleanly. The brass key drops into your hand.&quot;</li><li class="pass">&#10003; state the glass case is shattered</li><li class="pass">&#10003; state player.inventory contains brass key</li></ul></article><article class="card pass"><div class="cmd">&#9989; &gt; east</div><pre class="out">Cold Storage
-The temperature drops immediately. Your breath fogs. Racks of specimen jars line the walls, filled with amber fluid. A heavy metal cabinet stands against the far wall, marked with a snowflake. The laboratory is west.</pre><ul class="asserts"><li class="pass">&#10003; contains &quot;Cold Storage&quot;</li><li class="pass">&#10003; contains &quot;marked with a snowflake&quot;</li></ul></article><article class="card pass"><div class="cmd">&#9989; &gt; unlock cabinet with brass key</div><pre class="out">You unlock the metal cabinet with the brass key.</pre><ul class="asserts"><li class="pass">&#10003; contains &quot;You unlock the metal cabinet with the brass key.&quot;</li></ul></article><article class="card pass"><div class="cmd">&#9989; &gt; open cabinet</div><pre class="out">You open the metal cabinet.
+<span class="hl" data-asserts="1">You can see a pipe wrench here.</span></pre><details class="turn-extras"><summary class="turn-extras-summary">3 checks &#10003; &middot; Stairwell &middot; 1 carried &middot; raw</summary><div class="turn-extras-body"><h4>Checks</h4><ul class="assertions"><li class="pass"><span class="kind">contains</span><span class="label">Stairwell</span><button type="button" class="match-toggle" data-assertion-idx="0">show</button></li><li class="pass"><span class="kind">contains</span><span class="label">You can see a pipe wrench here.</span><button type="button" class="match-toggle" data-assertion-idx="1">show</button></li><li class="pass"><span class="kind">state</span><span class="label">player.location = Stairwell</span></li></ul><h4>World after this turn</h4><dl class="kv"><dt>Location</dt><dd>Stairwell</dd><dt>Carrying</dt><dd>spectacles</dd></dl><details class="raw"><summary>Raw: the runner record and the authored card</summary><pre class="raw-json">{
+  &quot;schemaVersion&quot;: 2,
+  &quot;seq&quot;: 7,
+  &quot;elapsedMs&quot;: 137,
+  &quot;type&quot;: &quot;command-result&quot;,
+  &quot;file&quot;: &quot;opening-receiving-room&quot;,
+  &quot;line&quot;: 0,
+  &quot;input&quot;: &quot;down&quot;,
+  &quot;passed&quot;: true,
+  &quot;expectedFailure&quot;: false,
+  &quot;skipped&quot;: false,
+  &quot;actualOutput&quot;: &quot;Stairwell\nConcrete steps descend to a landing. The air turns cold and damp. Pipes run along the ceiling, sweating with condensation. The trapdoor opens above. A passage continues south to the laboratory.\n\nYou can see a pipe wrench here.&quot;,
+  &quot;turn&quot;: 5,
+  &quot;world&quot;: {
+    &quot;location&quot;: {
+      &quot;name&quot;: &quot;Stairwell&quot;,
+      &quot;token&quot;: &quot;stairs&quot;
+    },
+    &quot;inventory&quot;: [
+      {
+        &quot;name&quot;: &quot;spectacles&quot;,
+        &quot;token&quot;: &quot;glasses&quot;
+      }
+    ]
+  },
+  &quot;assertionResults&quot;: [
+    {
+      &quot;description&quot;: &quot;contains \&quot;Stairwell\&quot;&quot;,
+      &quot;passed&quot;: true
+    },
+    {
+      &quot;description&quot;: &quot;contains \&quot;You can see a pipe wrench here.\&quot;&quot;,
+      &quot;passed&quot;: true
+    },
+    {
+      &quot;description&quot;: &quot;state player.location = Stairwell&quot;,
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre><pre class="raw-json">{
+  &quot;type&quot;: &quot;turn&quot;,
+  &quot;command&quot;: &quot;down&quot;,
+  &quot;assertions&quot;: {
+    &quot;contains&quot;: [
+      &quot;Stairwell&quot;,
+      &quot;You can see a pipe wrench here.&quot;
+    ],
+    &quot;states&quot;: [
+      &quot;player.location = Stairwell&quot;
+    ]
+  },
+  &quot;branches&quot;: &quot;[1 branch(es), rendered as their own lines]&quot;
+}</pre></details></div></details></div></details><div class="fork">&#8627; branch <a href="#line-2">stairwell · south</a> &middot; 4 cards <span class="pass">&#10003;</span></div></li><li class="turn" data-status="pass"><details class="turn-detail" data-status="pass"><summary class="turn-row"><span class="turn-tcount">T:6</span><span class="turn-cmd">&gt; take wrench</span><span class="turn-room">Stairwell</span><span class="turn-inv" title="spectacles, pipe wrench">2 carried</span><span class="turn-asserts"><span class="pass">&#10003; 2/2</span></span></summary><div class="turn-body"><pre class="turn-response"><span class="hl" data-asserts="0">Taken.</span></pre><details class="turn-extras"><summary class="turn-extras-summary">2 checks &#10003; &middot; Stairwell &middot; 2 carried &middot; raw</summary><div class="turn-extras-body"><h4>Checks</h4><ul class="assertions"><li class="pass"><span class="kind">contains</span><span class="label">Taken.</span><button type="button" class="match-toggle" data-assertion-idx="0">show</button></li><li class="pass"><span class="kind">state</span><span class="label">player.inventory contains pipe wrench</span></li></ul><h4>World after this turn</h4><dl class="kv"><dt>Location</dt><dd>Stairwell</dd><dt>Carrying</dt><dd>spectacles, pipe wrench</dd></dl><details class="raw"><summary>Raw: the runner record and the authored card</summary><pre class="raw-json">{
+  &quot;schemaVersion&quot;: 2,
+  &quot;seq&quot;: 8,
+  &quot;elapsedMs&quot;: 140,
+  &quot;type&quot;: &quot;command-result&quot;,
+  &quot;file&quot;: &quot;opening-receiving-room&quot;,
+  &quot;line&quot;: 0,
+  &quot;input&quot;: &quot;take wrench&quot;,
+  &quot;passed&quot;: true,
+  &quot;expectedFailure&quot;: false,
+  &quot;skipped&quot;: false,
+  &quot;actualOutput&quot;: &quot;Taken.&quot;,
+  &quot;turn&quot;: 6,
+  &quot;world&quot;: {
+    &quot;location&quot;: {
+      &quot;name&quot;: &quot;Stairwell&quot;,
+      &quot;token&quot;: &quot;stairs&quot;
+    },
+    &quot;inventory&quot;: [
+      {
+        &quot;name&quot;: &quot;spectacles&quot;,
+        &quot;token&quot;: &quot;glasses&quot;
+      },
+      {
+        &quot;name&quot;: &quot;pipe wrench&quot;,
+        &quot;token&quot;: &quot;wrench&quot;
+      }
+    ]
+  },
+  &quot;assertionResults&quot;: [
+    {
+      &quot;description&quot;: &quot;contains \&quot;Taken.\&quot;&quot;,
+      &quot;passed&quot;: true
+    },
+    {
+      &quot;description&quot;: &quot;state player.inventory contains pipe wrench&quot;,
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre><pre class="raw-json">{
+  &quot;type&quot;: &quot;turn&quot;,
+  &quot;command&quot;: &quot;take wrench&quot;,
+  &quot;assertions&quot;: {
+    &quot;contains&quot;: [
+      &quot;Taken.&quot;
+    ],
+    &quot;states&quot;: [
+      &quot;player.inventory contains pipe wrench&quot;
+    ]
+  }
+}</pre></details></div></details></div></details></li><li class="turn" data-status="pass"><details class="turn-detail" data-status="pass"><summary class="turn-row"><span class="turn-tcount">T:7</span><span class="turn-cmd">&gt; south</span><span class="turn-room">Laboratory</span><span class="turn-inv" title="spectacles, pipe wrench">2 carried</span><span class="turn-asserts"><span class="pass">&#10003; 2/2</span></span></summary><div class="turn-body"><pre class="turn-response"><span class="hl" data-asserts="0">Laboratory</span>
+A long room lined with workbenches and glass-fronted cabinets. Everything is labeled in the same careful handwriting. The stairwell is north. <span class="hl" data-asserts="1">A heavy door leads east to cold storage.</span></pre><details class="turn-extras"><summary class="turn-extras-summary">2 checks &#10003; &middot; Laboratory &middot; 2 carried &middot; raw</summary><div class="turn-extras-body"><h4>Checks</h4><ul class="assertions"><li class="pass"><span class="kind">contains</span><span class="label">Laboratory</span><button type="button" class="match-toggle" data-assertion-idx="0">show</button></li><li class="pass"><span class="kind">contains</span><span class="label">A heavy door leads east to cold storage.</span><button type="button" class="match-toggle" data-assertion-idx="1">show</button></li></ul><h4>World after this turn</h4><dl class="kv"><dt>Location</dt><dd>Laboratory</dd><dt>Carrying</dt><dd>spectacles, pipe wrench</dd></dl><details class="raw"><summary>Raw: the runner record and the authored card</summary><pre class="raw-json">{
+  &quot;schemaVersion&quot;: 2,
+  &quot;seq&quot;: 9,
+  &quot;elapsedMs&quot;: 142,
+  &quot;type&quot;: &quot;command-result&quot;,
+  &quot;file&quot;: &quot;opening-receiving-room&quot;,
+  &quot;line&quot;: 0,
+  &quot;input&quot;: &quot;south&quot;,
+  &quot;passed&quot;: true,
+  &quot;expectedFailure&quot;: false,
+  &quot;skipped&quot;: false,
+  &quot;actualOutput&quot;: &quot;Laboratory\nA long room lined with workbenches and glass-fronted cabinets. Everything is labeled in the same careful handwriting. The stairwell is north. A heavy door leads east to cold storage.&quot;,
+  &quot;turn&quot;: 7,
+  &quot;world&quot;: {
+    &quot;location&quot;: {
+      &quot;name&quot;: &quot;Laboratory&quot;,
+      &quot;token&quot;: &quot;lab&quot;
+    },
+    &quot;inventory&quot;: [
+      {
+        &quot;name&quot;: &quot;spectacles&quot;,
+        &quot;token&quot;: &quot;glasses&quot;
+      },
+      {
+        &quot;name&quot;: &quot;pipe wrench&quot;,
+        &quot;token&quot;: &quot;wrench&quot;
+      }
+    ]
+  },
+  &quot;assertionResults&quot;: [
+    {
+      &quot;description&quot;: &quot;contains \&quot;Laboratory\&quot;&quot;,
+      &quot;passed&quot;: true
+    },
+    {
+      &quot;description&quot;: &quot;contains \&quot;A heavy door leads east to cold storage.\&quot;&quot;,
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre><pre class="raw-json">{
+  &quot;type&quot;: &quot;turn&quot;,
+  &quot;command&quot;: &quot;south&quot;,
+  &quot;assertions&quot;: {
+    &quot;contains&quot;: [
+      &quot;Laboratory&quot;,
+      &quot;A heavy door leads east to cold storage.&quot;
+    ]
+  }
+}</pre></details></div></details></div></details></li><li class="turn" data-status="pass"><details class="turn-detail" data-status="pass"><summary class="turn-row"><span class="turn-tcount">T:8</span><span class="turn-cmd">&gt; read plaque</span><span class="turn-room">Laboratory</span><span class="turn-inv" title="spectacles, pipe wrench">2 carried</span><span class="turn-asserts"><span class="pass">&#10003; 1/1</span></span></summary><div class="turn-body"><pre class="turn-response">CISTERN MAINTENANCE — Valve operation: <span class="hl" data-asserts="0">LEFT drains. RIGHT floods.</span> Do not operate without authorization.</pre><details class="turn-extras"><summary class="turn-extras-summary">1 check &#10003; &middot; Laboratory &middot; 2 carried &middot; raw</summary><div class="turn-extras-body"><h4>Checks</h4><ul class="assertions"><li class="pass"><span class="kind">contains</span><span class="label">LEFT drains. RIGHT floods.</span><button type="button" class="match-toggle" data-assertion-idx="0">show</button></li></ul><h4>World after this turn</h4><dl class="kv"><dt>Location</dt><dd>Laboratory</dd><dt>Carrying</dt><dd>spectacles, pipe wrench</dd></dl><details class="raw"><summary>Raw: the runner record and the authored card</summary><pre class="raw-json">{
+  &quot;schemaVersion&quot;: 2,
+  &quot;seq&quot;: 10,
+  &quot;elapsedMs&quot;: 145,
+  &quot;type&quot;: &quot;command-result&quot;,
+  &quot;file&quot;: &quot;opening-receiving-room&quot;,
+  &quot;line&quot;: 0,
+  &quot;input&quot;: &quot;read plaque&quot;,
+  &quot;passed&quot;: true,
+  &quot;expectedFailure&quot;: false,
+  &quot;skipped&quot;: false,
+  &quot;actualOutput&quot;: &quot;CISTERN MAINTENANCE — Valve operation: LEFT drains. RIGHT floods. Do not operate without authorization.&quot;,
+  &quot;turn&quot;: 8,
+  &quot;world&quot;: {
+    &quot;location&quot;: {
+      &quot;name&quot;: &quot;Laboratory&quot;,
+      &quot;token&quot;: &quot;lab&quot;
+    },
+    &quot;inventory&quot;: [
+      {
+        &quot;name&quot;: &quot;spectacles&quot;,
+        &quot;token&quot;: &quot;glasses&quot;
+      },
+      {
+        &quot;name&quot;: &quot;pipe wrench&quot;,
+        &quot;token&quot;: &quot;wrench&quot;
+      }
+    ]
+  },
+  &quot;assertionResults&quot;: [
+    {
+      &quot;description&quot;: &quot;contains \&quot;LEFT drains. RIGHT floods.\&quot;&quot;,
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre><pre class="raw-json">{
+  &quot;type&quot;: &quot;turn&quot;,
+  &quot;command&quot;: &quot;read plaque&quot;,
+  &quot;assertions&quot;: {
+    &quot;contains&quot;: [
+      &quot;LEFT drains. RIGHT floods.&quot;
+    ]
+  }
+}</pre></details></div></details></div></details></li><li class="turn" data-status="pass"><details class="turn-detail" data-status="pass"><summary class="turn-row"><span class="turn-tcount">T:9</span><span class="turn-cmd">&gt; break glass case with wrench</span><span class="turn-room">Laboratory</span><span class="turn-inv" title="spectacles, pipe wrench, brass key">3 carried</span><span class="turn-asserts"><span class="pass">&#10003; 3/3</span></span></summary><div class="turn-body"><pre class="turn-response">You swing the wrench. <span class="hl" data-asserts="0">The glass shatters cleanly. The brass key drops into your hand.</span></pre><details class="turn-extras"><summary class="turn-extras-summary">3 checks &#10003; &middot; Laboratory &middot; 3 carried &middot; raw</summary><div class="turn-extras-body"><h4>Checks</h4><ul class="assertions"><li class="pass"><span class="kind">contains</span><span class="label">The glass shatters cleanly. The brass key drops into your hand.</span><button type="button" class="match-toggle" data-assertion-idx="0">show</button></li><li class="pass"><span class="kind">state</span><span class="label">the glass case is shattered</span></li><li class="pass"><span class="kind">state</span><span class="label">player.inventory contains brass key</span></li></ul><h4>World after this turn</h4><dl class="kv"><dt>Location</dt><dd>Laboratory</dd><dt>Carrying</dt><dd>spectacles, pipe wrench, brass key</dd></dl><details class="raw"><summary>Raw: the runner record and the authored card</summary><pre class="raw-json">{
+  &quot;schemaVersion&quot;: 2,
+  &quot;seq&quot;: 11,
+  &quot;elapsedMs&quot;: 158,
+  &quot;type&quot;: &quot;command-result&quot;,
+  &quot;file&quot;: &quot;opening-receiving-room&quot;,
+  &quot;line&quot;: 0,
+  &quot;input&quot;: &quot;break glass case with wrench&quot;,
+  &quot;passed&quot;: true,
+  &quot;expectedFailure&quot;: false,
+  &quot;skipped&quot;: false,
+  &quot;actualOutput&quot;: &quot;You swing the wrench. The glass shatters cleanly. The brass key drops into your hand.&quot;,
+  &quot;turn&quot;: 9,
+  &quot;world&quot;: {
+    &quot;location&quot;: {
+      &quot;name&quot;: &quot;Laboratory&quot;,
+      &quot;token&quot;: &quot;lab&quot;
+    },
+    &quot;inventory&quot;: [
+      {
+        &quot;name&quot;: &quot;spectacles&quot;,
+        &quot;token&quot;: &quot;glasses&quot;
+      },
+      {
+        &quot;name&quot;: &quot;pipe wrench&quot;,
+        &quot;token&quot;: &quot;wrench&quot;
+      },
+      {
+        &quot;name&quot;: &quot;brass key&quot;,
+        &quot;token&quot;: &quot;key&quot;
+      }
+    ]
+  },
+  &quot;assertionResults&quot;: [
+    {
+      &quot;description&quot;: &quot;contains \&quot;The glass shatters cleanly. The brass key drops into your hand.\&quot;&quot;,
+      &quot;passed&quot;: true
+    },
+    {
+      &quot;description&quot;: &quot;state the glass case is shattered&quot;,
+      &quot;passed&quot;: true
+    },
+    {
+      &quot;description&quot;: &quot;state player.inventory contains brass key&quot;,
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre><pre class="raw-json">{
+  &quot;type&quot;: &quot;turn&quot;,
+  &quot;command&quot;: &quot;break glass case with wrench&quot;,
+  &quot;assertions&quot;: {
+    &quot;contains&quot;: [
+      &quot;The glass shatters cleanly. The brass key drops into your hand.&quot;
+    ],
+    &quot;states&quot;: [
+      &quot;the glass case is shattered&quot;,
+      &quot;player.inventory contains brass key&quot;
+    ]
+  },
+  &quot;branches&quot;: &quot;[1 branch(es), rendered as their own lines]&quot;
+}</pre></details></div></details></div></details><div class="fork">&#8627; branch <a href="#line-3">laboratory · break case</a> &middot; 2 cards <span class="pass">&#10003;</span></div></li><li class="turn" data-status="pass"><details class="turn-detail" data-status="pass"><summary class="turn-row"><span class="turn-tcount">T:10</span><span class="turn-cmd">&gt; east</span><span class="turn-room">Cold Storage</span><span class="turn-inv" title="spectacles, pipe wrench, brass key">3 carried</span><span class="turn-asserts"><span class="pass">&#10003; 2/2</span></span></summary><div class="turn-body"><pre class="turn-response"><span class="hl" data-asserts="0">Cold Storage</span>
+The temperature drops immediately. Your breath fogs. Racks of specimen jars line the walls, filled with amber fluid. A heavy metal cabinet stands against the far wall, <span class="hl" data-asserts="1">marked with a snowflake</span>. The laboratory is west.</pre><details class="turn-extras"><summary class="turn-extras-summary">2 checks &#10003; &middot; Cold Storage &middot; 3 carried &middot; raw</summary><div class="turn-extras-body"><h4>Checks</h4><ul class="assertions"><li class="pass"><span class="kind">contains</span><span class="label">Cold Storage</span><button type="button" class="match-toggle" data-assertion-idx="0">show</button></li><li class="pass"><span class="kind">contains</span><span class="label">marked with a snowflake</span><button type="button" class="match-toggle" data-assertion-idx="1">show</button></li></ul><h4>World after this turn</h4><dl class="kv"><dt>Location</dt><dd>Cold Storage</dd><dt>Carrying</dt><dd>spectacles, pipe wrench, brass key</dd></dl><details class="raw"><summary>Raw: the runner record and the authored card</summary><pre class="raw-json">{
+  &quot;schemaVersion&quot;: 2,
+  &quot;seq&quot;: 12,
+  &quot;elapsedMs&quot;: 161,
+  &quot;type&quot;: &quot;command-result&quot;,
+  &quot;file&quot;: &quot;opening-receiving-room&quot;,
+  &quot;line&quot;: 0,
+  &quot;input&quot;: &quot;east&quot;,
+  &quot;passed&quot;: true,
+  &quot;expectedFailure&quot;: false,
+  &quot;skipped&quot;: false,
+  &quot;actualOutput&quot;: &quot;Cold Storage\nThe temperature drops immediately. Your breath fogs. Racks of specimen jars line the walls, filled with amber fluid. A heavy metal cabinet stands against the far wall, marked with a snowflake. The laboratory is west.&quot;,
+  &quot;turn&quot;: 10,
+  &quot;world&quot;: {
+    &quot;location&quot;: {
+      &quot;name&quot;: &quot;Cold Storage&quot;,
+      &quot;token&quot;: &quot;freezer&quot;
+    },
+    &quot;inventory&quot;: [
+      {
+        &quot;name&quot;: &quot;spectacles&quot;,
+        &quot;token&quot;: &quot;glasses&quot;
+      },
+      {
+        &quot;name&quot;: &quot;pipe wrench&quot;,
+        &quot;token&quot;: &quot;wrench&quot;
+      },
+      {
+        &quot;name&quot;: &quot;brass key&quot;,
+        &quot;token&quot;: &quot;key&quot;
+      }
+    ]
+  },
+  &quot;assertionResults&quot;: [
+    {
+      &quot;description&quot;: &quot;contains \&quot;Cold Storage\&quot;&quot;,
+      &quot;passed&quot;: true
+    },
+    {
+      &quot;description&quot;: &quot;contains \&quot;marked with a snowflake\&quot;&quot;,
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre><pre class="raw-json">{
+  &quot;type&quot;: &quot;turn&quot;,
+  &quot;command&quot;: &quot;east&quot;,
+  &quot;assertions&quot;: {
+    &quot;contains&quot;: [
+      &quot;Cold Storage&quot;,
+      &quot;marked with a snowflake&quot;
+    ]
+  }
+}</pre></details></div></details></div></details></li><li class="turn" data-status="pass"><details class="turn-detail" data-status="pass"><summary class="turn-row"><span class="turn-tcount">T:11</span><span class="turn-cmd">&gt; unlock cabinet with brass key</span><span class="turn-room">Cold Storage</span><span class="turn-inv" title="spectacles, pipe wrench, brass key">3 carried</span><span class="turn-asserts"><span class="pass">&#10003; 1/1</span></span></summary><div class="turn-body"><pre class="turn-response"><span class="hl" data-asserts="0">You unlock the metal cabinet with the brass key.</span></pre><details class="turn-extras"><summary class="turn-extras-summary">1 check &#10003; &middot; Cold Storage &middot; 3 carried &middot; raw</summary><div class="turn-extras-body"><h4>Checks</h4><ul class="assertions"><li class="pass"><span class="kind">contains</span><span class="label">You unlock the metal cabinet with the brass key.</span><button type="button" class="match-toggle" data-assertion-idx="0">show</button></li></ul><h4>World after this turn</h4><dl class="kv"><dt>Location</dt><dd>Cold Storage</dd><dt>Carrying</dt><dd>spectacles, pipe wrench, brass key</dd></dl><details class="raw"><summary>Raw: the runner record and the authored card</summary><pre class="raw-json">{
+  &quot;schemaVersion&quot;: 2,
+  &quot;seq&quot;: 13,
+  &quot;elapsedMs&quot;: 171,
+  &quot;type&quot;: &quot;command-result&quot;,
+  &quot;file&quot;: &quot;opening-receiving-room&quot;,
+  &quot;line&quot;: 0,
+  &quot;input&quot;: &quot;unlock cabinet with brass key&quot;,
+  &quot;passed&quot;: true,
+  &quot;expectedFailure&quot;: false,
+  &quot;skipped&quot;: false,
+  &quot;actualOutput&quot;: &quot;You unlock the metal cabinet with the brass key.&quot;,
+  &quot;turn&quot;: 11,
+  &quot;world&quot;: {
+    &quot;location&quot;: {
+      &quot;name&quot;: &quot;Cold Storage&quot;,
+      &quot;token&quot;: &quot;freezer&quot;
+    },
+    &quot;inventory&quot;: [
+      {
+        &quot;name&quot;: &quot;spectacles&quot;,
+        &quot;token&quot;: &quot;glasses&quot;
+      },
+      {
+        &quot;name&quot;: &quot;pipe wrench&quot;,
+        &quot;token&quot;: &quot;wrench&quot;
+      },
+      {
+        &quot;name&quot;: &quot;brass key&quot;,
+        &quot;token&quot;: &quot;key&quot;
+      }
+    ]
+  },
+  &quot;assertionResults&quot;: [
+    {
+      &quot;description&quot;: &quot;contains \&quot;You unlock the metal cabinet with the brass key.\&quot;&quot;,
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre><pre class="raw-json">{
+  &quot;type&quot;: &quot;turn&quot;,
+  &quot;command&quot;: &quot;unlock cabinet with brass key&quot;,
+  &quot;assertions&quot;: {
+    &quot;contains&quot;: [
+      &quot;You unlock the metal cabinet with the brass key.&quot;
+    ]
+  }
+}</pre></details></div></details></div></details></li><li class="turn" data-status="pass"><details class="turn-detail" data-status="pass"><summary class="turn-row"><span class="turn-tcount">T:12</span><span class="turn-cmd">&gt; open cabinet</span><span class="turn-room">Cold Storage</span><span class="turn-inv" title="spectacles, pipe wrench, brass key">3 carried</span><span class="turn-asserts"><span class="pass">&#10003; 2/2</span></span></summary><div class="turn-body"><pre class="turn-response"><span class="hl" data-asserts="0">You open the metal cabinet.</span>
 
-In the metal cabinet you see a glass dish and a grey fungus.</pre><ul class="asserts"><li class="pass">&#10003; contains &quot;You open the metal cabinet.&quot;</li><li class="pass">&#10003; contains &quot;a glass dish and a grey fungus&quot;</li></ul></article><article class="card pass"><div class="cmd">&#9989; &gt; take fungus</div><pre class="out">You take the grey fungus from the metal cabinet.</pre><ul class="asserts"><li class="pass">&#10003; contains &quot;You take the grey fungus from the metal cabinet.&quot;</li><li class="pass">&#10003; state player.inventory contains grey fungus</li></ul></article><article class="card pass"><div class="cmd">&#9989; &gt; west</div><pre class="out">Laboratory
-A long room lined with workbenches and glass-fronted cabinets. Everything is labeled in the same careful handwriting. The stairwell is north. A heavy door leads east to cold storage.</pre><ul class="asserts"><li class="pass">&#10003; contains &quot;Laboratory&quot;</li></ul></article><article class="card pass"><div class="cmd">&#9989; &gt; eat fungus</div><pre class="out">You eat the grey fungus.
+In the metal cabinet you see <span class="hl" data-asserts="1">a glass dish and a grey fungus</span>.</pre><details class="turn-extras"><summary class="turn-extras-summary">2 checks &#10003; &middot; Cold Storage &middot; 3 carried &middot; raw</summary><div class="turn-extras-body"><h4>Checks</h4><ul class="assertions"><li class="pass"><span class="kind">contains</span><span class="label">You open the metal cabinet.</span><button type="button" class="match-toggle" data-assertion-idx="0">show</button></li><li class="pass"><span class="kind">contains</span><span class="label">a glass dish and a grey fungus</span><button type="button" class="match-toggle" data-assertion-idx="1">show</button></li></ul><h4>World after this turn</h4><dl class="kv"><dt>Location</dt><dd>Cold Storage</dd><dt>Carrying</dt><dd>spectacles, pipe wrench, brass key</dd></dl><details class="raw"><summary>Raw: the runner record and the authored card</summary><pre class="raw-json">{
+  &quot;schemaVersion&quot;: 2,
+  &quot;seq&quot;: 14,
+  &quot;elapsedMs&quot;: 175,
+  &quot;type&quot;: &quot;command-result&quot;,
+  &quot;file&quot;: &quot;opening-receiving-room&quot;,
+  &quot;line&quot;: 0,
+  &quot;input&quot;: &quot;open cabinet&quot;,
+  &quot;passed&quot;: true,
+  &quot;expectedFailure&quot;: false,
+  &quot;skipped&quot;: false,
+  &quot;actualOutput&quot;: &quot;You open the metal cabinet.\n\nIn the metal cabinet you see a glass dish and a grey fungus.&quot;,
+  &quot;turn&quot;: 12,
+  &quot;world&quot;: {
+    &quot;location&quot;: {
+      &quot;name&quot;: &quot;Cold Storage&quot;,
+      &quot;token&quot;: &quot;freezer&quot;
+    },
+    &quot;inventory&quot;: [
+      {
+        &quot;name&quot;: &quot;spectacles&quot;,
+        &quot;token&quot;: &quot;glasses&quot;
+      },
+      {
+        &quot;name&quot;: &quot;pipe wrench&quot;,
+        &quot;token&quot;: &quot;wrench&quot;
+      },
+      {
+        &quot;name&quot;: &quot;brass key&quot;,
+        &quot;token&quot;: &quot;key&quot;
+      }
+    ]
+  },
+  &quot;assertionResults&quot;: [
+    {
+      &quot;description&quot;: &quot;contains \&quot;You open the metal cabinet.\&quot;&quot;,
+      &quot;passed&quot;: true
+    },
+    {
+      &quot;description&quot;: &quot;contains \&quot;a glass dish and a grey fungus\&quot;&quot;,
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre><pre class="raw-json">{
+  &quot;type&quot;: &quot;turn&quot;,
+  &quot;command&quot;: &quot;open cabinet&quot;,
+  &quot;assertions&quot;: {
+    &quot;contains&quot;: [
+      &quot;You open the metal cabinet.&quot;,
+      &quot;a glass dish and a grey fungus&quot;
+    ]
+  }
+}</pre></details></div></details></div></details></li><li class="turn" data-status="pass"><details class="turn-detail" data-status="pass"><summary class="turn-row"><span class="turn-tcount">T:13</span><span class="turn-cmd">&gt; take fungus</span><span class="turn-room">Cold Storage</span><span class="turn-inv" title="spectacles, pipe wrench, brass key, grey fungus">4 carried</span><span class="turn-asserts"><span class="pass">&#10003; 2/2</span></span></summary><div class="turn-body"><pre class="turn-response"><span class="hl" data-asserts="0">You take the grey fungus from the metal cabinet.</span></pre><details class="turn-extras"><summary class="turn-extras-summary">2 checks &#10003; &middot; Cold Storage &middot; 4 carried &middot; raw</summary><div class="turn-extras-body"><h4>Checks</h4><ul class="assertions"><li class="pass"><span class="kind">contains</span><span class="label">You take the grey fungus from the metal cabinet.</span><button type="button" class="match-toggle" data-assertion-idx="0">show</button></li><li class="pass"><span class="kind">state</span><span class="label">player.inventory contains grey fungus</span></li></ul><h4>World after this turn</h4><dl class="kv"><dt>Location</dt><dd>Cold Storage</dd><dt>Carrying</dt><dd>spectacles, pipe wrench, brass key, grey fungus</dd></dl><details class="raw"><summary>Raw: the runner record and the authored card</summary><pre class="raw-json">{
+  &quot;schemaVersion&quot;: 2,
+  &quot;seq&quot;: 15,
+  &quot;elapsedMs&quot;: 178,
+  &quot;type&quot;: &quot;command-result&quot;,
+  &quot;file&quot;: &quot;opening-receiving-room&quot;,
+  &quot;line&quot;: 0,
+  &quot;input&quot;: &quot;take fungus&quot;,
+  &quot;passed&quot;: true,
+  &quot;expectedFailure&quot;: false,
+  &quot;skipped&quot;: false,
+  &quot;actualOutput&quot;: &quot;You take the grey fungus from the metal cabinet.&quot;,
+  &quot;turn&quot;: 13,
+  &quot;world&quot;: {
+    &quot;location&quot;: {
+      &quot;name&quot;: &quot;Cold Storage&quot;,
+      &quot;token&quot;: &quot;freezer&quot;
+    },
+    &quot;inventory&quot;: [
+      {
+        &quot;name&quot;: &quot;spectacles&quot;,
+        &quot;token&quot;: &quot;glasses&quot;
+      },
+      {
+        &quot;name&quot;: &quot;pipe wrench&quot;,
+        &quot;token&quot;: &quot;wrench&quot;
+      },
+      {
+        &quot;name&quot;: &quot;brass key&quot;,
+        &quot;token&quot;: &quot;key&quot;
+      },
+      {
+        &quot;name&quot;: &quot;grey fungus&quot;,
+        &quot;token&quot;: &quot;fungus&quot;
+      }
+    ]
+  },
+  &quot;assertionResults&quot;: [
+    {
+      &quot;description&quot;: &quot;contains \&quot;You take the grey fungus from the metal cabinet.\&quot;&quot;,
+      &quot;passed&quot;: true
+    },
+    {
+      &quot;description&quot;: &quot;state player.inventory contains grey fungus&quot;,
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre><pre class="raw-json">{
+  &quot;type&quot;: &quot;turn&quot;,
+  &quot;command&quot;: &quot;take fungus&quot;,
+  &quot;assertions&quot;: {
+    &quot;contains&quot;: [
+      &quot;You take the grey fungus from the metal cabinet.&quot;
+    ],
+    &quot;states&quot;: [
+      &quot;player.inventory contains grey fungus&quot;
+    ]
+  }
+}</pre></details></div></details></div></details></li><li class="turn" data-status="pass"><details class="turn-detail" data-status="pass"><summary class="turn-row"><span class="turn-tcount">T:14</span><span class="turn-cmd">&gt; west</span><span class="turn-room">Laboratory</span><span class="turn-inv" title="spectacles, pipe wrench, brass key, grey fungus">4 carried</span><span class="turn-asserts"><span class="pass">&#10003; 1/1</span></span></summary><div class="turn-body"><pre class="turn-response"><span class="hl" data-asserts="0">Laboratory</span>
+A long room lined with workbenches and glass-fronted cabinets. Everything is labeled in the same careful handwriting. The stairwell is north. A heavy door leads east to cold storage.</pre><details class="turn-extras"><summary class="turn-extras-summary">1 check &#10003; &middot; Laboratory &middot; 4 carried &middot; raw</summary><div class="turn-extras-body"><h4>Checks</h4><ul class="assertions"><li class="pass"><span class="kind">contains</span><span class="label">Laboratory</span><button type="button" class="match-toggle" data-assertion-idx="0">show</button></li></ul><h4>World after this turn</h4><dl class="kv"><dt>Location</dt><dd>Laboratory</dd><dt>Carrying</dt><dd>spectacles, pipe wrench, brass key, grey fungus</dd></dl><details class="raw"><summary>Raw: the runner record and the authored card</summary><pre class="raw-json">{
+  &quot;schemaVersion&quot;: 2,
+  &quot;seq&quot;: 16,
+  &quot;elapsedMs&quot;: 183,
+  &quot;type&quot;: &quot;command-result&quot;,
+  &quot;file&quot;: &quot;opening-receiving-room&quot;,
+  &quot;line&quot;: 0,
+  &quot;input&quot;: &quot;west&quot;,
+  &quot;passed&quot;: true,
+  &quot;expectedFailure&quot;: false,
+  &quot;skipped&quot;: false,
+  &quot;actualOutput&quot;: &quot;Laboratory\nA long room lined with workbenches and glass-fronted cabinets. Everything is labeled in the same careful handwriting. The stairwell is north. A heavy door leads east to cold storage.&quot;,
+  &quot;turn&quot;: 14,
+  &quot;world&quot;: {
+    &quot;location&quot;: {
+      &quot;name&quot;: &quot;Laboratory&quot;,
+      &quot;token&quot;: &quot;lab&quot;
+    },
+    &quot;inventory&quot;: [
+      {
+        &quot;name&quot;: &quot;spectacles&quot;,
+        &quot;token&quot;: &quot;glasses&quot;
+      },
+      {
+        &quot;name&quot;: &quot;pipe wrench&quot;,
+        &quot;token&quot;: &quot;wrench&quot;
+      },
+      {
+        &quot;name&quot;: &quot;brass key&quot;,
+        &quot;token&quot;: &quot;key&quot;
+      },
+      {
+        &quot;name&quot;: &quot;grey fungus&quot;,
+        &quot;token&quot;: &quot;fungus&quot;
+      }
+    ]
+  },
+  &quot;assertionResults&quot;: [
+    {
+      &quot;description&quot;: &quot;contains \&quot;Laboratory\&quot;&quot;,
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre><pre class="raw-json">{
+  &quot;type&quot;: &quot;turn&quot;,
+  &quot;command&quot;: &quot;west&quot;,
+  &quot;assertions&quot;: {
+    &quot;contains&quot;: [
+      &quot;Laboratory&quot;
+    ]
+  }
+}</pre></details></div></details></div></details></li><li class="turn" data-status="pass"><details class="turn-detail" data-status="pass"><summary class="turn-row"><span class="turn-tcount">T:15</span><span class="turn-cmd">&gt; eat fungus</span><span class="turn-room">Laboratory</span><span class="turn-inv" title="spectacles, pipe wrench, brass key, grey fungus">4 carried</span><span class="turn-asserts"><span class="pass">&#10003; 4/4</span></span></summary><div class="turn-body"><pre class="turn-response"><span class="hl" data-asserts="0">You eat the grey fungus.</span>
 
-It tastes of nothing. Then of everything. The walls ripple once and settle into new shapes. You understand, now, that this is not distortion. This is clarity. The world has not changed. Your ability to see it has.
+It tastes of nothing. Then of everything. The walls ripple once and settle into new shapes. You understand, now, that this is not distortion. <span class="hl" data-asserts="1">This is clarity.</span> The world has not changed. Your ability to see it has.
 
-The floor at the south end of the laboratory splits open. Not cracks — a wound. The edges are smooth and glistening, like muscle tissue pulling apart. A dark shaft descends, lined with something that contracts slowly as you watch.</pre><ul class="asserts"><li class="pass">&#10003; contains &quot;You eat the grey fungus.&quot;</li><li class="pass">&#10003; contains &quot;This is clarity.&quot;</li><li class="pass">&#10003; contains &quot;The floor at the south end of the laboratory splits open.&quot;</li><li class="pass">&#10003; state story.state = clarity</li></ul></article><article class="card pass"><div class="cmd">&#9989; &gt; south</div><pre class="out">Cistern
-A circular chamber of old brick. The chamber is alive. The bricks are teeth in a circular jaw. The dark water below is a throat, swallowing and unswallowing in slow rhythm. The pipes overhead are arteries, pulsing with something that is not water. An iron valve grows from the north wall like a bone spur. Beside it, a sign hangs from the flesh of the wall. The passage back north climbs toward the laboratory.</pre><ul class="asserts"><li class="pass">&#10003; contains &quot;Cistern&quot;</li><li class="pass">&#10003; contains &quot;The chamber is alive. The bricks are teeth in a circular jaw.&quot;</li><li class="pass">&#10003; state story.state = clarity</li><li class="pass">&#10003; state the Cistern is breached</li></ul></article><article class="card pass"><div class="cmd">&#9989; &gt; turn valve left</div><pre class="out">Metal screams against metal as you force the valve left. The water shudders, then begins to drain — slowly at first, then in a sudden rush. The dark water drops, revealing walls coated in pale slime. A drainage grate stands open in the floor, revealing a narrow passage descending further.
+<span class="hl" data-asserts="2">The floor at the south end of the laboratory splits open.</span> Not cracks — a wound. The edges are smooth and glistening, like muscle tissue pulling apart. A dark shaft descends, lined with something that contracts slowly as you watch.</pre><details class="turn-extras"><summary class="turn-extras-summary">4 checks &#10003; &middot; Laboratory &middot; 4 carried &middot; raw</summary><div class="turn-extras-body"><h4>Checks</h4><ul class="assertions"><li class="pass"><span class="kind">contains</span><span class="label">You eat the grey fungus.</span><button type="button" class="match-toggle" data-assertion-idx="0">show</button></li><li class="pass"><span class="kind">contains</span><span class="label">This is clarity.</span><button type="button" class="match-toggle" data-assertion-idx="1">show</button></li><li class="pass"><span class="kind">contains</span><span class="label">The floor at the south end of the laboratory splits open.</span><button type="button" class="match-toggle" data-assertion-idx="2">show</button></li><li class="pass"><span class="kind">state</span><span class="label">story.state = clarity</span></li></ul><h4>World after this turn</h4><dl class="kv"><dt>Location</dt><dd>Laboratory</dd><dt>Carrying</dt><dd>spectacles, pipe wrench, brass key, grey fungus</dd></dl><details class="raw"><summary>Raw: the runner record and the authored card</summary><pre class="raw-json">{
+  &quot;schemaVersion&quot;: 2,
+  &quot;seq&quot;: 17,
+  &quot;elapsedMs&quot;: 188,
+  &quot;type&quot;: &quot;command-result&quot;,
+  &quot;file&quot;: &quot;opening-receiving-room&quot;,
+  &quot;line&quot;: 0,
+  &quot;input&quot;: &quot;eat fungus&quot;,
+  &quot;passed&quot;: true,
+  &quot;expectedFailure&quot;: false,
+  &quot;skipped&quot;: false,
+  &quot;actualOutput&quot;: &quot;You eat the grey fungus.\n\nIt tastes of nothing. Then of everything. The walls ripple once and settle into new shapes. You understand, now, that this is not distortion. This is clarity. The world has not changed. Your ability to see it has.\n\nThe floor at the south end of the laboratory splits open. Not cracks — a wound. The edges are smooth and glistening, like muscle tissue pulling apart. A dark shaft descends, lined with something that contracts slowly as you watch.&quot;,
+  &quot;turn&quot;: 15,
+  &quot;world&quot;: {
+    &quot;location&quot;: {
+      &quot;name&quot;: &quot;Laboratory&quot;,
+      &quot;token&quot;: &quot;lab&quot;
+    },
+    &quot;inventory&quot;: [
+      {
+        &quot;name&quot;: &quot;spectacles&quot;,
+        &quot;token&quot;: &quot;glasses&quot;
+      },
+      {
+        &quot;name&quot;: &quot;pipe wrench&quot;,
+        &quot;token&quot;: &quot;wrench&quot;
+      },
+      {
+        &quot;name&quot;: &quot;brass key&quot;,
+        &quot;token&quot;: &quot;key&quot;
+      },
+      {
+        &quot;name&quot;: &quot;grey fungus&quot;,
+        &quot;token&quot;: &quot;fungus&quot;
+      }
+    ]
+  },
+  &quot;assertionResults&quot;: [
+    {
+      &quot;description&quot;: &quot;contains \&quot;You eat the grey fungus.\&quot;&quot;,
+      &quot;passed&quot;: true
+    },
+    {
+      &quot;description&quot;: &quot;contains \&quot;This is clarity.\&quot;&quot;,
+      &quot;passed&quot;: true
+    },
+    {
+      &quot;description&quot;: &quot;contains \&quot;The floor at the south end of the laboratory splits open.\&quot;&quot;,
+      &quot;passed&quot;: true
+    },
+    {
+      &quot;description&quot;: &quot;state story.state = clarity&quot;,
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre><pre class="raw-json">{
+  &quot;type&quot;: &quot;turn&quot;,
+  &quot;command&quot;: &quot;eat fungus&quot;,
+  &quot;assertions&quot;: {
+    &quot;contains&quot;: [
+      &quot;You eat the grey fungus.&quot;,
+      &quot;This is clarity.&quot;,
+      &quot;The floor at the south end of the laboratory splits open.&quot;
+    ],
+    &quot;states&quot;: [
+      &quot;story.state = clarity&quot;
+    ]
+  },
+  &quot;branches&quot;: &quot;[1 branch(es), rendered as their own lines]&quot;
+}</pre></details></div></details></div></details><div class="fork">&#8627; branch <a href="#line-4">laboratory · look</a> &middot; 3 cards <span class="pass">&#10003;</span></div></li><li class="turn" data-status="pass"><details class="turn-detail" data-status="pass"><summary class="turn-row"><span class="turn-tcount">T:16</span><span class="turn-cmd">&gt; south</span><span class="turn-room">Cistern</span><span class="turn-inv" title="spectacles, pipe wrench, brass key, grey fungus">4 carried</span><span class="turn-asserts"><span class="pass">&#10003; 4/4</span></span></summary><div class="turn-body"><pre class="turn-response"><span class="hl" data-asserts="0">Cistern</span>
+A circular chamber of old brick. <span class="hl" data-asserts="1">The chamber is alive. The bricks are teeth in a circular jaw.</span> The dark water below is a throat, swallowing and unswallowing in slow rhythm. The pipes overhead are arteries, pulsing with something that is not water. An iron valve grows from the north wall like a bone spur. Beside it, a sign hangs from the flesh of the wall. The passage back north climbs toward the laboratory.</pre><details class="turn-extras"><summary class="turn-extras-summary">4 checks &#10003; &middot; Cistern &middot; 4 carried &middot; raw</summary><div class="turn-extras-body"><h4>Checks</h4><ul class="assertions"><li class="pass"><span class="kind">contains</span><span class="label">Cistern</span><button type="button" class="match-toggle" data-assertion-idx="0">show</button></li><li class="pass"><span class="kind">contains</span><span class="label">The chamber is alive. The bricks are teeth in a circular jaw.</span><button type="button" class="match-toggle" data-assertion-idx="1">show</button></li><li class="pass"><span class="kind">state</span><span class="label">story.state = clarity</span></li><li class="pass"><span class="kind">state</span><span class="label">the Cistern is breached</span></li></ul><h4>World after this turn</h4><dl class="kv"><dt>Location</dt><dd>Cistern</dd><dt>Carrying</dt><dd>spectacles, pipe wrench, brass key, grey fungus</dd></dl><details class="raw"><summary>Raw: the runner record and the authored card</summary><pre class="raw-json">{
+  &quot;schemaVersion&quot;: 2,
+  &quot;seq&quot;: 18,
+  &quot;elapsedMs&quot;: 190,
+  &quot;type&quot;: &quot;command-result&quot;,
+  &quot;file&quot;: &quot;opening-receiving-room&quot;,
+  &quot;line&quot;: 0,
+  &quot;input&quot;: &quot;south&quot;,
+  &quot;passed&quot;: true,
+  &quot;expectedFailure&quot;: false,
+  &quot;skipped&quot;: false,
+  &quot;actualOutput&quot;: &quot;Cistern\nA circular chamber of old brick. The chamber is alive. The bricks are teeth in a circular jaw. The dark water below is a throat, swallowing and unswallowing in slow rhythm. The pipes overhead are arteries, pulsing with something that is not water. An iron valve grows from the north wall like a bone spur. Beside it, a sign hangs from the flesh of the wall. The passage back north climbs toward the laboratory.&quot;,
+  &quot;turn&quot;: 16,
+  &quot;world&quot;: {
+    &quot;location&quot;: {
+      &quot;name&quot;: &quot;Cistern&quot;,
+      &quot;token&quot;: &quot;chamber&quot;
+    },
+    &quot;inventory&quot;: [
+      {
+        &quot;name&quot;: &quot;spectacles&quot;,
+        &quot;token&quot;: &quot;glasses&quot;
+      },
+      {
+        &quot;name&quot;: &quot;pipe wrench&quot;,
+        &quot;token&quot;: &quot;wrench&quot;
+      },
+      {
+        &quot;name&quot;: &quot;brass key&quot;,
+        &quot;token&quot;: &quot;key&quot;
+      },
+      {
+        &quot;name&quot;: &quot;grey fungus&quot;,
+        &quot;token&quot;: &quot;fungus&quot;
+      }
+    ]
+  },
+  &quot;assertionResults&quot;: [
+    {
+      &quot;description&quot;: &quot;contains \&quot;Cistern\&quot;&quot;,
+      &quot;passed&quot;: true
+    },
+    {
+      &quot;description&quot;: &quot;contains \&quot;The chamber is alive. The bricks are teeth in a circular jaw.\&quot;&quot;,
+      &quot;passed&quot;: true
+    },
+    {
+      &quot;description&quot;: &quot;state story.state = clarity&quot;,
+      &quot;passed&quot;: true
+    },
+    {
+      &quot;description&quot;: &quot;state the Cistern is breached&quot;,
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre><pre class="raw-json">{
+  &quot;type&quot;: &quot;turn&quot;,
+  &quot;command&quot;: &quot;south&quot;,
+  &quot;assertions&quot;: {
+    &quot;contains&quot;: [
+      &quot;Cistern&quot;,
+      &quot;The chamber is alive. The bricks are teeth in a circular jaw.&quot;
+    ],
+    &quot;states&quot;: [
+      &quot;story.state = clarity&quot;,
+      &quot;the Cistern is breached&quot;
+    ]
+  },
+  &quot;branches&quot;: &quot;[1 branch(es), rendered as their own lines]&quot;
+}</pre></details></div></details></div></details><div class="fork">&#8627; branch <a href="#line-5">cistern · read sign</a> &middot; 3 cards <span class="pass">&#10003;</span></div></li><li class="turn" data-status="pass"><details class="turn-detail" data-status="pass"><summary class="turn-row"><span class="turn-tcount">T:17</span><span class="turn-cmd">&gt; turn valve left</span><span class="turn-room">Cistern</span><span class="turn-inv" title="spectacles, pipe wrench, brass key, grey fungus">4 carried</span><span class="turn-asserts"><span class="pass">&#10003; 4/4</span></span></summary><div class="turn-body"><pre class="turn-response"><span class="hl" data-asserts="0">Metal screams against metal</span> as you force the valve left. The water shudders, then begins to drain — slowly at first, then in a sudden rush. The dark water drops, revealing walls coated in pale slime. A drainage grate stands open in the floor, revealing a narrow passage descending further.
 
-A hiss from the cracked pipes overhead. Something cold and chemical settles on your skin, your eyes, your tongue. You blink. The letters on the sign shift. The walls flicker like a signal losing coherence.
+<span class="hl" data-asserts="1">A hiss from the cracked pipes overhead.</span> Something cold and chemical settles on your skin, your eyes, your tongue. You blink. The letters on the sign shift. The walls flicker like a signal losing coherence.
 
-When your vision steadies, the world has not returned to normal. It has gone further.</pre><ul class="asserts"><li class="pass">&#10003; contains &quot;Metal screams against metal&quot;</li><li class="pass">&#10003; contains &quot;A hiss from the cracked pipes overhead.&quot;</li><li class="pass">&#10003; state the iron valve is turned</li><li class="pass">&#10003; state story.state = corruption</li></ul></article><article class="card pass"><div class="cmd">&#9989; &gt; down</div><pre class="out">Source
-A space that should not exist beneath a building this size. The walls are membranes, translucent and veined. Light comes from inside them — a slow amber pulse. A low stone basin sits in the center, holding something luminous, warm, and waiting.</pre><ul class="asserts"><li class="pass">&#10003; contains &quot;Source&quot;</li><li class="pass">&#10003; contains &quot;A low stone basin sits in the center&quot;</li><li class="pass">&#10003; state player.location = Source</li></ul></article><article class="card pass"><div class="cmd">&#9989; &gt; touch basin</div><pre class="out">You reach in. It reaches back.
+When your vision steadies, the world has not returned to normal. It has gone further.</pre><details class="turn-extras"><summary class="turn-extras-summary">4 checks &#10003; &middot; Cistern &middot; 4 carried &middot; raw</summary><div class="turn-extras-body"><h4>Checks</h4><ul class="assertions"><li class="pass"><span class="kind">contains</span><span class="label">Metal screams against metal</span><button type="button" class="match-toggle" data-assertion-idx="0">show</button></li><li class="pass"><span class="kind">contains</span><span class="label">A hiss from the cracked pipes overhead.</span><button type="button" class="match-toggle" data-assertion-idx="1">show</button></li><li class="pass"><span class="kind">state</span><span class="label">the iron valve is turned</span></li><li class="pass"><span class="kind">state</span><span class="label">story.state = corruption</span></li></ul><h4>World after this turn</h4><dl class="kv"><dt>Location</dt><dd>Cistern</dd><dt>Carrying</dt><dd>spectacles, pipe wrench, brass key, grey fungus</dd></dl><details class="raw"><summary>Raw: the runner record and the authored card</summary><pre class="raw-json">{
+  &quot;schemaVersion&quot;: 2,
+  &quot;seq&quot;: 19,
+  &quot;elapsedMs&quot;: 194,
+  &quot;type&quot;: &quot;command-result&quot;,
+  &quot;file&quot;: &quot;opening-receiving-room&quot;,
+  &quot;line&quot;: 0,
+  &quot;input&quot;: &quot;turn valve left&quot;,
+  &quot;passed&quot;: true,
+  &quot;expectedFailure&quot;: false,
+  &quot;skipped&quot;: false,
+  &quot;actualOutput&quot;: &quot;Metal screams against metal as you force the valve left. The water shudders, then begins to drain — slowly at first, then in a sudden rush. The dark water drops, revealing walls coated in pale slime. A drainage grate stands open in the floor, revealing a narrow passage descending further.\n\nA hiss from the cracked pipes overhead. Something cold and chemical settles on your skin, your eyes, your tongue. You blink. The letters on the sign shift. The walls flicker like a signal losing coherence.\n\nWhen your vision steadies, the world has not returned to normal. It has gone further.&quot;,
+  &quot;turn&quot;: 17,
+  &quot;world&quot;: {
+    &quot;location&quot;: {
+      &quot;name&quot;: &quot;Cistern&quot;,
+      &quot;token&quot;: &quot;chamber&quot;
+    },
+    &quot;inventory&quot;: [
+      {
+        &quot;name&quot;: &quot;spectacles&quot;,
+        &quot;token&quot;: &quot;glasses&quot;
+      },
+      {
+        &quot;name&quot;: &quot;pipe wrench&quot;,
+        &quot;token&quot;: &quot;wrench&quot;
+      },
+      {
+        &quot;name&quot;: &quot;brass key&quot;,
+        &quot;token&quot;: &quot;key&quot;
+      },
+      {
+        &quot;name&quot;: &quot;grey fungus&quot;,
+        &quot;token&quot;: &quot;fungus&quot;
+      }
+    ]
+  },
+  &quot;assertionResults&quot;: [
+    {
+      &quot;description&quot;: &quot;contains \&quot;Metal screams against metal\&quot;&quot;,
+      &quot;passed&quot;: true
+    },
+    {
+      &quot;description&quot;: &quot;contains \&quot;A hiss from the cracked pipes overhead.\&quot;&quot;,
+      &quot;passed&quot;: true
+    },
+    {
+      &quot;description&quot;: &quot;state the iron valve is turned&quot;,
+      &quot;passed&quot;: true
+    },
+    {
+      &quot;description&quot;: &quot;state story.state = corruption&quot;,
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre><pre class="raw-json">{
+  &quot;type&quot;: &quot;turn&quot;,
+  &quot;command&quot;: &quot;turn valve left&quot;,
+  &quot;assertions&quot;: {
+    &quot;contains&quot;: [
+      &quot;Metal screams against metal&quot;,
+      &quot;A hiss from the cracked pipes overhead.&quot;
+    ],
+    &quot;states&quot;: [
+      &quot;the iron valve is turned&quot;,
+      &quot;story.state = corruption&quot;
+    ]
+  }
+}</pre></details></div></details></div></details></li><li class="turn" data-status="pass"><details class="turn-detail" data-status="pass"><summary class="turn-row"><span class="turn-tcount">T:18</span><span class="turn-cmd">&gt; down</span><span class="turn-room">Source</span><span class="turn-inv" title="spectacles, pipe wrench, brass key, grey fungus">4 carried</span><span class="turn-asserts"><span class="pass">&#10003; 3/3</span></span></summary><div class="turn-body"><pre class="turn-response"><span class="hl" data-asserts="0">Source</span>
+A space that should not exist beneath a building this size. The walls are membranes, translucent and veined. Light comes from inside them — a slow amber pulse. <span class="hl" data-asserts="1">A low stone basin sits in the center</span>, holding something luminous, warm, and waiting.</pre><details class="turn-extras"><summary class="turn-extras-summary">3 checks &#10003; &middot; Source &middot; 4 carried &middot; raw</summary><div class="turn-extras-body"><h4>Checks</h4><ul class="assertions"><li class="pass"><span class="kind">contains</span><span class="label">Source</span><button type="button" class="match-toggle" data-assertion-idx="0">show</button></li><li class="pass"><span class="kind">contains</span><span class="label">A low stone basin sits in the center</span><button type="button" class="match-toggle" data-assertion-idx="1">show</button></li><li class="pass"><span class="kind">state</span><span class="label">player.location = Source</span></li></ul><h4>World after this turn</h4><dl class="kv"><dt>Location</dt><dd>Source</dd><dt>Carrying</dt><dd>spectacles, pipe wrench, brass key, grey fungus</dd></dl><details class="raw"><summary>Raw: the runner record and the authored card</summary><pre class="raw-json">{
+  &quot;schemaVersion&quot;: 2,
+  &quot;seq&quot;: 20,
+  &quot;elapsedMs&quot;: 196,
+  &quot;type&quot;: &quot;command-result&quot;,
+  &quot;file&quot;: &quot;opening-receiving-room&quot;,
+  &quot;line&quot;: 0,
+  &quot;input&quot;: &quot;down&quot;,
+  &quot;passed&quot;: true,
+  &quot;expectedFailure&quot;: false,
+  &quot;skipped&quot;: false,
+  &quot;actualOutput&quot;: &quot;Source\nA space that should not exist beneath a building this size. The walls are membranes, translucent and veined. Light comes from inside them — a slow amber pulse. A low stone basin sits in the center, holding something luminous, warm, and waiting.&quot;,
+  &quot;turn&quot;: 18,
+  &quot;world&quot;: {
+    &quot;location&quot;: {
+      &quot;name&quot;: &quot;Source&quot;,
+      &quot;token&quot;: &quot;Source&quot;
+    },
+    &quot;inventory&quot;: [
+      {
+        &quot;name&quot;: &quot;spectacles&quot;,
+        &quot;token&quot;: &quot;glasses&quot;
+      },
+      {
+        &quot;name&quot;: &quot;pipe wrench&quot;,
+        &quot;token&quot;: &quot;wrench&quot;
+      },
+      {
+        &quot;name&quot;: &quot;brass key&quot;,
+        &quot;token&quot;: &quot;key&quot;
+      },
+      {
+        &quot;name&quot;: &quot;grey fungus&quot;,
+        &quot;token&quot;: &quot;fungus&quot;
+      }
+    ]
+  },
+  &quot;assertionResults&quot;: [
+    {
+      &quot;description&quot;: &quot;contains \&quot;Source\&quot;&quot;,
+      &quot;passed&quot;: true
+    },
+    {
+      &quot;description&quot;: &quot;contains \&quot;A low stone basin sits in the center\&quot;&quot;,
+      &quot;passed&quot;: true
+    },
+    {
+      &quot;description&quot;: &quot;state player.location = Source&quot;,
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre><pre class="raw-json">{
+  &quot;type&quot;: &quot;turn&quot;,
+  &quot;command&quot;: &quot;down&quot;,
+  &quot;assertions&quot;: {
+    &quot;contains&quot;: [
+      &quot;Source&quot;,
+      &quot;A low stone basin sits in the center&quot;
+    ],
+    &quot;states&quot;: [
+      &quot;player.location = Source&quot;
+    ]
+  }
+}</pre></details></div></details></div></details></li><li class="turn" data-status="pass"><details class="turn-detail" data-status="pass"><summary class="turn-row"><span class="turn-tcount">T:19</span><span class="turn-cmd">&gt; touch basin</span><span class="turn-room">Source</span><span class="turn-inv" title="spectacles, pipe wrench, brass key, grey fungus">4 carried</span><span class="turn-asserts"><span class="pass">&#10003; 2/2</span></span></summary><div class="turn-body"><pre class="turn-response"><span class="hl" data-asserts="0">You reach in. It reaches back.</span>
 
 The light expands. It fills your hands, your arms, your chest. You feel it behind your eyes — not heat, not cold, but recognition. The building above you does not exist. The rooms, the corridors, the instruments — they were always this. Membrane and bone and light, folded into shapes you could almost name.
 
-You understand now. You have always been the patient. The treatment is complete.</pre><ul class="asserts"><li class="pass">&#10003; contains &quot;You reach in. It reaches back.&quot;</li><li class="pass">&#10003; contains &quot;The treatment is complete.&quot;</li></ul></article></section><section class="line"><h2>receiving-room · read form</h2><article class="card pass"><div class="cmd">&#9989; &gt; read form</div><pre class="out">Patient exhibits reduced perception. Corrective lenses issued.</pre><ul class="asserts"><li class="pass">&#10003; contains &quot;Patient exhibits reduced perception.&quot;</li></ul></article><article class="card pass"><div class="cmd">&#9989; &gt; examine counter</div><pre class="out">Waist-high, dividing the room. Your side is scuffed linoleum. The far side is dark wood, polished once but not recently. Under the counter, scratched into the wood: THEY BUILT DOWN BEFORE THEY BUILT UP.</pre><ul class="asserts"><li class="pass">&#10003; contains &quot;scuffed linoleum&quot;</li><li class="pass">&#10003; contains &quot;THEY BUILT DOWN BEFORE THEY BUILT UP.&quot;</li></ul></article><article class="card pass"><div class="cmd">&#9989; &gt; east</div><pre class="out">Corridor
-A long hallway tiled in white. Several tiles are cracked, revealing raw concrete beneath. The receiving room is west. The treatment room is east.</pre><ul class="asserts"><li class="pass">&#10003; contains &quot;Corridor&quot;</li><li class="pass">&#10003; contains &quot;A long hallway tiled in white.&quot;</li></ul></article><article class="card pass"><div class="cmd">&#9989; &gt; down</div><pre class="out">The floor is solid tile. There is no way down.</pre><ul class="asserts"><li class="pass">&#10003; contains &quot;The floor is solid tile. There is no way down.&quot;</li><li class="pass">&#10003; state player.location = Corridor</li></ul></article><article class="card pass"><div class="cmd">&#9989; &gt; east</div><pre class="out">Treatment Room
-A reclining chair bolted to the floor, surrounded by drainage channels cut into the concrete. Instrument trays line the east wall. A faded note is pinned to the wall. The corridor is west.</pre><ul class="asserts"><li class="pass">&#10003; contains &quot;Treatment Room&quot;</li><li class="pass">&#10003; contains &quot;A reclining chair bolted to the floor&quot;</li></ul></article><article class="card pass"><div class="cmd">&#9989; &gt; read note</div><pre class="out">Re: access to the lower level. What you cannot see is still there. The corrective lenses are not optional. They are the first step.</pre><ul class="asserts"><li class="pass">&#10003; contains &quot;The corrective lenses are not optional.&quot;</li></ul></article><article class="card pass"><div class="cmd">&#9989; &gt; examine chair</div><pre class="out">Padded in cracked leather, tilted fifteen degrees back. Restraint loops hang from the armrests.</pre><ul class="asserts"><li class="pass">&#10003; contains &quot;Restraint loops hang from the armrests.&quot;</li><li class="pass">&#10003; not contains &quot;Its leather is skin.&quot;</li></ul></article></section><section class="line"><h2>stairwell · south</h2><article class="card pass"><div class="cmd">&#9989; &gt; south</div><pre class="out">Laboratory
-A long room lined with workbenches and glass-fronted cabinets. Everything is labeled in the same careful handwriting. The stairwell is north. A heavy door leads east to cold storage.</pre><ul class="asserts"><li class="pass">&#10003; contains &quot;Laboratory&quot;</li></ul></article><article class="card pass"><div class="cmd">&#9989; &gt; break case</div><pre class="out">You rap your knuckles against the glass. It holds. You cannot break it with your bare hands.</pre><ul class="asserts"><li class="pass">&#10003; contains &quot;You rap your knuckles against the glass.&quot;</li><li class="pass">&#10003; state the glass case is intact</li></ul></article><article class="card pass"><div class="cmd">&#9989; &gt; smash workbenches</div><pre class="out">Violence will not help here.</pre><ul class="asserts"><li class="pass">&#10003; contains &quot;Violence will not help here.&quot;</li></ul></article><article class="card pass"><div class="cmd">&#9989; &gt; south</div><pre class="out">The south wall is solid. There is no exit that way.</pre><ul class="asserts"><li class="pass">&#10003; contains &quot;The south wall is solid. There is no exit that way.&quot;</li><li class="pass">&#10003; state player.location = Laboratory</li></ul></article></section><section class="line"><h2>laboratory · break case</h2><article class="card pass"><div class="cmd">&#9989; &gt; break case</div><pre class="out">The case is already shattered. Only fragments remain.</pre><ul class="asserts"><li class="pass">&#10003; contains &quot;The case is already shattered.&quot;</li></ul></article><article class="card pass"><div class="cmd">&#9989; &gt; examine case</div><pre class="out">Shattered remains of the display case. Fragments of thin glass cling to the frame.</pre><ul class="asserts"><li class="pass">&#10003; contains &quot;Shattered remains of the display case.&quot;</li></ul></article></section><section class="line"><h2>laboratory · look</h2><article class="card pass"><div class="cmd">&#9989; &gt; look</div><pre class="out">Laboratory
-A long room lined with workbenches and glass-fronted cabinets. Everything is labeled in the same careful handwriting. The stairwell is north. A heavy door leads east to cold storage. At the south end, the floor has split open — a wound with smooth, glistening edges. A dark passage descends through it.</pre><ul class="asserts"><li class="pass">&#10003; contains &quot;A dark passage descends through it.&quot;</li></ul></article><article class="card pass"><div class="cmd">&#9989; &gt; north</div><pre class="out">Stairwell
-Concrete steps descend to a landing. The air turns cold and damp. Pipes run along the ceiling, sweating with condensation. The trapdoor opens above. A passage continues south to the laboratory.</pre><ul class="asserts"><li class="pass">&#10003; contains &quot;Stairwell&quot;</li></ul></article><article class="card pass"><div class="cmd">&#9989; &gt; examine pipes</div><pre class="out">Copper and iron pipes bundled with wire, running along the ceiling. Condensation beads on their surfaces. They pulse. The condensation is warm now, and slightly viscous. These are not pipes. They have never been pipes.</pre><ul class="asserts"><li class="pass">&#10003; contains &quot;They have never been pipes.&quot;</li></ul></article></section><section class="line"><h2>cistern · read sign</h2><article class="card pass"><div class="cmd">&#9989; &gt; read sign</div><pre class="out">CISTERN VALVE OPERATION — LEFT: drains cistern to sublevel. RIGHT: emergency flood (DO NOT OPERATE).
+You understand now. You have always been the patient. <span class="hl" data-asserts="1">The treatment is complete.</span></pre><details class="turn-extras"><summary class="turn-extras-summary">2 checks &#10003; &middot; Source &middot; 4 carried &middot; raw</summary><div class="turn-extras-body"><h4>Checks</h4><ul class="assertions"><li class="pass"><span class="kind">contains</span><span class="label">You reach in. It reaches back.</span><button type="button" class="match-toggle" data-assertion-idx="0">show</button></li><li class="pass"><span class="kind">contains</span><span class="label">The treatment is complete.</span><button type="button" class="match-toggle" data-assertion-idx="1">show</button></li></ul><h4>World after this turn</h4><dl class="kv"><dt>Location</dt><dd>Source</dd><dt>Carrying</dt><dd>spectacles, pipe wrench, brass key, grey fungus</dd></dl><details class="raw"><summary>Raw: the runner record and the authored card</summary><pre class="raw-json">{
+  &quot;schemaVersion&quot;: 2,
+  &quot;seq&quot;: 21,
+  &quot;elapsedMs&quot;: 202,
+  &quot;type&quot;: &quot;command-result&quot;,
+  &quot;file&quot;: &quot;opening-receiving-room&quot;,
+  &quot;line&quot;: 0,
+  &quot;input&quot;: &quot;touch basin&quot;,
+  &quot;passed&quot;: true,
+  &quot;expectedFailure&quot;: false,
+  &quot;skipped&quot;: false,
+  &quot;actualOutput&quot;: &quot;You reach in. It reaches back.\n\nThe light expands. It fills your hands, your arms, your chest. You feel it behind your eyes — not heat, not cold, but recognition. The building above you does not exist. The rooms, the corridors, the instruments — they were always this. Membrane and bone and light, folded into shapes you could almost name.\n\nYou understand now. You have always been the patient. The treatment is complete.&quot;,
+  &quot;turn&quot;: 19,
+  &quot;ending&quot;: &quot;victory&quot;,
+  &quot;world&quot;: {
+    &quot;location&quot;: {
+      &quot;name&quot;: &quot;Source&quot;,
+      &quot;token&quot;: &quot;Source&quot;
+    },
+    &quot;inventory&quot;: [
+      {
+        &quot;name&quot;: &quot;spectacles&quot;,
+        &quot;token&quot;: &quot;glasses&quot;
+      },
+      {
+        &quot;name&quot;: &quot;pipe wrench&quot;,
+        &quot;token&quot;: &quot;wrench&quot;
+      },
+      {
+        &quot;name&quot;: &quot;brass key&quot;,
+        &quot;token&quot;: &quot;key&quot;
+      },
+      {
+        &quot;name&quot;: &quot;grey fungus&quot;,
+        &quot;token&quot;: &quot;fungus&quot;
+      }
+    ]
+  },
+  &quot;assertionResults&quot;: [
+    {
+      &quot;description&quot;: &quot;contains \&quot;You reach in. It reaches back.\&quot;&quot;,
+      &quot;passed&quot;: true
+    },
+    {
+      &quot;description&quot;: &quot;contains \&quot;The treatment is complete.\&quot;&quot;,
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre><pre class="raw-json">{
+  &quot;type&quot;: &quot;turn&quot;,
+  &quot;command&quot;: &quot;touch basin&quot;,
+  &quot;assertions&quot;: {
+    &quot;contains&quot;: [
+      &quot;You reach in. It reaches back.&quot;,
+      &quot;The treatment is complete.&quot;
+    ]
+  }
+}</pre></details></div></details></div></details></li></ul></div></details><details class="test" id="line-1" data-status="pass"><summary class="test-summary"><span class="glyph pass">&#10003;</span><span class="test-name">receiving-room · read form</span><span class="test-summary-meta">branch &middot; 7 cards &middot; 7/7 &#10003; &middot; 31 ms</span></summary><div class="test-body"><div class="line-note">Replays <a href="#line-0">opening-receiving-room</a> through T:1 <code>&gt; look</code> (1 command replayed, none re-asserted), then diverges.</div><ul class="transcript"><li class="turn" data-status="pass"><details class="turn-detail" data-status="pass"><summary class="turn-row"><span class="turn-tcount">T:2</span><span class="turn-cmd">&gt; read form</span><span class="turn-room">Receiving Room</span><span class="turn-inv" title="carrying nothing"></span><span class="turn-asserts"><span class="pass">&#10003; 1/1</span></span></summary><div class="turn-body"><pre class="turn-response"><span class="hl" data-asserts="0">Patient exhibits reduced perception.</span> Corrective lenses issued.</pre><details class="turn-extras"><summary class="turn-extras-summary">1 check &#10003; &middot; Receiving Room &middot; 0 carried &middot; raw</summary><div class="turn-extras-body"><h4>Checks</h4><ul class="assertions"><li class="pass"><span class="kind">contains</span><span class="label">Patient exhibits reduced perception.</span><button type="button" class="match-toggle" data-assertion-idx="0">show</button></li></ul><h4>World after this turn</h4><dl class="kv"><dt>Location</dt><dd>Receiving Room</dd><dt>Carrying</dt><dd>nothing</dd></dl><details class="raw"><summary>Raw: the runner record and the authored card</summary><pre class="raw-json">{
+  &quot;schemaVersion&quot;: 2,
+  &quot;seq&quot;: 24,
+  &quot;elapsedMs&quot;: 238,
+  &quot;type&quot;: &quot;command-result&quot;,
+  &quot;file&quot;: &quot;receiving-room · read form&quot;,
+  &quot;line&quot;: 0,
+  &quot;input&quot;: &quot;read form&quot;,
+  &quot;passed&quot;: true,
+  &quot;expectedFailure&quot;: false,
+  &quot;skipped&quot;: false,
+  &quot;actualOutput&quot;: &quot;Patient exhibits reduced perception. Corrective lenses issued.&quot;,
+  &quot;turn&quot;: 2,
+  &quot;world&quot;: {
+    &quot;location&quot;: {
+      &quot;name&quot;: &quot;Receiving Room&quot;,
+      &quot;token&quot;: &quot;reception&quot;
+    },
+    &quot;inventory&quot;: []
+  },
+  &quot;assertionResults&quot;: [
+    {
+      &quot;description&quot;: &quot;contains \&quot;Patient exhibits reduced perception.\&quot;&quot;,
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre><pre class="raw-json">{
+  &quot;type&quot;: &quot;turn&quot;,
+  &quot;command&quot;: &quot;read form&quot;,
+  &quot;assertions&quot;: {
+    &quot;contains&quot;: [
+      &quot;Patient exhibits reduced perception.&quot;
+    ]
+  }
+}</pre></details></div></details></div></details></li><li class="turn" data-status="pass"><details class="turn-detail" data-status="pass"><summary class="turn-row"><span class="turn-tcount">T:3</span><span class="turn-cmd">&gt; examine counter</span><span class="turn-room">Receiving Room</span><span class="turn-inv" title="carrying nothing"></span><span class="turn-asserts"><span class="pass">&#10003; 2/2</span></span></summary><div class="turn-body"><pre class="turn-response">Waist-high, dividing the room. Your side is <span class="hl" data-asserts="0">scuffed linoleum</span>. The far side is dark wood, polished once but not recently. Under the counter, scratched into the wood: <span class="hl" data-asserts="1">THEY BUILT DOWN BEFORE THEY BUILT UP.</span></pre><details class="turn-extras"><summary class="turn-extras-summary">2 checks &#10003; &middot; Receiving Room &middot; 0 carried &middot; raw</summary><div class="turn-extras-body"><h4>Checks</h4><ul class="assertions"><li class="pass"><span class="kind">contains</span><span class="label">scuffed linoleum</span><button type="button" class="match-toggle" data-assertion-idx="0">show</button></li><li class="pass"><span class="kind">contains</span><span class="label">THEY BUILT DOWN BEFORE THEY BUILT UP.</span><button type="button" class="match-toggle" data-assertion-idx="1">show</button></li></ul><h4>World after this turn</h4><dl class="kv"><dt>Location</dt><dd>Receiving Room</dd><dt>Carrying</dt><dd>nothing</dd></dl><details class="raw"><summary>Raw: the runner record and the authored card</summary><pre class="raw-json">{
+  &quot;schemaVersion&quot;: 2,
+  &quot;seq&quot;: 25,
+  &quot;elapsedMs&quot;: 240,
+  &quot;type&quot;: &quot;command-result&quot;,
+  &quot;file&quot;: &quot;receiving-room · read form&quot;,
+  &quot;line&quot;: 0,
+  &quot;input&quot;: &quot;examine counter&quot;,
+  &quot;passed&quot;: true,
+  &quot;expectedFailure&quot;: false,
+  &quot;skipped&quot;: false,
+  &quot;actualOutput&quot;: &quot;Waist-high, dividing the room. Your side is scuffed linoleum. The far side is dark wood, polished once but not recently. Under the counter, scratched into the wood: THEY BUILT DOWN BEFORE THEY BUILT UP.&quot;,
+  &quot;turn&quot;: 3,
+  &quot;world&quot;: {
+    &quot;location&quot;: {
+      &quot;name&quot;: &quot;Receiving Room&quot;,
+      &quot;token&quot;: &quot;reception&quot;
+    },
+    &quot;inventory&quot;: []
+  },
+  &quot;assertionResults&quot;: [
+    {
+      &quot;description&quot;: &quot;contains \&quot;scuffed linoleum\&quot;&quot;,
+      &quot;passed&quot;: true
+    },
+    {
+      &quot;description&quot;: &quot;contains \&quot;THEY BUILT DOWN BEFORE THEY BUILT UP.\&quot;&quot;,
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre><pre class="raw-json">{
+  &quot;type&quot;: &quot;turn&quot;,
+  &quot;command&quot;: &quot;examine counter&quot;,
+  &quot;assertions&quot;: {
+    &quot;contains&quot;: [
+      &quot;scuffed linoleum&quot;,
+      &quot;THEY BUILT DOWN BEFORE THEY BUILT UP.&quot;
+    ]
+  }
+}</pre></details></div></details></div></details></li><li class="turn" data-status="pass"><details class="turn-detail" data-status="pass"><summary class="turn-row"><span class="turn-tcount">T:4</span><span class="turn-cmd">&gt; east</span><span class="turn-room">Corridor</span><span class="turn-inv" title="carrying nothing"></span><span class="turn-asserts"><span class="pass">&#10003; 2/2</span></span></summary><div class="turn-body"><pre class="turn-response"><span class="hl" data-asserts="0">Corridor</span>
+<span class="hl" data-asserts="1">A long hallway tiled in white.</span> Several tiles are cracked, revealing raw concrete beneath. The receiving room is west. The treatment room is east.</pre><details class="turn-extras"><summary class="turn-extras-summary">2 checks &#10003; &middot; Corridor &middot; 0 carried &middot; raw</summary><div class="turn-extras-body"><h4>Checks</h4><ul class="assertions"><li class="pass"><span class="kind">contains</span><span class="label">Corridor</span><button type="button" class="match-toggle" data-assertion-idx="0">show</button></li><li class="pass"><span class="kind">contains</span><span class="label">A long hallway tiled in white.</span><button type="button" class="match-toggle" data-assertion-idx="1">show</button></li></ul><h4>World after this turn</h4><dl class="kv"><dt>Location</dt><dd>Corridor</dd><dt>Carrying</dt><dd>nothing</dd></dl><details class="raw"><summary>Raw: the runner record and the authored card</summary><pre class="raw-json">{
+  &quot;schemaVersion&quot;: 2,
+  &quot;seq&quot;: 26,
+  &quot;elapsedMs&quot;: 243,
+  &quot;type&quot;: &quot;command-result&quot;,
+  &quot;file&quot;: &quot;receiving-room · read form&quot;,
+  &quot;line&quot;: 0,
+  &quot;input&quot;: &quot;east&quot;,
+  &quot;passed&quot;: true,
+  &quot;expectedFailure&quot;: false,
+  &quot;skipped&quot;: false,
+  &quot;actualOutput&quot;: &quot;Corridor\nA long hallway tiled in white. Several tiles are cracked, revealing raw concrete beneath. The receiving room is west. The treatment room is east.&quot;,
+  &quot;turn&quot;: 4,
+  &quot;world&quot;: {
+    &quot;location&quot;: {
+      &quot;name&quot;: &quot;Corridor&quot;,
+      &quot;token&quot;: &quot;hallway&quot;
+    },
+    &quot;inventory&quot;: []
+  },
+  &quot;assertionResults&quot;: [
+    {
+      &quot;description&quot;: &quot;contains \&quot;Corridor\&quot;&quot;,
+      &quot;passed&quot;: true
+    },
+    {
+      &quot;description&quot;: &quot;contains \&quot;A long hallway tiled in white.\&quot;&quot;,
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre><pre class="raw-json">{
+  &quot;type&quot;: &quot;turn&quot;,
+  &quot;command&quot;: &quot;east&quot;,
+  &quot;assertions&quot;: {
+    &quot;contains&quot;: [
+      &quot;Corridor&quot;,
+      &quot;A long hallway tiled in white.&quot;
+    ]
+  }
+}</pre></details></div></details></div></details></li><li class="turn" data-status="pass"><details class="turn-detail" data-status="pass"><summary class="turn-row"><span class="turn-tcount">T:5</span><span class="turn-cmd">&gt; down</span><span class="turn-room">Corridor</span><span class="turn-inv" title="carrying nothing"></span><span class="turn-asserts"><span class="pass">&#10003; 2/2</span></span></summary><div class="turn-body"><pre class="turn-response"><span class="hl" data-asserts="0">The floor is solid tile. There is no way down.</span></pre><details class="turn-extras"><summary class="turn-extras-summary">2 checks &#10003; &middot; Corridor &middot; 0 carried &middot; raw</summary><div class="turn-extras-body"><h4>Checks</h4><ul class="assertions"><li class="pass"><span class="kind">contains</span><span class="label">The floor is solid tile. There is no way down.</span><button type="button" class="match-toggle" data-assertion-idx="0">show</button></li><li class="pass"><span class="kind">state</span><span class="label">player.location = Corridor</span></li></ul><h4>World after this turn</h4><dl class="kv"><dt>Location</dt><dd>Corridor</dd><dt>Carrying</dt><dd>nothing</dd></dl><details class="raw"><summary>Raw: the runner record and the authored card</summary><pre class="raw-json">{
+  &quot;schemaVersion&quot;: 2,
+  &quot;seq&quot;: 27,
+  &quot;elapsedMs&quot;: 250,
+  &quot;type&quot;: &quot;command-result&quot;,
+  &quot;file&quot;: &quot;receiving-room · read form&quot;,
+  &quot;line&quot;: 0,
+  &quot;input&quot;: &quot;down&quot;,
+  &quot;passed&quot;: true,
+  &quot;expectedFailure&quot;: false,
+  &quot;skipped&quot;: false,
+  &quot;actualOutput&quot;: &quot;The floor is solid tile. There is no way down.&quot;,
+  &quot;turn&quot;: 5,
+  &quot;world&quot;: {
+    &quot;location&quot;: {
+      &quot;name&quot;: &quot;Corridor&quot;,
+      &quot;token&quot;: &quot;hallway&quot;
+    },
+    &quot;inventory&quot;: []
+  },
+  &quot;assertionResults&quot;: [
+    {
+      &quot;description&quot;: &quot;contains \&quot;The floor is solid tile. There is no way down.\&quot;&quot;,
+      &quot;passed&quot;: true
+    },
+    {
+      &quot;description&quot;: &quot;state player.location = Corridor&quot;,
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre><pre class="raw-json">{
+  &quot;type&quot;: &quot;turn&quot;,
+  &quot;command&quot;: &quot;down&quot;,
+  &quot;assertions&quot;: {
+    &quot;contains&quot;: [
+      &quot;The floor is solid tile. There is no way down.&quot;
+    ],
+    &quot;states&quot;: [
+      &quot;player.location = Corridor&quot;
+    ]
+  }
+}</pre></details></div></details></div></details></li><li class="turn" data-status="pass"><details class="turn-detail" data-status="pass"><summary class="turn-row"><span class="turn-tcount">T:6</span><span class="turn-cmd">&gt; east</span><span class="turn-room">Treatment Room</span><span class="turn-inv" title="carrying nothing"></span><span class="turn-asserts"><span class="pass">&#10003; 2/2</span></span></summary><div class="turn-body"><pre class="turn-response"><span class="hl" data-asserts="0">Treatment Room</span>
+<span class="hl" data-asserts="1">A reclining chair bolted to the floor</span>, surrounded by drainage channels cut into the concrete. Instrument trays line the east wall. A faded note is pinned to the wall. The corridor is west.</pre><details class="turn-extras"><summary class="turn-extras-summary">2 checks &#10003; &middot; Treatment Room &middot; 0 carried &middot; raw</summary><div class="turn-extras-body"><h4>Checks</h4><ul class="assertions"><li class="pass"><span class="kind">contains</span><span class="label">Treatment Room</span><button type="button" class="match-toggle" data-assertion-idx="0">show</button></li><li class="pass"><span class="kind">contains</span><span class="label">A reclining chair bolted to the floor</span><button type="button" class="match-toggle" data-assertion-idx="1">show</button></li></ul><h4>World after this turn</h4><dl class="kv"><dt>Location</dt><dd>Treatment Room</dd><dt>Carrying</dt><dd>nothing</dd></dl><details class="raw"><summary>Raw: the runner record and the authored card</summary><pre class="raw-json">{
+  &quot;schemaVersion&quot;: 2,
+  &quot;seq&quot;: 28,
+  &quot;elapsedMs&quot;: 255,
+  &quot;type&quot;: &quot;command-result&quot;,
+  &quot;file&quot;: &quot;receiving-room · read form&quot;,
+  &quot;line&quot;: 0,
+  &quot;input&quot;: &quot;east&quot;,
+  &quot;passed&quot;: true,
+  &quot;expectedFailure&quot;: false,
+  &quot;skipped&quot;: false,
+  &quot;actualOutput&quot;: &quot;Treatment Room\nA reclining chair bolted to the floor, surrounded by drainage channels cut into the concrete. Instrument trays line the east wall. A faded note is pinned to the wall. The corridor is west.&quot;,
+  &quot;turn&quot;: 6,
+  &quot;world&quot;: {
+    &quot;location&quot;: {
+      &quot;name&quot;: &quot;Treatment Room&quot;,
+      &quot;token&quot;: &quot;treatment&quot;
+    },
+    &quot;inventory&quot;: []
+  },
+  &quot;assertionResults&quot;: [
+    {
+      &quot;description&quot;: &quot;contains \&quot;Treatment Room\&quot;&quot;,
+      &quot;passed&quot;: true
+    },
+    {
+      &quot;description&quot;: &quot;contains \&quot;A reclining chair bolted to the floor\&quot;&quot;,
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre><pre class="raw-json">{
+  &quot;type&quot;: &quot;turn&quot;,
+  &quot;command&quot;: &quot;east&quot;,
+  &quot;assertions&quot;: {
+    &quot;contains&quot;: [
+      &quot;Treatment Room&quot;,
+      &quot;A reclining chair bolted to the floor&quot;
+    ]
+  }
+}</pre></details></div></details></div></details></li><li class="turn" data-status="pass"><details class="turn-detail" data-status="pass"><summary class="turn-row"><span class="turn-tcount">T:7</span><span class="turn-cmd">&gt; read note</span><span class="turn-room">Treatment Room</span><span class="turn-inv" title="carrying nothing"></span><span class="turn-asserts"><span class="pass">&#10003; 1/1</span></span></summary><div class="turn-body"><pre class="turn-response">Re: access to the lower level. What you cannot see is still there. <span class="hl" data-asserts="0">The corrective lenses are not optional.</span> They are the first step.</pre><details class="turn-extras"><summary class="turn-extras-summary">1 check &#10003; &middot; Treatment Room &middot; 0 carried &middot; raw</summary><div class="turn-extras-body"><h4>Checks</h4><ul class="assertions"><li class="pass"><span class="kind">contains</span><span class="label">The corrective lenses are not optional.</span><button type="button" class="match-toggle" data-assertion-idx="0">show</button></li></ul><h4>World after this turn</h4><dl class="kv"><dt>Location</dt><dd>Treatment Room</dd><dt>Carrying</dt><dd>nothing</dd></dl><details class="raw"><summary>Raw: the runner record and the authored card</summary><pre class="raw-json">{
+  &quot;schemaVersion&quot;: 2,
+  &quot;seq&quot;: 29,
+  &quot;elapsedMs&quot;: 259,
+  &quot;type&quot;: &quot;command-result&quot;,
+  &quot;file&quot;: &quot;receiving-room · read form&quot;,
+  &quot;line&quot;: 0,
+  &quot;input&quot;: &quot;read note&quot;,
+  &quot;passed&quot;: true,
+  &quot;expectedFailure&quot;: false,
+  &quot;skipped&quot;: false,
+  &quot;actualOutput&quot;: &quot;Re: access to the lower level. What you cannot see is still there. The corrective lenses are not optional. They are the first step.&quot;,
+  &quot;turn&quot;: 7,
+  &quot;world&quot;: {
+    &quot;location&quot;: {
+      &quot;name&quot;: &quot;Treatment Room&quot;,
+      &quot;token&quot;: &quot;treatment&quot;
+    },
+    &quot;inventory&quot;: []
+  },
+  &quot;assertionResults&quot;: [
+    {
+      &quot;description&quot;: &quot;contains \&quot;The corrective lenses are not optional.\&quot;&quot;,
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre><pre class="raw-json">{
+  &quot;type&quot;: &quot;turn&quot;,
+  &quot;command&quot;: &quot;read note&quot;,
+  &quot;assertions&quot;: {
+    &quot;contains&quot;: [
+      &quot;The corrective lenses are not optional.&quot;
+    ]
+  }
+}</pre></details></div></details></div></details></li><li class="turn" data-status="pass"><details class="turn-detail" data-status="pass"><summary class="turn-row"><span class="turn-tcount">T:8</span><span class="turn-cmd">&gt; examine chair</span><span class="turn-room">Treatment Room</span><span class="turn-inv" title="carrying nothing"></span><span class="turn-asserts"><span class="pass">&#10003; 2/2</span></span></summary><div class="turn-body"><pre class="turn-response">Padded in cracked leather, tilted fifteen degrees back. <span class="hl" data-asserts="0">Restraint loops hang from the armrests.</span></pre><details class="turn-extras"><summary class="turn-extras-summary">2 checks &#10003; &middot; Treatment Room &middot; 0 carried &middot; raw</summary><div class="turn-extras-body"><h4>Checks</h4><ul class="assertions"><li class="pass"><span class="kind">contains</span><span class="label">Restraint loops hang from the armrests.</span><button type="button" class="match-toggle" data-assertion-idx="0">show</button></li><li class="pass"><span class="kind">not contains</span><span class="label">Its leather is skin.</span></li></ul><h4>World after this turn</h4><dl class="kv"><dt>Location</dt><dd>Treatment Room</dd><dt>Carrying</dt><dd>nothing</dd></dl><details class="raw"><summary>Raw: the runner record and the authored card</summary><pre class="raw-json">{
+  &quot;schemaVersion&quot;: 2,
+  &quot;seq&quot;: 30,
+  &quot;elapsedMs&quot;: 262,
+  &quot;type&quot;: &quot;command-result&quot;,
+  &quot;file&quot;: &quot;receiving-room · read form&quot;,
+  &quot;line&quot;: 0,
+  &quot;input&quot;: &quot;examine chair&quot;,
+  &quot;passed&quot;: true,
+  &quot;expectedFailure&quot;: false,
+  &quot;skipped&quot;: false,
+  &quot;actualOutput&quot;: &quot;Padded in cracked leather, tilted fifteen degrees back. Restraint loops hang from the armrests.&quot;,
+  &quot;turn&quot;: 8,
+  &quot;world&quot;: {
+    &quot;location&quot;: {
+      &quot;name&quot;: &quot;Treatment Room&quot;,
+      &quot;token&quot;: &quot;treatment&quot;
+    },
+    &quot;inventory&quot;: []
+  },
+  &quot;assertionResults&quot;: [
+    {
+      &quot;description&quot;: &quot;contains \&quot;Restraint loops hang from the armrests.\&quot;&quot;,
+      &quot;passed&quot;: true
+    },
+    {
+      &quot;description&quot;: &quot;not contains \&quot;Its leather is skin.\&quot;&quot;,
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre><pre class="raw-json">{
+  &quot;type&quot;: &quot;turn&quot;,
+  &quot;command&quot;: &quot;examine chair&quot;,
+  &quot;assertions&quot;: {
+    &quot;contains&quot;: [
+      &quot;Restraint loops hang from the armrests.&quot;
+    ],
+    &quot;notContains&quot;: [
+      &quot;Its leather is skin.&quot;
+    ]
+  }
+}</pre></details></div></details></div></details></li></ul></div></details><details class="test" id="line-2" data-status="pass"><summary class="test-summary"><span class="glyph pass">&#10003;</span><span class="test-name">stairwell · south</span><span class="test-summary-meta">branch &middot; 4 cards &middot; 4/4 &#10003; &middot; 22 ms</span></summary><div class="test-body"><div class="line-note">Replays <a href="#line-0">opening-receiving-room</a> through T:5 <code>&gt; down</code> (5 commands replayed, none re-asserted), then diverges.</div><ul class="transcript"><li class="turn" data-status="pass"><details class="turn-detail" data-status="pass"><summary class="turn-row"><span class="turn-tcount">T:6</span><span class="turn-cmd">&gt; south</span><span class="turn-room">Laboratory</span><span class="turn-inv" title="spectacles">1 carried</span><span class="turn-asserts"><span class="pass">&#10003; 1/1</span></span></summary><div class="turn-body"><pre class="turn-response"><span class="hl" data-asserts="0">Laboratory</span>
+A long room lined with workbenches and glass-fronted cabinets. Everything is labeled in the same careful handwriting. The stairwell is north. A heavy door leads east to cold storage.</pre><details class="turn-extras"><summary class="turn-extras-summary">1 check &#10003; &middot; Laboratory &middot; 1 carried &middot; raw</summary><div class="turn-extras-body"><h4>Checks</h4><ul class="assertions"><li class="pass"><span class="kind">contains</span><span class="label">Laboratory</span><button type="button" class="match-toggle" data-assertion-idx="0">show</button></li></ul><h4>World after this turn</h4><dl class="kv"><dt>Location</dt><dd>Laboratory</dd><dt>Carrying</dt><dd>spectacles</dd></dl><details class="raw"><summary>Raw: the runner record and the authored card</summary><pre class="raw-json">{
+  &quot;schemaVersion&quot;: 2,
+  &quot;seq&quot;: 33,
+  &quot;elapsedMs&quot;: 305,
+  &quot;type&quot;: &quot;command-result&quot;,
+  &quot;file&quot;: &quot;stairwell · south&quot;,
+  &quot;line&quot;: 0,
+  &quot;input&quot;: &quot;south&quot;,
+  &quot;passed&quot;: true,
+  &quot;expectedFailure&quot;: false,
+  &quot;skipped&quot;: false,
+  &quot;actualOutput&quot;: &quot;Laboratory\nA long room lined with workbenches and glass-fronted cabinets. Everything is labeled in the same careful handwriting. The stairwell is north. A heavy door leads east to cold storage.&quot;,
+  &quot;turn&quot;: 6,
+  &quot;world&quot;: {
+    &quot;location&quot;: {
+      &quot;name&quot;: &quot;Laboratory&quot;,
+      &quot;token&quot;: &quot;lab&quot;
+    },
+    &quot;inventory&quot;: [
+      {
+        &quot;name&quot;: &quot;spectacles&quot;,
+        &quot;token&quot;: &quot;glasses&quot;
+      }
+    ]
+  },
+  &quot;assertionResults&quot;: [
+    {
+      &quot;description&quot;: &quot;contains \&quot;Laboratory\&quot;&quot;,
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre><pre class="raw-json">{
+  &quot;type&quot;: &quot;turn&quot;,
+  &quot;command&quot;: &quot;south&quot;,
+  &quot;assertions&quot;: {
+    &quot;contains&quot;: [
+      &quot;Laboratory&quot;
+    ]
+  }
+}</pre></details></div></details></div></details></li><li class="turn" data-status="pass"><details class="turn-detail" data-status="pass"><summary class="turn-row"><span class="turn-tcount">T:7</span><span class="turn-cmd">&gt; break case</span><span class="turn-room">Laboratory</span><span class="turn-inv" title="spectacles">1 carried</span><span class="turn-asserts"><span class="pass">&#10003; 2/2</span></span></summary><div class="turn-body"><pre class="turn-response"><span class="hl" data-asserts="0">You rap your knuckles against the glass.</span> It holds. You cannot break it with your bare hands.</pre><details class="turn-extras"><summary class="turn-extras-summary">2 checks &#10003; &middot; Laboratory &middot; 1 carried &middot; raw</summary><div class="turn-extras-body"><h4>Checks</h4><ul class="assertions"><li class="pass"><span class="kind">contains</span><span class="label">You rap your knuckles against the glass.</span><button type="button" class="match-toggle" data-assertion-idx="0">show</button></li><li class="pass"><span class="kind">state</span><span class="label">the glass case is intact</span></li></ul><h4>World after this turn</h4><dl class="kv"><dt>Location</dt><dd>Laboratory</dd><dt>Carrying</dt><dd>spectacles</dd></dl><details class="raw"><summary>Raw: the runner record and the authored card</summary><pre class="raw-json">{
+  &quot;schemaVersion&quot;: 2,
+  &quot;seq&quot;: 34,
+  &quot;elapsedMs&quot;: 311,
+  &quot;type&quot;: &quot;command-result&quot;,
+  &quot;file&quot;: &quot;stairwell · south&quot;,
+  &quot;line&quot;: 0,
+  &quot;input&quot;: &quot;break case&quot;,
+  &quot;passed&quot;: true,
+  &quot;expectedFailure&quot;: false,
+  &quot;skipped&quot;: false,
+  &quot;actualOutput&quot;: &quot;You rap your knuckles against the glass. It holds. You cannot break it with your bare hands.&quot;,
+  &quot;turn&quot;: 7,
+  &quot;world&quot;: {
+    &quot;location&quot;: {
+      &quot;name&quot;: &quot;Laboratory&quot;,
+      &quot;token&quot;: &quot;lab&quot;
+    },
+    &quot;inventory&quot;: [
+      {
+        &quot;name&quot;: &quot;spectacles&quot;,
+        &quot;token&quot;: &quot;glasses&quot;
+      }
+    ]
+  },
+  &quot;assertionResults&quot;: [
+    {
+      &quot;description&quot;: &quot;contains \&quot;You rap your knuckles against the glass.\&quot;&quot;,
+      &quot;passed&quot;: true
+    },
+    {
+      &quot;description&quot;: &quot;state the glass case is intact&quot;,
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre><pre class="raw-json">{
+  &quot;type&quot;: &quot;turn&quot;,
+  &quot;command&quot;: &quot;break case&quot;,
+  &quot;assertions&quot;: {
+    &quot;contains&quot;: [
+      &quot;You rap your knuckles against the glass.&quot;
+    ],
+    &quot;states&quot;: [
+      &quot;the glass case is intact&quot;
+    ]
+  }
+}</pre></details></div></details></div></details></li><li class="turn" data-status="pass"><details class="turn-detail" data-status="pass"><summary class="turn-row"><span class="turn-tcount">T:8</span><span class="turn-cmd">&gt; smash workbenches</span><span class="turn-room">Laboratory</span><span class="turn-inv" title="spectacles">1 carried</span><span class="turn-asserts"><span class="pass">&#10003; 1/1</span></span></summary><div class="turn-body"><pre class="turn-response"><span class="hl" data-asserts="0">Violence will not help here.</span></pre><details class="turn-extras"><summary class="turn-extras-summary">1 check &#10003; &middot; Laboratory &middot; 1 carried &middot; raw</summary><div class="turn-extras-body"><h4>Checks</h4><ul class="assertions"><li class="pass"><span class="kind">contains</span><span class="label">Violence will not help here.</span><button type="button" class="match-toggle" data-assertion-idx="0">show</button></li></ul><h4>World after this turn</h4><dl class="kv"><dt>Location</dt><dd>Laboratory</dd><dt>Carrying</dt><dd>spectacles</dd></dl><details class="raw"><summary>Raw: the runner record and the authored card</summary><pre class="raw-json">{
+  &quot;schemaVersion&quot;: 2,
+  &quot;seq&quot;: 35,
+  &quot;elapsedMs&quot;: 314,
+  &quot;type&quot;: &quot;command-result&quot;,
+  &quot;file&quot;: &quot;stairwell · south&quot;,
+  &quot;line&quot;: 0,
+  &quot;input&quot;: &quot;smash workbenches&quot;,
+  &quot;passed&quot;: true,
+  &quot;expectedFailure&quot;: false,
+  &quot;skipped&quot;: false,
+  &quot;actualOutput&quot;: &quot;Violence will not help here.&quot;,
+  &quot;turn&quot;: 8,
+  &quot;world&quot;: {
+    &quot;location&quot;: {
+      &quot;name&quot;: &quot;Laboratory&quot;,
+      &quot;token&quot;: &quot;lab&quot;
+    },
+    &quot;inventory&quot;: [
+      {
+        &quot;name&quot;: &quot;spectacles&quot;,
+        &quot;token&quot;: &quot;glasses&quot;
+      }
+    ]
+  },
+  &quot;assertionResults&quot;: [
+    {
+      &quot;description&quot;: &quot;contains \&quot;Violence will not help here.\&quot;&quot;,
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre><pre class="raw-json">{
+  &quot;type&quot;: &quot;turn&quot;,
+  &quot;command&quot;: &quot;smash workbenches&quot;,
+  &quot;assertions&quot;: {
+    &quot;contains&quot;: [
+      &quot;Violence will not help here.&quot;
+    ]
+  }
+}</pre></details></div></details></div></details></li><li class="turn" data-status="pass"><details class="turn-detail" data-status="pass"><summary class="turn-row"><span class="turn-tcount">T:9</span><span class="turn-cmd">&gt; south</span><span class="turn-room">Laboratory</span><span class="turn-inv" title="spectacles">1 carried</span><span class="turn-asserts"><span class="pass">&#10003; 2/2</span></span></summary><div class="turn-body"><pre class="turn-response"><span class="hl" data-asserts="0">The south wall is solid. There is no exit that way.</span></pre><details class="turn-extras"><summary class="turn-extras-summary">2 checks &#10003; &middot; Laboratory &middot; 1 carried &middot; raw</summary><div class="turn-extras-body"><h4>Checks</h4><ul class="assertions"><li class="pass"><span class="kind">contains</span><span class="label">The south wall is solid. There is no exit that way.</span><button type="button" class="match-toggle" data-assertion-idx="0">show</button></li><li class="pass"><span class="kind">state</span><span class="label">player.location = Laboratory</span></li></ul><h4>World after this turn</h4><dl class="kv"><dt>Location</dt><dd>Laboratory</dd><dt>Carrying</dt><dd>spectacles</dd></dl><details class="raw"><summary>Raw: the runner record and the authored card</summary><pre class="raw-json">{
+  &quot;schemaVersion&quot;: 2,
+  &quot;seq&quot;: 36,
+  &quot;elapsedMs&quot;: 320,
+  &quot;type&quot;: &quot;command-result&quot;,
+  &quot;file&quot;: &quot;stairwell · south&quot;,
+  &quot;line&quot;: 0,
+  &quot;input&quot;: &quot;south&quot;,
+  &quot;passed&quot;: true,
+  &quot;expectedFailure&quot;: false,
+  &quot;skipped&quot;: false,
+  &quot;actualOutput&quot;: &quot;The south wall is solid. There is no exit that way.&quot;,
+  &quot;turn&quot;: 9,
+  &quot;world&quot;: {
+    &quot;location&quot;: {
+      &quot;name&quot;: &quot;Laboratory&quot;,
+      &quot;token&quot;: &quot;lab&quot;
+    },
+    &quot;inventory&quot;: [
+      {
+        &quot;name&quot;: &quot;spectacles&quot;,
+        &quot;token&quot;: &quot;glasses&quot;
+      }
+    ]
+  },
+  &quot;assertionResults&quot;: [
+    {
+      &quot;description&quot;: &quot;contains \&quot;The south wall is solid. There is no exit that way.\&quot;&quot;,
+      &quot;passed&quot;: true
+    },
+    {
+      &quot;description&quot;: &quot;state player.location = Laboratory&quot;,
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre><pre class="raw-json">{
+  &quot;type&quot;: &quot;turn&quot;,
+  &quot;command&quot;: &quot;south&quot;,
+  &quot;assertions&quot;: {
+    &quot;contains&quot;: [
+      &quot;The south wall is solid. There is no exit that way.&quot;
+    ],
+    &quot;states&quot;: [
+      &quot;player.location = Laboratory&quot;
+    ]
+  }
+}</pre></details></div></details></div></details></li></ul></div></details><details class="test" id="line-3" data-status="pass"><summary class="test-summary"><span class="glyph pass">&#10003;</span><span class="test-name">laboratory · break case</span><span class="test-summary-meta">branch &middot; 2 cards &middot; 2/2 &#10003; &middot; 9 ms</span></summary><div class="test-body"><div class="line-note">Replays <a href="#line-0">opening-receiving-room</a> through T:9 <code>&gt; break glass case with wrench</code> (9 commands replayed, none re-asserted), then diverges.</div><ul class="transcript"><li class="turn" data-status="pass"><details class="turn-detail" data-status="pass"><summary class="turn-row"><span class="turn-tcount">T:10</span><span class="turn-cmd">&gt; break case</span><span class="turn-room">Laboratory</span><span class="turn-inv" title="spectacles, pipe wrench, brass key">3 carried</span><span class="turn-asserts"><span class="pass">&#10003; 1/1</span></span></summary><div class="turn-body"><pre class="turn-response"><span class="hl" data-asserts="0">The case is already shattered.</span> Only fragments remain.</pre><details class="turn-extras"><summary class="turn-extras-summary">1 check &#10003; &middot; Laboratory &middot; 3 carried &middot; raw</summary><div class="turn-extras-body"><h4>Checks</h4><ul class="assertions"><li class="pass"><span class="kind">contains</span><span class="label">The case is already shattered.</span><button type="button" class="match-toggle" data-assertion-idx="0">show</button></li></ul><h4>World after this turn</h4><dl class="kv"><dt>Location</dt><dd>Laboratory</dd><dt>Carrying</dt><dd>spectacles, pipe wrench, brass key</dd></dl><details class="raw"><summary>Raw: the runner record and the authored card</summary><pre class="raw-json">{
+  &quot;schemaVersion&quot;: 2,
+  &quot;seq&quot;: 39,
+  &quot;elapsedMs&quot;: 377,
+  &quot;type&quot;: &quot;command-result&quot;,
+  &quot;file&quot;: &quot;laboratory · break case&quot;,
+  &quot;line&quot;: 0,
+  &quot;input&quot;: &quot;break case&quot;,
+  &quot;passed&quot;: true,
+  &quot;expectedFailure&quot;: false,
+  &quot;skipped&quot;: false,
+  &quot;actualOutput&quot;: &quot;The case is already shattered. Only fragments remain.&quot;,
+  &quot;turn&quot;: 10,
+  &quot;world&quot;: {
+    &quot;location&quot;: {
+      &quot;name&quot;: &quot;Laboratory&quot;,
+      &quot;token&quot;: &quot;lab&quot;
+    },
+    &quot;inventory&quot;: [
+      {
+        &quot;name&quot;: &quot;spectacles&quot;,
+        &quot;token&quot;: &quot;glasses&quot;
+      },
+      {
+        &quot;name&quot;: &quot;pipe wrench&quot;,
+        &quot;token&quot;: &quot;wrench&quot;
+      },
+      {
+        &quot;name&quot;: &quot;brass key&quot;,
+        &quot;token&quot;: &quot;key&quot;
+      }
+    ]
+  },
+  &quot;assertionResults&quot;: [
+    {
+      &quot;description&quot;: &quot;contains \&quot;The case is already shattered.\&quot;&quot;,
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre><pre class="raw-json">{
+  &quot;type&quot;: &quot;turn&quot;,
+  &quot;command&quot;: &quot;break case&quot;,
+  &quot;assertions&quot;: {
+    &quot;contains&quot;: [
+      &quot;The case is already shattered.&quot;
+    ]
+  }
+}</pre></details></div></details></div></details></li><li class="turn" data-status="pass"><details class="turn-detail" data-status="pass"><summary class="turn-row"><span class="turn-tcount">T:11</span><span class="turn-cmd">&gt; examine case</span><span class="turn-room">Laboratory</span><span class="turn-inv" title="spectacles, pipe wrench, brass key">3 carried</span><span class="turn-asserts"><span class="pass">&#10003; 1/1</span></span></summary><div class="turn-body"><pre class="turn-response"><span class="hl" data-asserts="0">Shattered remains of the display case.</span> Fragments of thin glass cling to the frame.</pre><details class="turn-extras"><summary class="turn-extras-summary">1 check &#10003; &middot; Laboratory &middot; 3 carried &middot; raw</summary><div class="turn-extras-body"><h4>Checks</h4><ul class="assertions"><li class="pass"><span class="kind">contains</span><span class="label">Shattered remains of the display case.</span><button type="button" class="match-toggle" data-assertion-idx="0">show</button></li></ul><h4>World after this turn</h4><dl class="kv"><dt>Location</dt><dd>Laboratory</dd><dt>Carrying</dt><dd>spectacles, pipe wrench, brass key</dd></dl><details class="raw"><summary>Raw: the runner record and the authored card</summary><pre class="raw-json">{
+  &quot;schemaVersion&quot;: 2,
+  &quot;seq&quot;: 40,
+  &quot;elapsedMs&quot;: 379,
+  &quot;type&quot;: &quot;command-result&quot;,
+  &quot;file&quot;: &quot;laboratory · break case&quot;,
+  &quot;line&quot;: 0,
+  &quot;input&quot;: &quot;examine case&quot;,
+  &quot;passed&quot;: true,
+  &quot;expectedFailure&quot;: false,
+  &quot;skipped&quot;: false,
+  &quot;actualOutput&quot;: &quot;Shattered remains of the display case. Fragments of thin glass cling to the frame.&quot;,
+  &quot;turn&quot;: 11,
+  &quot;world&quot;: {
+    &quot;location&quot;: {
+      &quot;name&quot;: &quot;Laboratory&quot;,
+      &quot;token&quot;: &quot;lab&quot;
+    },
+    &quot;inventory&quot;: [
+      {
+        &quot;name&quot;: &quot;spectacles&quot;,
+        &quot;token&quot;: &quot;glasses&quot;
+      },
+      {
+        &quot;name&quot;: &quot;pipe wrench&quot;,
+        &quot;token&quot;: &quot;wrench&quot;
+      },
+      {
+        &quot;name&quot;: &quot;brass key&quot;,
+        &quot;token&quot;: &quot;key&quot;
+      }
+    ]
+  },
+  &quot;assertionResults&quot;: [
+    {
+      &quot;description&quot;: &quot;contains \&quot;Shattered remains of the display case.\&quot;&quot;,
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre><pre class="raw-json">{
+  &quot;type&quot;: &quot;turn&quot;,
+  &quot;command&quot;: &quot;examine case&quot;,
+  &quot;assertions&quot;: {
+    &quot;contains&quot;: [
+      &quot;Shattered remains of the display case.&quot;
+    ]
+  }
+}</pre></details></div></details></div></details></li></ul></div></details><details class="test" id="line-4" data-status="pass"><summary class="test-summary"><span class="glyph pass">&#10003;</span><span class="test-name">laboratory · look</span><span class="test-summary-meta">branch &middot; 3 cards &middot; 3/3 &#10003; &middot; 10 ms</span></summary><div class="test-body"><div class="line-note">Replays <a href="#line-0">opening-receiving-room</a> through T:15 <code>&gt; eat fungus</code> (15 commands replayed, none re-asserted), then diverges.</div><ul class="transcript"><li class="turn" data-status="pass"><details class="turn-detail" data-status="pass"><summary class="turn-row"><span class="turn-tcount">T:16</span><span class="turn-cmd">&gt; look</span><span class="turn-room">Laboratory</span><span class="turn-inv" title="spectacles, pipe wrench, brass key, grey fungus">4 carried</span><span class="turn-asserts"><span class="pass">&#10003; 1/1</span></span></summary><div class="turn-body"><pre class="turn-response">Laboratory
+A long room lined with workbenches and glass-fronted cabinets. Everything is labeled in the same careful handwriting. The stairwell is north. A heavy door leads east to cold storage. At the south end, the floor has split open — a wound with smooth, glistening edges. <span class="hl" data-asserts="0">A dark passage descends through it.</span></pre><details class="turn-extras"><summary class="turn-extras-summary">1 check &#10003; &middot; Laboratory &middot; 4 carried &middot; raw</summary><div class="turn-extras-body"><h4>Checks</h4><ul class="assertions"><li class="pass"><span class="kind">contains</span><span class="label">A dark passage descends through it.</span><button type="button" class="match-toggle" data-assertion-idx="0">show</button></li></ul><h4>World after this turn</h4><dl class="kv"><dt>Location</dt><dd>Laboratory</dd><dt>Carrying</dt><dd>spectacles, pipe wrench, brass key, grey fungus</dd></dl><details class="raw"><summary>Raw: the runner record and the authored card</summary><pre class="raw-json">{
+  &quot;schemaVersion&quot;: 2,
+  &quot;seq&quot;: 43,
+  &quot;elapsedMs&quot;: 455,
+  &quot;type&quot;: &quot;command-result&quot;,
+  &quot;file&quot;: &quot;laboratory · look&quot;,
+  &quot;line&quot;: 0,
+  &quot;input&quot;: &quot;look&quot;,
+  &quot;passed&quot;: true,
+  &quot;expectedFailure&quot;: false,
+  &quot;skipped&quot;: false,
+  &quot;actualOutput&quot;: &quot;Laboratory\nA long room lined with workbenches and glass-fronted cabinets. Everything is labeled in the same careful handwriting. The stairwell is north. A heavy door leads east to cold storage. At the south end, the floor has split open — a wound with smooth, glistening edges. A dark passage descends through it.&quot;,
+  &quot;turn&quot;: 16,
+  &quot;world&quot;: {
+    &quot;location&quot;: {
+      &quot;name&quot;: &quot;Laboratory&quot;,
+      &quot;token&quot;: &quot;lab&quot;
+    },
+    &quot;inventory&quot;: [
+      {
+        &quot;name&quot;: &quot;spectacles&quot;,
+        &quot;token&quot;: &quot;glasses&quot;
+      },
+      {
+        &quot;name&quot;: &quot;pipe wrench&quot;,
+        &quot;token&quot;: &quot;wrench&quot;
+      },
+      {
+        &quot;name&quot;: &quot;brass key&quot;,
+        &quot;token&quot;: &quot;key&quot;
+      },
+      {
+        &quot;name&quot;: &quot;grey fungus&quot;,
+        &quot;token&quot;: &quot;fungus&quot;
+      }
+    ]
+  },
+  &quot;assertionResults&quot;: [
+    {
+      &quot;description&quot;: &quot;contains \&quot;A dark passage descends through it.\&quot;&quot;,
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre><pre class="raw-json">{
+  &quot;type&quot;: &quot;turn&quot;,
+  &quot;command&quot;: &quot;look&quot;,
+  &quot;assertions&quot;: {
+    &quot;contains&quot;: [
+      &quot;A dark passage descends through it.&quot;
+    ]
+  }
+}</pre></details></div></details></div></details></li><li class="turn" data-status="pass"><details class="turn-detail" data-status="pass"><summary class="turn-row"><span class="turn-tcount">T:17</span><span class="turn-cmd">&gt; north</span><span class="turn-room">Stairwell</span><span class="turn-inv" title="spectacles, pipe wrench, brass key, grey fungus">4 carried</span><span class="turn-asserts"><span class="pass">&#10003; 1/1</span></span></summary><div class="turn-body"><pre class="turn-response"><span class="hl" data-asserts="0">Stairwell</span>
+Concrete steps descend to a landing. The air turns cold and damp. Pipes run along the ceiling, sweating with condensation. The trapdoor opens above. A passage continues south to the laboratory.</pre><details class="turn-extras"><summary class="turn-extras-summary">1 check &#10003; &middot; Stairwell &middot; 4 carried &middot; raw</summary><div class="turn-extras-body"><h4>Checks</h4><ul class="assertions"><li class="pass"><span class="kind">contains</span><span class="label">Stairwell</span><button type="button" class="match-toggle" data-assertion-idx="0">show</button></li></ul><h4>World after this turn</h4><dl class="kv"><dt>Location</dt><dd>Stairwell</dd><dt>Carrying</dt><dd>spectacles, pipe wrench, brass key, grey fungus</dd></dl><details class="raw"><summary>Raw: the runner record and the authored card</summary><pre class="raw-json">{
+  &quot;schemaVersion&quot;: 2,
+  &quot;seq&quot;: 44,
+  &quot;elapsedMs&quot;: 459,
+  &quot;type&quot;: &quot;command-result&quot;,
+  &quot;file&quot;: &quot;laboratory · look&quot;,
+  &quot;line&quot;: 0,
+  &quot;input&quot;: &quot;north&quot;,
+  &quot;passed&quot;: true,
+  &quot;expectedFailure&quot;: false,
+  &quot;skipped&quot;: false,
+  &quot;actualOutput&quot;: &quot;Stairwell\nConcrete steps descend to a landing. The air turns cold and damp. Pipes run along the ceiling, sweating with condensation. The trapdoor opens above. A passage continues south to the laboratory.&quot;,
+  &quot;turn&quot;: 17,
+  &quot;world&quot;: {
+    &quot;location&quot;: {
+      &quot;name&quot;: &quot;Stairwell&quot;,
+      &quot;token&quot;: &quot;stairs&quot;
+    },
+    &quot;inventory&quot;: [
+      {
+        &quot;name&quot;: &quot;spectacles&quot;,
+        &quot;token&quot;: &quot;glasses&quot;
+      },
+      {
+        &quot;name&quot;: &quot;pipe wrench&quot;,
+        &quot;token&quot;: &quot;wrench&quot;
+      },
+      {
+        &quot;name&quot;: &quot;brass key&quot;,
+        &quot;token&quot;: &quot;key&quot;
+      },
+      {
+        &quot;name&quot;: &quot;grey fungus&quot;,
+        &quot;token&quot;: &quot;fungus&quot;
+      }
+    ]
+  },
+  &quot;assertionResults&quot;: [
+    {
+      &quot;description&quot;: &quot;contains \&quot;Stairwell\&quot;&quot;,
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre><pre class="raw-json">{
+  &quot;type&quot;: &quot;turn&quot;,
+  &quot;command&quot;: &quot;north&quot;,
+  &quot;assertions&quot;: {
+    &quot;contains&quot;: [
+      &quot;Stairwell&quot;
+    ]
+  }
+}</pre></details></div></details></div></details></li><li class="turn" data-status="pass"><details class="turn-detail" data-status="pass"><summary class="turn-row"><span class="turn-tcount">T:18</span><span class="turn-cmd">&gt; examine pipes</span><span class="turn-room">Stairwell</span><span class="turn-inv" title="spectacles, pipe wrench, brass key, grey fungus">4 carried</span><span class="turn-asserts"><span class="pass">&#10003; 1/1</span></span></summary><div class="turn-body"><pre class="turn-response">Copper and iron pipes bundled with wire, running along the ceiling. Condensation beads on their surfaces. They pulse. The condensation is warm now, and slightly viscous. These are not pipes. <span class="hl" data-asserts="0">They have never been pipes.</span></pre><details class="turn-extras"><summary class="turn-extras-summary">1 check &#10003; &middot; Stairwell &middot; 4 carried &middot; raw</summary><div class="turn-extras-body"><h4>Checks</h4><ul class="assertions"><li class="pass"><span class="kind">contains</span><span class="label">They have never been pipes.</span><button type="button" class="match-toggle" data-assertion-idx="0">show</button></li></ul><h4>World after this turn</h4><dl class="kv"><dt>Location</dt><dd>Stairwell</dd><dt>Carrying</dt><dd>spectacles, pipe wrench, brass key, grey fungus</dd></dl><details class="raw"><summary>Raw: the runner record and the authored card</summary><pre class="raw-json">{
+  &quot;schemaVersion&quot;: 2,
+  &quot;seq&quot;: 45,
+  &quot;elapsedMs&quot;: 461,
+  &quot;type&quot;: &quot;command-result&quot;,
+  &quot;file&quot;: &quot;laboratory · look&quot;,
+  &quot;line&quot;: 0,
+  &quot;input&quot;: &quot;examine pipes&quot;,
+  &quot;passed&quot;: true,
+  &quot;expectedFailure&quot;: false,
+  &quot;skipped&quot;: false,
+  &quot;actualOutput&quot;: &quot;Copper and iron pipes bundled with wire, running along the ceiling. Condensation beads on their surfaces. They pulse. The condensation is warm now, and slightly viscous. These are not pipes. They have never been pipes.&quot;,
+  &quot;turn&quot;: 18,
+  &quot;world&quot;: {
+    &quot;location&quot;: {
+      &quot;name&quot;: &quot;Stairwell&quot;,
+      &quot;token&quot;: &quot;stairs&quot;
+    },
+    &quot;inventory&quot;: [
+      {
+        &quot;name&quot;: &quot;spectacles&quot;,
+        &quot;token&quot;: &quot;glasses&quot;
+      },
+      {
+        &quot;name&quot;: &quot;pipe wrench&quot;,
+        &quot;token&quot;: &quot;wrench&quot;
+      },
+      {
+        &quot;name&quot;: &quot;brass key&quot;,
+        &quot;token&quot;: &quot;key&quot;
+      },
+      {
+        &quot;name&quot;: &quot;grey fungus&quot;,
+        &quot;token&quot;: &quot;fungus&quot;
+      }
+    ]
+  },
+  &quot;assertionResults&quot;: [
+    {
+      &quot;description&quot;: &quot;contains \&quot;They have never been pipes.\&quot;&quot;,
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre><pre class="raw-json">{
+  &quot;type&quot;: &quot;turn&quot;,
+  &quot;command&quot;: &quot;examine pipes&quot;,
+  &quot;assertions&quot;: {
+    &quot;contains&quot;: [
+      &quot;They have never been pipes.&quot;
+    ]
+  }
+}</pre></details></div></details></div></details></li></ul></div></details><details class="test" id="line-5" data-status="pass"><summary class="test-summary"><span class="glyph pass">&#10003;</span><span class="test-name">cistern · read sign</span><span class="test-summary-meta">branch &middot; 3 cards &middot; 3/3 &#10003; &middot; 12 ms</span></summary><div class="test-body"><div class="line-note">Replays <a href="#line-0">opening-receiving-room</a> through T:16 <code>&gt; south</code> (16 commands replayed, none re-asserted), then diverges.</div><ul class="transcript"><li class="turn" data-status="pass"><details class="turn-detail" data-status="pass"><summary class="turn-row"><span class="turn-tcount">T:17</span><span class="turn-cmd">&gt; read sign</span><span class="turn-room">Cistern</span><span class="turn-inv" title="spectacles, pipe wrench, brass key, grey fungus">4 carried</span><span class="turn-asserts"><span class="pass">&#10003; 3/3</span></span></summary><div class="turn-body"><pre class="turn-response">CISTERN VALVE OPERATION — <span class="hl" data-asserts="0">LEFT: drains cistern to sublevel.</span> RIGHT: emergency flood (DO NOT OPERATE).
 
-A hiss from the cracked pipes overhead. Something cold and chemical settles on your skin, your eyes, your tongue. You blink. The letters on the sign shift. The walls flicker like a signal losing coherence.
+<span class="hl" data-asserts="1">A hiss from the cracked pipes overhead.</span> Something cold and chemical settles on your skin, your eyes, your tongue. You blink. The letters on the sign shift. The walls flicker like a signal losing coherence.
 
-When your vision steadies, the world has not returned to normal. It has gone further.</pre><ul class="asserts"><li class="pass">&#10003; contains &quot;LEFT: drains cistern to sublevel.&quot;</li><li class="pass">&#10003; contains &quot;A hiss from the cracked pipes overhead.&quot;</li><li class="pass">&#10003; state story.state = corruption</li></ul></article><article class="card pass"><div class="cmd">&#9989; &gt; examine valve</div><pre class="out">An ir0n valv3. It hs a handl you can trn l3ft or r1ght.</pre><ul class="asserts"><li class="pass">&#10003; contains &quot;An ir0n valv3.&quot;</li></ul></article><article class="card pass"><div class="cmd">&#9989; &gt; turn valve right</div><pre class="out">You turn the valve right. A deep groan echoes through the pipes.
+When your vision steadies, the world has not returned to normal. It has gone further.</pre><details class="turn-extras"><summary class="turn-extras-summary">3 checks &#10003; &middot; Cistern &middot; 4 carried &middot; raw</summary><div class="turn-extras-body"><h4>Checks</h4><ul class="assertions"><li class="pass"><span class="kind">contains</span><span class="label">LEFT: drains cistern to sublevel.</span><button type="button" class="match-toggle" data-assertion-idx="0">show</button></li><li class="pass"><span class="kind">contains</span><span class="label">A hiss from the cracked pipes overhead.</span><button type="button" class="match-toggle" data-assertion-idx="1">show</button></li><li class="pass"><span class="kind">state</span><span class="label">story.state = corruption</span></li></ul><h4>World after this turn</h4><dl class="kv"><dt>Location</dt><dd>Cistern</dd><dt>Carrying</dt><dd>spectacles, pipe wrench, brass key, grey fungus</dd></dl><details class="raw"><summary>Raw: the runner record and the authored card</summary><pre class="raw-json">{
+  &quot;schemaVersion&quot;: 2,
+  &quot;seq&quot;: 48,
+  &quot;elapsedMs&quot;: 532,
+  &quot;type&quot;: &quot;command-result&quot;,
+  &quot;file&quot;: &quot;cistern · read sign&quot;,
+  &quot;line&quot;: 0,
+  &quot;input&quot;: &quot;read sign&quot;,
+  &quot;passed&quot;: true,
+  &quot;expectedFailure&quot;: false,
+  &quot;skipped&quot;: false,
+  &quot;actualOutput&quot;: &quot;CISTERN VALVE OPERATION — LEFT: drains cistern to sublevel. RIGHT: emergency flood (DO NOT OPERATE).\n\nA hiss from the cracked pipes overhead. Something cold and chemical settles on your skin, your eyes, your tongue. You blink. The letters on the sign shift. The walls flicker like a signal losing coherence.\n\nWhen your vision steadies, the world has not returned to normal. It has gone further.&quot;,
+  &quot;turn&quot;: 17,
+  &quot;world&quot;: {
+    &quot;location&quot;: {
+      &quot;name&quot;: &quot;Cistern&quot;,
+      &quot;token&quot;: &quot;chamber&quot;
+    },
+    &quot;inventory&quot;: [
+      {
+        &quot;name&quot;: &quot;spectacles&quot;,
+        &quot;token&quot;: &quot;glasses&quot;
+      },
+      {
+        &quot;name&quot;: &quot;pipe wrench&quot;,
+        &quot;token&quot;: &quot;wrench&quot;
+      },
+      {
+        &quot;name&quot;: &quot;brass key&quot;,
+        &quot;token&quot;: &quot;key&quot;
+      },
+      {
+        &quot;name&quot;: &quot;grey fungus&quot;,
+        &quot;token&quot;: &quot;fungus&quot;
+      }
+    ]
+  },
+  &quot;assertionResults&quot;: [
+    {
+      &quot;description&quot;: &quot;contains \&quot;LEFT: drains cistern to sublevel.\&quot;&quot;,
+      &quot;passed&quot;: true
+    },
+    {
+      &quot;description&quot;: &quot;contains \&quot;A hiss from the cracked pipes overhead.\&quot;&quot;,
+      &quot;passed&quot;: true
+    },
+    {
+      &quot;description&quot;: &quot;state story.state = corruption&quot;,
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre><pre class="raw-json">{
+  &quot;type&quot;: &quot;turn&quot;,
+  &quot;command&quot;: &quot;read sign&quot;,
+  &quot;assertions&quot;: {
+    &quot;contains&quot;: [
+      &quot;LEFT: drains cistern to sublevel.&quot;,
+      &quot;A hiss from the cracked pipes overhead.&quot;
+    ],
+    &quot;states&quot;: [
+      &quot;story.state = corruption&quot;
+    ]
+  }
+}</pre></details></div></details></div></details></li><li class="turn" data-status="pass"><details class="turn-detail" data-status="pass"><summary class="turn-row"><span class="turn-tcount">T:18</span><span class="turn-cmd">&gt; examine valve</span><span class="turn-room">Cistern</span><span class="turn-inv" title="spectacles, pipe wrench, brass key, grey fungus">4 carried</span><span class="turn-asserts"><span class="pass">&#10003; 1/1</span></span></summary><div class="turn-body"><pre class="turn-response"><span class="hl" data-asserts="0">An ir0n valv3.</span> It hs a handl you can trn l3ft or r1ght.</pre><details class="turn-extras"><summary class="turn-extras-summary">1 check &#10003; &middot; Cistern &middot; 4 carried &middot; raw</summary><div class="turn-extras-body"><h4>Checks</h4><ul class="assertions"><li class="pass"><span class="kind">contains</span><span class="label">An ir0n valv3.</span><button type="button" class="match-toggle" data-assertion-idx="0">show</button></li></ul><h4>World after this turn</h4><dl class="kv"><dt>Location</dt><dd>Cistern</dd><dt>Carrying</dt><dd>spectacles, pipe wrench, brass key, grey fungus</dd></dl><details class="raw"><summary>Raw: the runner record and the authored card</summary><pre class="raw-json">{
+  &quot;schemaVersion&quot;: 2,
+  &quot;seq&quot;: 49,
+  &quot;elapsedMs&quot;: 538,
+  &quot;type&quot;: &quot;command-result&quot;,
+  &quot;file&quot;: &quot;cistern · read sign&quot;,
+  &quot;line&quot;: 0,
+  &quot;input&quot;: &quot;examine valve&quot;,
+  &quot;passed&quot;: true,
+  &quot;expectedFailure&quot;: false,
+  &quot;skipped&quot;: false,
+  &quot;actualOutput&quot;: &quot;An ir0n valv3. It hs a handl you can trn l3ft or r1ght.&quot;,
+  &quot;turn&quot;: 18,
+  &quot;world&quot;: {
+    &quot;location&quot;: {
+      &quot;name&quot;: &quot;Cistern&quot;,
+      &quot;token&quot;: &quot;chamber&quot;
+    },
+    &quot;inventory&quot;: [
+      {
+        &quot;name&quot;: &quot;spectacles&quot;,
+        &quot;token&quot;: &quot;glasses&quot;
+      },
+      {
+        &quot;name&quot;: &quot;pipe wrench&quot;,
+        &quot;token&quot;: &quot;wrench&quot;
+      },
+      {
+        &quot;name&quot;: &quot;brass key&quot;,
+        &quot;token&quot;: &quot;key&quot;
+      },
+      {
+        &quot;name&quot;: &quot;grey fungus&quot;,
+        &quot;token&quot;: &quot;fungus&quot;
+      }
+    ]
+  },
+  &quot;assertionResults&quot;: [
+    {
+      &quot;description&quot;: &quot;contains \&quot;An ir0n valv3.\&quot;&quot;,
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre><pre class="raw-json">{
+  &quot;type&quot;: &quot;turn&quot;,
+  &quot;command&quot;: &quot;examine valve&quot;,
+  &quot;assertions&quot;: {
+    &quot;contains&quot;: [
+      &quot;An ir0n valv3.&quot;
+    ]
+  }
+}</pre></details></div></details></div></details></li><li class="turn" data-status="pass"><details class="turn-detail" data-status="pass"><summary class="turn-row"><span class="turn-tcount">T:19</span><span class="turn-cmd">&gt; turn valve right</span><span class="turn-room">Cistern</span><span class="turn-inv" title="spectacles, pipe wrench, brass key, grey fungus">4 carried</span><span class="turn-asserts"><span class="pass">&#10003; 1/1</span></span></summary><div class="turn-body"><pre class="turn-response">You turn the valve right. A deep groan echoes through the pipes.
 
-The water surges in. It does not stop. It rises past your waist, your chest, your chin. The last thing you see is the ceiling, dark and receding.
+<span class="hl" data-asserts="0">The water surges in. It does not stop.</span> It rises past your waist, your chest, your chin. The last thing you see is the ceiling, dark and receding.
 
-The water fills the chamber. It does not stop.</pre><ul class="asserts"><li class="pass">&#10003; contains &quot;The water surges in. It does not stop.&quot;</li></ul></article></section>
-</div>
-
+The water fills the chamber. It does not stop.</pre><details class="turn-extras"><summary class="turn-extras-summary">1 check &#10003; &middot; Cistern &middot; 4 carried &middot; raw</summary><div class="turn-extras-body"><h4>Checks</h4><ul class="assertions"><li class="pass"><span class="kind">contains</span><span class="label">The water surges in. It does not stop.</span><button type="button" class="match-toggle" data-assertion-idx="0">show</button></li></ul><h4>World after this turn</h4><dl class="kv"><dt>Location</dt><dd>Cistern</dd><dt>Carrying</dt><dd>spectacles, pipe wrench, brass key, grey fungus</dd></dl><details class="raw"><summary>Raw: the runner record and the authored card</summary><pre class="raw-json">{
+  &quot;schemaVersion&quot;: 2,
+  &quot;seq&quot;: 50,
+  &quot;elapsedMs&quot;: 542,
+  &quot;type&quot;: &quot;command-result&quot;,
+  &quot;file&quot;: &quot;cistern · read sign&quot;,
+  &quot;line&quot;: 0,
+  &quot;input&quot;: &quot;turn valve right&quot;,
+  &quot;passed&quot;: true,
+  &quot;expectedFailure&quot;: false,
+  &quot;skipped&quot;: false,
+  &quot;actualOutput&quot;: &quot;You turn the valve right. A deep groan echoes through the pipes.\n\nThe water surges in. It does not stop. It rises past your waist, your chest, your chin. The last thing you see is the ceiling, dark and receding.\n\nThe water fills the chamber. It does not stop.&quot;,
+  &quot;turn&quot;: 19,
+  &quot;ending&quot;: &quot;defeat&quot;,
+  &quot;world&quot;: {
+    &quot;location&quot;: {
+      &quot;name&quot;: &quot;Cistern&quot;,
+      &quot;token&quot;: &quot;chamber&quot;
+    },
+    &quot;inventory&quot;: [
+      {
+        &quot;name&quot;: &quot;spectacles&quot;,
+        &quot;token&quot;: &quot;glasses&quot;
+      },
+      {
+        &quot;name&quot;: &quot;pipe wrench&quot;,
+        &quot;token&quot;: &quot;wrench&quot;
+      },
+      {
+        &quot;name&quot;: &quot;brass key&quot;,
+        &quot;token&quot;: &quot;key&quot;
+      },
+      {
+        &quot;name&quot;: &quot;grey fungus&quot;,
+        &quot;token&quot;: &quot;fungus&quot;
+      }
+    ]
+  },
+  &quot;assertionResults&quot;: [
+    {
+      &quot;description&quot;: &quot;contains \&quot;The water surges in. It does not stop.\&quot;&quot;,
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre><pre class="raw-json">{
+  &quot;type&quot;: &quot;turn&quot;,
+  &quot;command&quot;: &quot;turn valve right&quot;,
+  &quot;assertions&quot;: {
+    &quot;contains&quot;: [
+      &quot;The water surges in. It does not stop.&quot;
+    ]
+  }
+}</pre></details></div></details></div></details></li></ul></div></details></div></div>
+<script>
+(function () {
+  // "show" on a check highlights what it matched in the prose; radio-style per card.
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest && e.target.closest('.match-toggle');
+    if (!btn) return;
+    var turn = btn.closest('.turn-detail');
+    if (!turn) return;
+    var idx = btn.getAttribute('data-assertion-idx');
+    var wasActive = btn.classList.contains('active');
+    turn.querySelectorAll('.match-toggle.active').forEach(function (b) { b.classList.remove('active'); });
+    turn.querySelectorAll('.hl.hl-active').forEach(function (s) { s.classList.remove('hl-active'); });
+    if (wasActive) return;
+    btn.classList.add('active');
+    turn.querySelectorAll('.hl').forEach(function (span) {
+      var ids = (span.getAttribute('data-asserts') || '').split(' ');
+      if (ids.indexOf(idx) >= 0) span.classList.add('hl-active');
+    });
+  });
+  var all = function (sel) { return Array.prototype.slice.call(document.querySelectorAll(sel)); };
+  document.getElementById('expand-all').addEventListener('click', function () {
+    all('details').forEach(function (d) { d.open = true; });
+  });
+  document.getElementById('collapse-all').addEventListener('click', function () {
+    all('details').forEach(function (d) { d.open = false; });
+  });
+  document.getElementById('failures-only').addEventListener('change', function (e) {
+    document.body.classList.toggle('failures-only', e.target.checked);
+  });
+  var hint = document.getElementById('filter-hint');
+  document.getElementById('filter').addEventListener('input', function (e) {
+    var q = e.target.value.trim().toLowerCase();
+    var shown = 0, total = 0;
+    all('li.turn').forEach(function (li) {
+      total += 1;
+      var hit = !q || (li.textContent || '').toLowerCase().indexOf(q) >= 0;
+      li.classList.toggle('filtered-out', !hit);
+      if (hit) shown += 1;
+      if (hit && q.length >= 2) { var d = li.querySelector('details.turn-detail'); if (d) d.open = true; }
+    });
+    all('details.test').forEach(function (t) {
+      var visible = t.querySelectorAll('li.turn:not(.filtered-out)').length;
+      t.classList.toggle('filtered-out', !!q && !visible);
+      if (q && visible) t.open = true;
+    });
+    hint.textContent = q ? shown + ' of ' + total + ' cards match' : '';
+  });
+})();
+</script>
 <script src="theme-listener.js"></script>
 <script>
-ThemeListener.init({
-  buildCSS: function(g, sb) {
-    return 'body { background: ' + g.bodyBg + ' !important; color: ' + g.bufferFg + ' !important; }\n' +
-      'header, .meta { color: ' + g.gridFg + ' !important; border-color: ' + g.gridBg + ' !important; }\n' +
-      'pre, code { color: ' + g.bufferFg + ' !important; font-family: ' + g.monoFamily + ' !important; }\n' +
-      '.ln { color: ' + g.gridFg + ' !important; }\n' +
-      '.cmd { color: ' + g.inputFg + ' !important; }\n' +
+if (window.ThemeListener) ThemeListener.init({
+  buildCSS: function (g, sb) {
+    return ':root { --bg: ' + g.bodyBg + ' !important; --fg: ' + g.bufferFg + ' !important; --muted: ' + g.gridFg +
+      ' !important; --accent: ' + g.inputFg + ' !important; --code-bg: ' + g.bufferBg + ' !important; --line: ' + g.gridBg +
+      ' !important; --mono: ' + g.monoFamily + ' !important; }\n' +
+      'body { background: ' + g.bodyBg + ' !important; color: ' + g.bufferFg + ' !important; }\n' +
       '* { scrollbar-color: ' + sb.thumb + ' ' + sb.track + '; }\n';
   },
   dispatchResize: false
 });
 </script>
-
 </body>
 </html>
