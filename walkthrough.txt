@@ -7,7 +7,6 @@ x intake form
 read intake form
 x form
 x spectacles
-i
 x glasses
 take spectacles
 wear spectacles
@@ -18,7 +17,6 @@ down
 x sweating pipes
 x pipes
 x pipe wrench
-i
 x wrench
 take wrench
 south
@@ -34,13 +32,11 @@ x specimen jars
 x jars
 x metal cabinet
 look in metal cabinet
-look in metal cabinet
 x cabinet
 x glass dish
 read glass dish
 x dish
 x grey fungus
-i
 x fungus
 unlock cabinet with brass key
 open cabinet
@@ -124,5 +120,4 @@ down
 take membrane walls
 take stone basin
 score
-inventory
 touch basin

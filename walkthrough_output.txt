@@ -33,9 +33,6 @@ A carbon-copy form on the counter. Your name is written in a handwriting you do 
 > x spectacles
 Wire-rimmed with thick lenses. They feel heavier than they should.
 
-> i
-You aren't carrying anything.
-
 > x glasses
 Wire-rimmed with thick lenses. They feel heavier than they should.
 
@@ -71,11 +68,6 @@ Copper and iron pipes bundled with wire, running along the ceiling. Condensation
 
 > x pipe wrench
 Heavy steel with a rusted jaw. The grip is worn smooth.
-
-> i
-You are wearing:
-
-spectacles (worn)
 
 > x wrench
 Heavy steel with a rusted jaw. The grip is worn smooth.
@@ -124,9 +116,6 @@ Heavy metal, cold to the touch. A snowflake is embossed on the door.
 > look in metal cabinet
 The metal cabinet is closed.
 
-> look in metal cabinet
-The metal cabinet is closed.
-
 > x cabinet
 Heavy metal, cold to the touch. A snowflake is embossed on the door.
 
@@ -141,13 +130,6 @@ You can't see any such thing.
 
 > x grey fungus
 You can't see any such thing.
-
-> i
-You are carrying and wearing:
-
-a pipe wrench, brass key
-
-spectacles (worn)
 
 > x fungus
 You can't see any such thing.
@@ -430,11 +412,6 @@ The stone basin is fixed in place.
 
 > score
 This isn't that kind of game.
-
-> inventory
-You are carrying:
-
-a brass key
 
 > touch basin
 You reach in. It reaches back.

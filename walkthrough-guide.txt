@@ -7,7 +7,7 @@
 # to, and any verb the story defines itself. Refusals are coverage too
 # — taking scenery should fail, and the transcript records that it did.
 #
-# 8 of 8 rooms swept, 22 of 27 things exercised, 128 commands.
+# 8 of 8 rooms swept, 22 of 27 things exercised, 123 commands.
 #
 # Not exercised — held inside a closed thing, carried from the
 # start, or the player character itself: Depths, Patient, brass key, glass case, trapdoor.
@@ -23,7 +23,6 @@
 > read intake form
 > x form
 > x spectacles
-> i
 > x glasses
 > take spectacles
 > wear spectacles
@@ -40,7 +39,6 @@
 > x sweating pipes
 > x pipes
 > x pipe wrench
-> i
 > x wrench
 > take wrench
 
@@ -62,13 +60,11 @@
 > x jars
 > x metal cabinet
 > look in metal cabinet
-> look in metal cabinet
 > x cabinet
 > x glass dish
 > read glass dish
 > x dish
 > x grey fungus
-> i
 > x fungus
 > unlock cabinet with brass key
 > open cabinet
@@ -209,5 +205,4 @@
 > take membrane walls
 > take stone basin
 > score
-> inventory
 > touch basin
