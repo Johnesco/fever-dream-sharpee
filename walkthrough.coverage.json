@@ -1,0 +1,17 @@
+{
+  "generated": "derived from the story source",
+  "commands": 128,
+  "understood": 123,
+  "misses": 5,
+  "rooms_swept": 8,
+  "rooms_total": 8,
+  "things_covered": 22,
+  "things_total": 27,
+  "uncovered": [
+    "Depths",
+    "Patient",
+    "brass key",
+    "glass case",
+    "trapdoor"
+  ]
+}

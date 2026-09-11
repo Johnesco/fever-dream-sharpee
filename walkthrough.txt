@@ -1,18 +1,128 @@
+look
+x fluorescent tubes
+x tubes
+x long counter
+x counter
+x intake form
+read intake form
+x form
+x spectacles
+i
+x glasses
 take spectacles
 wear spectacles
 east
+x white tiles
+x tiles
 down
+x sweating pipes
+x pipes
+x pipe wrench
+i
+x wrench
 take wrench
 south
+x workbenches
+x benches
+x lab plaque
+read lab plaque
+x plaque
 read plaque
 break glass case with wrench
 east
+x specimen jars
+x jars
+x metal cabinet
+look in metal cabinet
+look in metal cabinet
+x cabinet
+x glass dish
+read glass dish
+x dish
+x grey fungus
+i
+x fungus
 unlock cabinet with brass key
 open cabinet
 take fungus
 west
 eat fungus
 south
+x dark water
+x water
+x iron valve
+x valve
+x instructional sign
+read instructional sign
+x sign
+x drainage grate
+x grate
 turn valve left
 down
+x membrane walls
+x walls
+x stone basin
+x basin
+up
+north
+north
+up
+east
+x reclining chair
+x chair
+x instrument trays
+x trays
+x faded note
+read faded note
+x note
+west
+west
+take fluorescent tubes
+take long counter
+take intake form
+wear spectacles
+take off spectacles
+take spectacles
+drop spectacles
+east
+take white tiles
+east
+take reclining chair
+take instrument trays
+take faded note
+west
+open trapdoor
+down
+take sweating pipes
+take pipe wrench
+drop pipe wrench
+south
+take workbenches
+take lab plaque
+east
+take specimen jars
+open metal cabinet
+close metal cabinet
+open metal cabinet
+unlock metal cabinet
+open metal cabinet
+open metal cabinet
+take metal cabinet
+take glass dish
+eat grey fungus
+take grey fungus
+drop grey fungus
+west
+south
+take dark water
+take iron valve
+draining iron valve
+take instructional sign
+take drainage grate
+open iron valve
+down
+take membrane walls
+take stone basin
+score
+inventory
 touch basin

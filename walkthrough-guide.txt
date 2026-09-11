@@ -1,0 +1,213 @@
+# fever-dream-sharpee — full-coverage walkthrough
+#
+# Not a completion walkthrough. It follows the solved path through the
+# story, and the first time the player stands in each room it exercises
+# every thing there the way that thing's traits allow: examine, read,
+# open and close, switch on and off, look inside, take and drop, talk
+# to, and any verb the story defines itself. Refusals are coverage too
+# — taking scenery should fail, and the transcript records that it did.
+#
+# 8 of 8 rooms swept, 22 of 27 things exercised, 128 commands.
+#
+# Not exercised — held inside a closed thing, carried from the
+# start, or the player character itself: Depths, Patient, brass key, glass case, trapdoor.
+
+## Receiving Room
+
+> look
+> x fluorescent tubes
+> x tubes
+> x long counter
+> x counter
+> x intake form
+> read intake form
+> x form
+> x spectacles
+> i
+> x glasses
+> take spectacles
+> wear spectacles
+
+## Corridor
+
+> east
+> x white tiles
+> x tiles
+
+## Stairwell
+
+> down
+> x sweating pipes
+> x pipes
+> x pipe wrench
+> i
+> x wrench
+> take wrench
+
+## Laboratory
+
+> south
+> x workbenches
+> x benches
+> x lab plaque
+> read lab plaque
+> x plaque
+> read plaque
+> break glass case with wrench
+
+## Cold Storage
+
+> east
+> x specimen jars
+> x jars
+> x metal cabinet
+> look in metal cabinet
+> look in metal cabinet
+> x cabinet
+> x glass dish
+> read glass dish
+> x dish
+> x grey fungus
+> i
+> x fungus
+> unlock cabinet with brass key
+> open cabinet
+> take fungus
+
+## Laboratory
+
+> west
+> eat fungus
+
+## Cistern
+
+> south
+> x dark water
+> x water
+> x iron valve
+> x valve
+> x instructional sign
+> read instructional sign
+> x sign
+> x drainage grate
+> x grate
+> turn valve left
+
+## Source
+
+> down
+> x membrane walls
+> x walls
+> x stone basin
+> x basin
+
+## Cistern
+
+> up
+
+## Laboratory
+
+> north
+
+## Stairwell
+
+> north
+
+## Corridor
+
+> up
+
+## Treatment Room
+
+> east
+> x reclining chair
+> x chair
+> x instrument trays
+> x trays
+> x faded note
+> read faded note
+> x note
+
+## Corridor
+
+> west
+
+## Receiving Room
+
+> west
+> take fluorescent tubes
+> take long counter
+> take intake form
+> wear spectacles
+> take off spectacles
+> take spectacles
+> drop spectacles
+
+## Corridor
+
+> east
+> take white tiles
+
+## Treatment Room
+
+> east
+> take reclining chair
+> take instrument trays
+> take faded note
+
+## Corridor
+
+> west
+> open trapdoor
+
+## Stairwell
+
+> down
+> take sweating pipes
+> take pipe wrench
+> drop pipe wrench
+
+## Laboratory
+
+> south
+> take workbenches
+> take lab plaque
+
+## Cold Storage
+
+> east
+> take specimen jars
+> open metal cabinet
+> close metal cabinet
+> open metal cabinet
+> unlock metal cabinet
+> open metal cabinet
+> open metal cabinet
+> take metal cabinet
+> take glass dish
+> eat grey fungus
+> take grey fungus
+> drop grey fungus
+
+## Laboratory
+
+> west
+
+## Cistern
+
+> south
+> take dark water
+> take iron valve
+> draining iron valve
+> take instructional sign
+> take drainage grate
+> open iron valve
+
+## Source
+
+> down
+> take membrane walls
+> take stone basin
+> score
+> inventory
+> touch basin
