@@ -107,7 +107,19 @@
     { "type": "turn", "command": "turn valve left",
       "assertions": { "contains": ["Metal screams against metal", "A hiss from the cracked pipes overhead."], "states": ["the iron valve is turned", "story.state = corruption"] } },
     { "type": "turn", "command": "down",
-      "assertions": { "contains": ["Source", "A low stone basin sits in the center"], "states": ["player.location = Source"] } },
+      "assertions": { "contains": ["Source", "A low stone basin sits in the center"], "states": ["player.location = Source"] },
+      "branches": [
+        { "branch": 6, "cards": [
+          { "type": "turn", "command": "touch basin",
+            "assertions": { "contains": ["You reach in. It reaches back.", "The treatment is complete."] } },
+          { "type": "turn", "command": "look",
+            "assertions": { "contains": ["The game has ended"] } },
+          { "type": "turn", "command": "restart",
+            "assertions": { "contains": ["The story restarts."] } },
+          { "type": "turn", "command": "look",
+            "assertions": { "contains": ["Receiving Room"], "notContains": ["The game has ended"] } }
+        ] }
+      ] },
     { "type": "turn", "command": "touch basin",
       "assertions": { "contains": ["You reach in. It reaches back.", "The treatment is complete."] } }
   ]
