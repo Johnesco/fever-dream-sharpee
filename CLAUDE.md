@@ -121,6 +121,7 @@ ADRs live in `docs/adr/` once the first one exists (index: `docs/adr/README.md`)
 ## Project History
 
 ### Recent Changes
+- 2026-09-21: The Laboratory names the glass case again (#3). The translation had dropped the Inform 7 `[glass-case-status]` line, so the case was invisible scenery; it also answers to glass, cabinet and glass cabinet now.
 - 2026-09-21: Mood overlay clarity state (#2): the fungus transition, clarity palettes, decay and vignette.
 - 2026-09-21: Mood overlay phase 1 (#2, ADR 0001): zone palettes from the Inform 7 edition and the glass-break effect, signalled from the story through the `transition` channel.
 - 2026-09-08: Translated to Chord. The TypeScript edition moved to `legacy/`; the sound files moved to `assets/sfx/`; `package.json`, `src/`, and `browser/` came from a fresh `sharpee init`. The fungus now prints its perception text on eating, which the TypeScript edition's transcripts had marked as a known bug.

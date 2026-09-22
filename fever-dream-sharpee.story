@@ -77,6 +77,13 @@ create the Laboratory
   is labeled in the same careful handwriting. The stairwell is north. A heavy
   door leads east to cold storage.
 
+  phrase detail while the glass case is intact and the glass case is in the Laboratory:
+    One of the glass cases, mounted on the far wall, holds something you
+    missed before: a brass key, suspended on a wire inside the glass.
+
+  phrase detail while the glass case is shattered:
+    You see the shattered remains of the glass case.
+
   phrase detail while not normal:
     At the south end, the floor has split open — a wound with smooth,
     glistening edges. A dark passage descends through it.
@@ -321,7 +328,7 @@ create the lab plaque
   end on
 
 create the glass case
-  aka case, display case
+  aka case, display case, display, glass, cabinet, glass cabinet
   scenery, breakable
   states: intact, shattered
 

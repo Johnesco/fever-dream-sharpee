@@ -1,3 +1,225 @@
-/* An interactive fiction adventure — author stylesheet.
+/* Fever Dream — author stylesheet.
  * Loaded after the platform CSS, so any rule here overrides the defaults.
- * Add your own styles below. */
+ *
+ * Mood overlay (docs/adr/0001, issue #2). src/mood.ts sets data-mood-zone on
+ * <html> from the room name; the story's `transition glass` puts
+ * transition-glass on .sharpee-window. Palettes are ported from the Inform 7
+ * edition and apply to the default theme only: a theme the player picks wins,
+ * and the hub's !important override wins over both. */
+
+/* Registered so the palette fades between rooms instead of snapping. */
+@property --theme-bg         { syntax: '<color>'; inherits: true; initial-value: #1e1e2e; }
+@property --theme-bg-alt     { syntax: '<color>'; inherits: true; initial-value: #181825; }
+@property --theme-text       { syntax: '<color>'; inherits: true; initial-value: #cdd6f4; }
+@property --theme-text-muted { syntax: '<color>'; inherits: true; initial-value: #a6adc8; }
+@property --theme-accent     { syntax: '<color>'; inherits: true; initial-value: #89b4fa; }
+@property --theme-border     { syntax: '<color>'; inherits: true; initial-value: #313244; }
+@property --theme-menu-bg    { syntax: '<color>'; inherits: true; initial-value: #181825; }
+
+html[data-theme="modern-dark"][data-mood-zone] {
+  transition:
+    --theme-bg 1.2s ease-in-out,
+    --theme-bg-alt 1.2s ease-in-out,
+    --theme-text 1.2s ease-in-out,
+    --theme-text-muted 1.2s ease-in-out,
+    --theme-accent 1.2s ease-in-out,
+    --theme-border 1.2s ease-in-out,
+    --theme-menu-bg 1.2s ease-in-out;
+}
+
+/* ── Zone palettes ─────────────────────────────────────────────── */
+
+html[data-theme="modern-dark"][data-mood-zone="ward"] {
+  --theme-bg: #0e0e12; --theme-text: #c0beb8; --theme-bg-alt: #161420; --theme-text-muted: #808090;
+  --theme-accent: #9098b0; --theme-border: #1e1e28; --theme-menu-bg: #161420; --theme-accent-text: #0e0e12;
+}
+html[data-theme="modern-dark"][data-mood-zone="treatment"] {
+  --theme-bg: #140c0c; --theme-text: #d0b0a8; --theme-bg-alt: #1e1410; --theme-text-muted: #906858;
+  --theme-accent: #c08060; --theme-border: #281810; --theme-menu-bg: #1e1410; --theme-accent-text: #140c0c;
+}
+html[data-theme="modern-dark"][data-mood-zone="basement"] {
+  --theme-bg: #0a0e14; --theme-text: #a8b8c8; --theme-bg-alt: #101820; --theme-text-muted: #607888;
+  --theme-accent: #5888a8; --theme-border: #141e28; --theme-menu-bg: #101820; --theme-accent-text: #0a0e14;
+}
+html[data-theme="modern-dark"][data-mood-zone="laboratory"] {
+  --theme-bg: #0c120c; --theme-text: #a8c8a0; --theme-bg-alt: #142010; --theme-text-muted: #608858;
+  --theme-accent: #68a850; --theme-border: #182810; --theme-menu-bg: #142010; --theme-accent-text: #0c120c;
+}
+html[data-theme="modern-dark"][data-mood-zone="coldstorage"] {
+  --theme-bg: #0a0c18; --theme-text: #a8acd0; --theme-bg-alt: #101428; --theme-text-muted: #586898;
+  --theme-accent: #5868c0; --theme-border: #141838; --theme-menu-bg: #101428; --theme-accent-text: #0a0c18;
+}
+html[data-theme="modern-dark"][data-mood-zone="cistern"] {
+  --theme-bg: #161008; --theme-text: #d0b880; --theme-bg-alt: #201808; --theme-text-muted: #907040;
+  --theme-accent: #c89830; --theme-border: #282008; --theme-menu-bg: #201808; --theme-accent-text: #161008;
+}
+html[data-theme="modern-dark"][data-mood-zone="source"] {
+  --theme-bg: #181408; --theme-text: #d8c880; --theme-bg-alt: #241c08; --theme-text-muted: #a88830;
+  --theme-accent: #e0b028; --theme-border: #302808; --theme-menu-bg: #241c08; --theme-accent-text: #181408;
+}
+
+/* ── Glass break: screen shake + shards (shards spawned by src/mood.ts) ── */
+
+@keyframes fd-screen-shake {
+  0%   { transform: translate(0, 0); }
+  10%  { transform: translate(-4px, 2px); }
+  20%  { transform: translate(5px, -3px); }
+  30%  { transform: translate(-3px, 4px); }
+  40%  { transform: translate(4px, -2px); }
+  50%  { transform: translate(-2px, 3px); }
+  60%  { transform: translate(3px, -1px); }
+  70%  { transform: translate(-1px, 2px); }
+  80%  { transform: translate(2px, -1px); }
+  90%  { transform: translate(-1px, 1px); }
+  100% { transform: translate(0, 0); }
+}
+
+.sharpee-window.transition-glass {
+  animation: fd-screen-shake 0.6s ease-out;
+}
+
+@keyframes fd-shard-fall {
+  0%   { opacity: 1; transform: translate(0, 0) rotate(0deg); }
+  100% { opacity: 0; transform: translate(var(--sx), var(--sy)) rotate(var(--sr)); }
+}
+
+.fd-glass-shard {
+  position: fixed;
+  width: var(--shard-w, 4px);
+  height: var(--shard-h, 8px);
+  background: linear-gradient(135deg, rgba(200, 220, 240, 0.8), rgba(140, 170, 200, 0.4));
+  clip-path: polygon(20% 0%, 100% 10%, 80% 100%, 0% 90%);
+  pointer-events: none;
+  z-index: 10003;
+  animation: fd-shard-fall var(--shard-dur, 1s) ease-out forwards;
+}
+
+/* ── Fungus eaten: hue ripple + amber flash (2.5s) ─────────────── */
+
+@keyframes fd-fungus-ripple {
+  0%   { filter: hue-rotate(0deg) saturate(1); }
+  20%  { filter: hue-rotate(30deg) saturate(1.4); }
+  40%  { filter: hue-rotate(-20deg) saturate(1.2); }
+  60%  { filter: hue-rotate(15deg) saturate(1.1); }
+  80%  { filter: hue-rotate(-5deg) saturate(1.05); }
+  100% { filter: hue-rotate(0deg) saturate(1); }
+}
+
+@keyframes fd-fungus-flash {
+  0%   { opacity: 0; }
+  15%  { opacity: 0.3; }
+  40%  { opacity: 0.15; }
+  100% { opacity: 0; }
+}
+
+.sharpee-window.transition-fungus {
+  animation: fd-fungus-ripple 2.5s ease-in-out;
+}
+
+.sharpee-window.transition-fungus::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgba(200, 160, 60, 0.4) 0%, rgba(160, 120, 40, 0.2) 40%, transparent 70%);
+  pointer-events: none;
+  z-index: 10003;
+  animation: fd-fungus-flash 2.5s ease-out forwards;
+}
+
+/* ── Clarity (after the fungus): warmer palettes where the Inform 7 edition
+      had them; the Cistern and the Source keep their own. ───────────────── */
+
+html[data-theme="modern-dark"][data-perception="clarity"][data-mood-zone="ward"] {
+  --theme-bg: #12100a; --theme-text: #c8c0a0; --theme-bg-alt: #1c1810; --theme-text-muted: #8a8060;
+  --theme-accent: #b0a068; --theme-border: #242018; --theme-menu-bg: #1c1810; --theme-accent-text: #12100a;
+}
+html[data-theme="modern-dark"][data-perception="clarity"][data-mood-zone="treatment"] {
+  --theme-bg: #140e0a; --theme-text: #d0b8a0; --theme-bg-alt: #201810; --theme-text-muted: #8a7050;
+  --theme-accent: #b88848; --theme-border: #281c10; --theme-menu-bg: #201810; --theme-accent-text: #140e0a;
+}
+html[data-theme="modern-dark"][data-perception="clarity"][data-mood-zone="basement"] {
+  --theme-bg: #0e100c; --theme-text: #b0b8a0; --theme-bg-alt: #141a10; --theme-text-muted: #688058;
+  --theme-accent: #80a060; --theme-border: #1c2410; --theme-menu-bg: #141a10; --theme-accent-text: #0e100c;
+}
+html[data-theme="modern-dark"][data-perception="clarity"][data-mood-zone="laboratory"] {
+  --theme-bg: #101408; --theme-text: #b8c898; --theme-bg-alt: #182008; --theme-text-muted: #6a8848;
+  --theme-accent: #88a840; --theme-border: #202808; --theme-menu-bg: #182008; --theme-accent-text: #101408;
+}
+html[data-theme="modern-dark"][data-perception="clarity"][data-mood-zone="coldstorage"] {
+  --theme-bg: #0e0e14; --theme-text: #b0b0c0; --theme-bg-alt: #141420; --theme-text-muted: #687088;
+  --theme-accent: #6880a8; --theme-border: #1c1c28; --theme-menu-bg: #141420; --theme-accent-text: #0e0e14;
+}
+
+/* Clarity decay: ramps up over ~10s, peaks at ~15s, settles by 40s into a
+   mild permanent altered state. Applies under every theme, like the shake. */
+@keyframes fd-clarity-decay {
+  0% {
+    filter: blur(0.5px) hue-rotate(5deg) saturate(1.1);
+    letter-spacing: 0.5px; word-spacing: 1px;
+    text-shadow: -0.5px 0 rgba(200, 140, 40, 0.1), 0.5px 0 rgba(80, 160, 60, 0.08);
+    transform: skewX(0deg) translateX(0) rotate(0deg);
+  }
+  25% {
+    filter: blur(2px) hue-rotate(40deg) saturate(1.6);
+    letter-spacing: 3px; word-spacing: 5px;
+    text-shadow: -1.5px 0 rgba(200, 140, 40, 0.35), 1.5px 0 rgba(80, 160, 60, 0.25), 0 1px rgba(160, 100, 180, 0.2);
+    transform: skewX(0.4deg) translateX(3px) rotate(-0.3deg);
+  }
+  40% {
+    filter: blur(3px) hue-rotate(65deg) saturate(2);
+    letter-spacing: 6px; word-spacing: 10px;
+    text-shadow: -2.5px 0 rgba(200, 140, 40, 0.5), 2.5px 0 rgba(80, 160, 60, 0.4), 0 1.5px rgba(160, 100, 180, 0.3);
+    transform: skewX(-0.5deg) translateX(-4px) rotate(0.4deg);
+  }
+  70% {
+    filter: blur(1px) hue-rotate(18deg) saturate(1.2);
+    letter-spacing: 1px; word-spacing: 1.5px;
+    text-shadow: -0.6px 0 rgba(200, 140, 40, 0.12), 0.6px 0 rgba(80, 160, 60, 0.08);
+    transform: skewX(0.1deg) translateX(0.5px) rotate(-0.05deg);
+  }
+  100% {
+    filter: blur(0.3px) hue-rotate(8deg) saturate(1.1);
+    letter-spacing: 0.3px; word-spacing: 0.5px;
+    text-shadow: -0.4px 0 rgba(180, 120, 40, 0.08), 0.4px 0 rgba(80, 140, 60, 0.05);
+    transform: skewX(0deg) translateX(0) rotate(0deg);
+  }
+}
+
+@keyframes fd-clarity-vignette {
+  0% {
+    box-shadow: inset 0 0 60px 15px rgba(160, 120, 40, 0.06), inset 0 0 120px 30px rgba(140, 100, 30, 0.03);
+  }
+  40% {
+    box-shadow: inset 0 0 100px 35px rgba(160, 120, 40, 0.35), inset 0 0 200px 60px rgba(140, 100, 30, 0.2),
+                inset 0 0 300px 80px rgba(120, 80, 20, 0.1);
+  }
+  100% {
+    box-shadow: inset 0 0 60px 15px rgba(160, 120, 40, 0.08), inset 0 0 120px 30px rgba(140, 100, 30, 0.04);
+  }
+}
+
+html[data-perception="clarity"] #text-content {
+  animation: fd-clarity-decay 40s ease-in-out forwards;
+  transform-origin: top center;
+}
+
+html[data-perception="clarity"] .sharpee-window::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10000;
+  animation: fd-clarity-vignette 40s ease-in-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sharpee-window.transition-glass,
+  .sharpee-window.transition-fungus,
+  .sharpee-window.transition-fungus::before { animation: none; }
+  html[data-perception="clarity"] #text-content { animation: none; }
+  html[data-perception="clarity"] .sharpee-window::after {
+    animation: none;
+    box-shadow: inset 0 0 60px 15px rgba(160, 120, 40, 0.08), inset 0 0 120px 30px rgba(140, 100, 30, 0.04);
+  }
+  html[data-theme="modern-dark"][data-mood-zone] { transition: none; }
+}
