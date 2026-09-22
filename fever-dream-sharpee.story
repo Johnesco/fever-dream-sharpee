@@ -390,6 +390,7 @@ create the grey fungus
   after the player eating
     change the story to clarity
     play sound fungus-eat when client has sound
+    emit media-transition with kind "fungus" and durationMs 2500 when client has transitions
     phrase fungus-consumed
       It tastes of nothing. Then of everything. The walls ripple once and
       settle into new shapes. You understand, now, that this is not
@@ -540,6 +541,7 @@ define trait breakable
     change it to shattered
     move the brass key to the Patient
     play sound glass-break when client has sound
+    emit media-transition with kind "glass" and durationMs 1500 when client has transitions
     phrase break-glass
       You swing the wrench. The glass shatters cleanly. The brass key drops
       into your hand.

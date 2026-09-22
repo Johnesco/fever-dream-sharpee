@@ -61,7 +61,8 @@
     { "type": "turn", "command": "read plaque",
       "assertions": { "contains": ["LEFT drains. RIGHT floods."] } },
     { "type": "turn", "command": "break glass case with wrench",
-      "assertions": { "contains": ["The glass shatters cleanly. The brass key drops into your hand."], "states": ["the glass case is shattered", "player.inventory contains brass key"] },
+      "assertions": { "contains": ["The glass shatters cleanly. The brass key drops into your hand."], "states": ["the glass case is shattered", "player.inventory contains brass key"],
+                      "channels": [{ "id": "transition.kind", "is": "glass" }] },
       "branches": [
         { "branch": 3, "cards": [
           { "type": "turn", "command": "break case",
@@ -81,7 +82,8 @@
     { "type": "turn", "command": "west",
       "assertions": { "contains": ["Laboratory"] } },
     { "type": "turn", "command": "eat fungus",
-      "assertions": { "contains": ["You eat the grey fungus.", "This is clarity.", "The floor at the south end of the laboratory splits open."], "states": ["story.state = clarity"] },
+      "assertions": { "contains": ["You eat the grey fungus.", "This is clarity.", "The floor at the south end of the laboratory splits open."], "states": ["story.state = clarity"],
+                      "channels": [{ "id": "transition.kind", "is": "fungus" }] },
       "branches": [
         { "branch": 4, "cards": [
           { "type": "turn", "command": "look",

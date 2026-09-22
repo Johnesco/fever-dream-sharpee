@@ -22,6 +22,10 @@ import { STORY_VERSION, BUILD_DATE } from './version.js';
 import { hatchModules } from './hatch-modules.js';
 // The compiled story, generated beside this file at build time the same way.
 import { storyIR } from './story-ir.js';
+// custom-entry: the page-side mood overlay (docs/adr/0001, issue #2). The only
+// change from the devkit template is this import and the startMood() call after
+// client.initialize(). Re-check both against the template after every engine bump.
+import { startMood } from './mood.js';
 
 const THEME_STORAGE_KEY = 'fever-dream-sharpee-theme';
 ThemeManager.applyEarlyTheme(THEME_STORAGE_KEY);
@@ -170,6 +174,7 @@ async function start(): Promise<void> {
       startupSaveInfo: document.getElementById('startup-save-info'),
       menuBar: document.getElementById('menu-bar'),
     });
+    startMood();
   }
 
   const world = new WorldModel();
