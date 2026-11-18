@@ -1,0 +1,42 @@
+{
+  "cards": [
+    {
+      "assertions": {
+        "contains": [
+          "Taken."
+        ],
+        "states": [
+          "player.inventory contains pipe wrench"
+        ]
+      },
+      "command": "take wrench",
+      "id": "xvlowi0w",
+      "type": "turn"
+    },
+    {
+      "assertions": {
+        "contains": [
+          "Laboratory",
+          "A heavy door leads east to cold storage.",
+          "One of the glass cases, mounted on the far wall, holds something you missed before"
+        ]
+      },
+      "command": "south",
+      "id": "lk6fz78d",
+      "type": "turn"
+    },
+    {
+      "assertions": {
+        "contains": [
+          "LEFT drains. RIGHT floods."
+        ]
+      },
+      "command": "read plaque",
+      "id": "xwkz0r7n",
+      "type": "turn"
+    }
+  ],
+  "id": "ge12yzxa",
+  "ordinal": 0,
+  "parent": "4n3hz3os"
+}

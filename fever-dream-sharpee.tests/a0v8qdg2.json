@@ -1,0 +1,42 @@
+{
+  "cards": [
+    {
+      "assertions": {
+        "contains": [
+          "LEFT: drains cistern to sublevel.",
+          "A hiss from the cracked pipes overhead."
+        ],
+        "states": [
+          "story.state = corruption"
+        ]
+      },
+      "command": "read sign",
+      "id": "3ufa4out",
+      "type": "turn"
+    },
+    {
+      "assertions": {
+        "contains": [
+          "An ir0n valv3."
+        ]
+      },
+      "command": "examine valve",
+      "id": "gy0pfb8v",
+      "type": "turn"
+    },
+    {
+      "assertions": {
+        "contains": [
+          "The water surges in. It does not stop."
+        ]
+      },
+      "command": "turn valve right",
+      "ending": "valve-right",
+      "id": "okvskc7t",
+      "type": "turn"
+    }
+  ],
+  "id": "a0v8qdg2",
+  "ordinal": 1,
+  "parent": "m2i4lehy"
+}

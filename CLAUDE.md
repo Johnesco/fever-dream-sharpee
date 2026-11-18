@@ -35,7 +35,7 @@ fever-dream-sharpee/
 ├── CLAUDE.md                        THIS FILE
 ├── README.md                        public documentation
 ├── fever-dream-sharpee.story        the game, one Chord file
-├── fever-dream-sharpee.tests.json   tests document: the walkthrough plus branches for the gates and the death
+├── fever-dream-sharpee.tests/      tests document: the walkthrough plus branches for the gates and the death
 ├── fever-dream-sharpee.config.json  IFID
 ├── ifhub.conf                       the IF Hub card
 ├── assets/sfx/*.ogg                 the eight sound cues from the Inform 7 original
@@ -55,7 +55,7 @@ Built output at the root (`play.html`, `game.js`, `*.css`, `lib/`, `sfx/`, `sour
 - Perception is the story's own state: `states: normal, clarity, corruption`, one-way. Eating the fungus moves it to clarity; the spray in the cistern moves it to corruption.
 - Prose that the TypeScript rewrote in place is expressed two ways. Things the player examines carry `on the player examining` with one `phrase … when <state>` per state, which replaces the description. Rooms and scenery that only gain text carry `phrase detail while <state>:`, which appends to it.
 - The spray fires one turn after the first entry to the cistern (`define sequence the spray exposure`), so the "chamber is alive" description is seen once before corruption takes it. The TypeScript fired it on entry and the clarity text was never shown.
-- Story verbs (`breaking`, `draining`, `flooding`) dispatch through traits (`breakable`, `drainable`), not entity clauses; the loader refuses entity `on` clauses for story-defined actions. `turn valve` with no direction goes to the standard `turning` and prints the hint.
+- Story verbs (`smashing`, `draining`, `flooding`) dispatch through traits (`smashable`, `drainable`), not entity clauses; the loader refuses entity `on` clauses for story-defined actions. `turn valve` with no direction goes to the standard `turning` and prints the hint.
 - The trapdoor, the glass case, and the brass key start out of play and are moved into the world when the spectacles are worn or the case breaks. Chord has no "concealed" flag.
 - The cabinet needs `starts locked`; `lockable with` alone leaves a container unlocked.
 - Transformed names from the TypeScript (crouching thing, bone shelves, arteries, organs, iron ribcage) survive as aliases, since Chord cannot rename an entity.
@@ -68,7 +68,7 @@ Built output at the root (`play.html`, `game.js`, `*.css`, `lib/`, `sfx/`, `sour
 - [x] All eight rooms, three levels, the region ambient drone in the depths
 - [x] Spectacles gate, wrench and glass case, locked cabinet, fungus, valve, basin
 - [x] Three perception states across rooms, scenery, the sign, the water, the valve, the walls, the basin
-- [x] Eight sound cues wired with `play sound … when client has sound`
+- [x] Eight sound cues wired with `play sound`
 - [x] Tests document ported from the five transcripts and the walkthrough
 - [x] Mood overlay, phase 1 (#2): room zone palettes, glass-break shake and shards
 - [x] Mood overlay, clarity (#2): fungus ripple and flash, then warmer palettes, a 40s text decay and a vignette. The page latches clarity when it sees the transition, so a restore or restart does not carry or clear it (deferred while restart is in flux).
@@ -121,6 +121,7 @@ ADRs live in `docs/adr/` once the first one exists (index: `docs/adr/README.md`)
 ## Project History
 
 ### Recent Changes
+- 2026-11-18 (#4): moved to the current engine and the Chord 4 language. Kinds lead every block; the Cistern and the Source say `in the Depths`; `play sound` no longer takes `when client has sound`. `breaking` and `breakable` are platform words now, so the story's verb is `smashing` on a `smashable` trait, and BREAK / SMASH / HIT are released from the standard attacking action with `remove from action attacking`. The fungus sound moved to a one-time rule in the story header: an eaten thing leaves the world, and `play sound` from a thing that has left fails the turn. `src/browser-entry.ts` was re-derived with the mood hook kept. The tests document is the `fever-dream-sharpee.tests/` directory; the eat card now asserts the sound event. 45 cards, 92 assertions, both endings reached. Built, not yet shipped; the mood overlay has not been re-checked in a browser.
 - 2026-09-21: The Laboratory names the glass case again (#3). The translation had dropped the Inform 7 `[glass-case-status]` line, so the case was invisible scenery; it also answers to glass, cabinet and glass cabinet now.
 - 2026-09-21: Mood overlay clarity state (#2): the fungus transition, clarity palettes, decay and vignette.
 - 2026-09-21: Mood overlay phase 1 (#2, ADR 0001): zone palettes from the Inform 7 edition and the glass-break effect, signalled from the story through the `transition` channel.

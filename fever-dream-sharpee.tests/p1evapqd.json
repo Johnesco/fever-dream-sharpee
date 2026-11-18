@@ -1,0 +1,31 @@
+{
+  "cards": [
+    {
+      "assertions": {
+        "contains": [
+          "A small display case mounted on the wall."
+        ]
+      },
+      "command": "x cabinet",
+      "id": "ozy7qdsn",
+      "type": "turn"
+    },
+    {
+      "assertions": {
+        "contains": [
+          "The glass shatters cleanly."
+        ],
+        "states": [
+          "the glass case is shattered",
+          "player.inventory contains brass key"
+        ]
+      },
+      "command": "break glass cabinet with wrench",
+      "id": "ojz1ueam",
+      "type": "turn"
+    }
+  ],
+  "id": "p1evapqd",
+  "ordinal": 1,
+  "parent": "ge12yzxa"
+}

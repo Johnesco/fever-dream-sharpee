@@ -1,0 +1,19 @@
+{
+  "cards": [
+    {
+      "assertions": {
+        "contains": [
+          "You reach in. It reaches back.",
+          "The treatment is complete."
+        ]
+      },
+      "command": "touch basin",
+      "ending": "basin-touch",
+      "id": "49eanp3j",
+      "type": "turn"
+    }
+  ],
+  "id": "x09d2xt2",
+  "ordinal": 0,
+  "parent": "2c4eblml"
+}

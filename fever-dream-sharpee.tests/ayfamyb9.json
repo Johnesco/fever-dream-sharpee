@@ -1,0 +1,53 @@
+{
+  "cards": [
+    {
+      "assertions": {
+        "contains": [
+          "Laboratory"
+        ]
+      },
+      "command": "south",
+      "id": "co3pc6ja",
+      "type": "turn"
+    },
+    {
+      "assertions": {
+        "contains": [
+          "You rap your knuckles against the glass."
+        ],
+        "states": [
+          "the glass case is intact"
+        ]
+      },
+      "command": "break case",
+      "id": "vvahd7pg",
+      "type": "turn"
+    },
+    {
+      "assertions": {
+        "contains": [
+          "Violence will not help here."
+        ]
+      },
+      "command": "smash workbenches",
+      "id": "vubbdr1e",
+      "type": "turn"
+    },
+    {
+      "assertions": {
+        "contains": [
+          "The south wall is solid. There is no exit that way."
+        ],
+        "states": [
+          "player.location = Laboratory"
+        ]
+      },
+      "command": "south",
+      "id": "7eidyzm6",
+      "type": "turn"
+    }
+  ],
+  "id": "ayfamyb9",
+  "ordinal": 1,
+  "parent": "4n3hz3os"
+}

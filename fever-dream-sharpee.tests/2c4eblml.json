@@ -1,0 +1,36 @@
+{
+  "cards": [
+    {
+      "assertions": {
+        "contains": [
+          "Metal screams against metal",
+          "A hiss from the cracked pipes overhead."
+        ],
+        "states": [
+          "the iron valve is turned",
+          "story.state = corruption"
+        ]
+      },
+      "command": "turn valve left",
+      "id": "pc5fi7x6",
+      "type": "turn"
+    },
+    {
+      "assertions": {
+        "contains": [
+          "Source",
+          "A low stone basin sits in the center"
+        ],
+        "states": [
+          "player.location = Source"
+        ]
+      },
+      "command": "down",
+      "id": "9w8qle87",
+      "type": "turn"
+    }
+  ],
+  "id": "2c4eblml",
+  "ordinal": 0,
+  "parent": "m2i4lehy"
+}

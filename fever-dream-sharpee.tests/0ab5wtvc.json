@@ -1,0 +1,86 @@
+{
+  "cards": [
+    {
+      "assertions": {
+        "contains": [
+          "Cold Storage",
+          "marked with a snowflake"
+        ]
+      },
+      "command": "east",
+      "id": "kn8dgtpf",
+      "type": "turn"
+    },
+    {
+      "assertions": {
+        "contains": [
+          "You unlock the metal cabinet with the brass key."
+        ]
+      },
+      "command": "unlock cabinet with brass key",
+      "id": "uienqca6",
+      "type": "turn"
+    },
+    {
+      "assertions": {
+        "contains": [
+          "You open the metal cabinet.",
+          "a glass dish and a grey fungus"
+        ]
+      },
+      "command": "open cabinet",
+      "id": "j024dl29",
+      "type": "turn"
+    },
+    {
+      "assertions": {
+        "contains": [
+          "You take the grey fungus from the metal cabinet."
+        ],
+        "states": [
+          "player.inventory contains grey fungus"
+        ]
+      },
+      "command": "take fungus",
+      "id": "c7jec07t",
+      "type": "turn"
+    },
+    {
+      "assertions": {
+        "contains": [
+          "Laboratory"
+        ]
+      },
+      "command": "west",
+      "id": "y93r93nw",
+      "type": "turn"
+    },
+    {
+      "assertions": {
+        "channels": [
+          {
+            "id": "transition.kind",
+            "is": "fungus"
+          }
+        ],
+        "contains": [
+          "You eat the grey fungus.",
+          "This is clarity.",
+          "The floor at the south end of the laboratory splits open."
+        ],
+        "events": [
+          "sound.emitted"
+        ],
+        "states": [
+          "story.state = clarity"
+        ]
+      },
+      "command": "eat fungus",
+      "id": "m9c9eqer",
+      "type": "turn"
+    }
+  ],
+  "id": "0ab5wtvc",
+  "ordinal": 0,
+  "parent": "7tib1vb7"
+}

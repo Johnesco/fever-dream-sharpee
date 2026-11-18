@@ -6,6 +6,9 @@
 ## then clarity when the fungus is eaten, then corruption when the spray hits.
 ## Prose that changed in place in the TypeScript now hangs off those states.
 
+## The header's one rule plays the fungus sound. The fungus is gone the moment
+## it is eaten, and a thing that has left the world cannot play a sound.
+
 story
   title: Fever Dream
   authors:
@@ -16,6 +19,10 @@ story
   description: A perceptual horror. Three items alter your perception. The world stays the same. You do not.
   themes: modern-dark, retro-terminal, paper, system-6
   states: normal, clarity, corruption
+
+  on every turn while clarity, once
+    play sound fungus-eat
+  end on
 
 ## ===========================================================================
 ## THE WARD — upper level
@@ -102,7 +109,6 @@ create the Cold Storage
 
 create the Depths
   a region
-  containing the Cistern, the Source
 
   after the player entering
     play ambient drone-horror when client has sound
@@ -114,6 +120,7 @@ create the Depths
 
 create the Cistern
   a room
+  in the Depths
   aka chamber, water chamber
   down to the Source
   down is blocked while the iron valve is idle: no-drain
@@ -153,6 +160,7 @@ create the Cistern
 
 create the Source
   a room
+  in the Depths
   aka the source
 
   A space that should not exist beneath a building this size. The walls are
@@ -161,7 +169,7 @@ create the Source
   luminous, warm, and waiting.
 
   after the player entering, once
-    play sound wound-open when client has sound
+    play sound wound-open
   end after
 
 ## ===========================================================================
@@ -180,6 +188,7 @@ create the Patient
 ## ===========================================================================
 
 create the fluorescent tubes
+  a thing
   aka tubes, lights, fluorescent lights, fluorescents
   scenery, plural
   in the Receiving Room
@@ -187,6 +196,7 @@ create the fluorescent tubes
   Long glass tubes behind plastic diffusers. One flickers in a broken rhythm.
 
 create the long counter
+  a thing
   aka counter, desk, reception desk
   scenery
   in the Receiving Room
@@ -196,6 +206,7 @@ create the long counter
   into the wood: THEY BUILT DOWN BEFORE THEY BUILT UP.
 
 create the intake form
+  a thing
   aka form, paper, document
   scenery, readable
   in the Receiving Room
@@ -209,6 +220,7 @@ create the intake form
   end on
 
 create the spectacles
+  a thing
   aka glasses, lenses, specs, corrective lenses
   wearable, plural
   in the Receiving Room
@@ -226,6 +238,7 @@ create the spectacles
   end after
 
 create the trapdoor
+  a thing
   aka trap door, hatch, door in floor
   scenery
   states: hidden, revealed
@@ -234,6 +247,7 @@ create the trapdoor
   recessed handle is set into the frame. Stairs descend into darkness.
 
 create the white tiles
+  a thing
   aka tiles, tile, floor, floor tiles
   scenery, plural
   in the Corridor
@@ -247,6 +261,7 @@ create the white tiles
     warm.
 
 create the reclining chair
+  a thing
   aka chair, recliner, seat, crouching thing, thing
   scenery
   in the Treatment Room
@@ -259,6 +274,7 @@ create the reclining chair
     look like a chair. Its leather is skin. Its restraints are tendons.
 
 create the instrument trays
+  a thing
   aka trays, steel trays, instruments, bone shelves, shelves
   scenery, plural
   in the Treatment Room
@@ -271,6 +287,7 @@ create the instrument trays
     ribs along the wall.
 
 create the faded note
+  a thing
   aka note, wall note
   scenery, readable
   in the Treatment Room
@@ -289,6 +306,7 @@ create the faded note
 ## ===========================================================================
 
 create the sweating pipes
+  a thing
   aka pipes, ceiling pipes, arteries
   scenery, plural
   in the Stairwell
@@ -301,12 +319,14 @@ create the sweating pipes
     are not pipes. They have never been pipes.
 
 create the pipe wrench
+  a thing
   aka wrench, tool
   in the Stairwell
 
   Heavy steel with a rusted jaw. The grip is worn smooth.
 
 create the workbenches
+  a thing
   aka benches, work benches, tables
   scenery, plural
   in the Laboratory
@@ -315,6 +335,7 @@ create the workbenches
   brass plates read 1 through 12, but benches 7 through 10 are missing.
 
 create the lab plaque
+  a thing
   aka plaque, brass plaque
   scenery, readable
   in the Laboratory
@@ -328,8 +349,9 @@ create the lab plaque
   end on
 
 create the glass case
+  a thing
   aka case, display case, display, glass, cabinet, glass cabinet
-  scenery, breakable
+  scenery, smashable
   states: intact, shattered
 
   A small display case mounted on the wall. Thin glass, sealed shut. Inside,
@@ -345,11 +367,13 @@ create the glass case
   end on
 
 create the brass key
+  a thing
   aka key, ornate key, snowflake key
 
   Ornate, warm to the touch. The bow is stamped with a snowflake.
 
 create the specimen jars
+  a thing
   aka jars, specimens, bottles, organs, sacs
   scenery, plural
   in the Cold Storage
@@ -363,8 +387,9 @@ create the specimen jars
     been alive.
 
 create the metal cabinet
+  a container
   aka cabinet, locker, snowflake cabinet, iron ribcage, ribcage
-  scenery, a container, openable, lockable with the brass key
+  scenery, openable, lockable with the brass key
   starts locked
   in the Cold Storage
 
@@ -375,6 +400,7 @@ create the metal cabinet
     like a chest cavity after surgery.
 
 create the glass dish
+  a thing
   aka dish, petri dish
   scenery, readable
   in the metal cabinet
@@ -387,6 +413,7 @@ create the glass dish
   end on
 
 create the grey fungus
+  a thing
   aka fungus, gray fungus, mushroom, growth
   edible
   in the metal cabinet
@@ -396,7 +423,6 @@ create the grey fungus
 
   after the player eating
     change the story to clarity
-    play sound fungus-eat when client has sound
     emit media-transition with kind "fungus" and durationMs 2500 when client has transitions
     phrase fungus-consumed
       It tastes of nothing. Then of everything. The walls ripple once and
@@ -415,6 +441,7 @@ create the grey fungus
 ## ===========================================================================
 
 create the dark water
+  a thing
   aka water, pool, liquid
   scenery
   in the Cistern
@@ -435,6 +462,7 @@ create the dark water
   end on
 
 create the iron valve
+  a thing
   aka valve, handle, T-handle, t-handle
   scenery, drainable
   in the Cistern
@@ -458,6 +486,7 @@ create the iron valve
   end on
 
 create the instructional sign
+  a thing
   aka sign, instructions, notice
   scenery, readable
   in the Cistern
@@ -485,6 +514,7 @@ create the instructional sign
   end on
 
 create the drainage grate
+  a thing
   aka grate, drain, floor grate
   scenery
   in the Cistern
@@ -501,6 +531,7 @@ create the drainage grate
   end on
 
 create the membrane walls
+  a thing
   aka walls, wall, membranes, membrane
   scenery, plural
   in the Source
@@ -516,6 +547,7 @@ create the membrane walls
   end on
 
 create the stone basin
+  a thing
   aka basin, bowl
   scenery
   in the Source
@@ -533,7 +565,7 @@ create the stone basin
   end on
 
   on the player touching
-    play sound basin-touch when client has sound
+    play sound basin-touch
     win basin-touch
   end on
 
@@ -541,13 +573,13 @@ create the stone basin
 ## VERBS
 ## ===========================================================================
 
-define trait breakable
-  on the player breaking
+define trait smashable
+  on the player smashing
     the player must hold the pipe wrench: break-need-tool
     it must be intact: break-already
     change it to shattered
     move the brass key to the Patient
-    play sound glass-break when client has sound
+    play sound glass-break
     emit media-transition with kind "glass" and durationMs 1500 when client has transitions
     phrase break-glass
       You swing the wrench. The glass shatters cleanly. The brass key drops
@@ -559,7 +591,7 @@ define trait drainable
   on the player draining
     it must be idle: valve-already-drained
     change it to turned
-    play sound valve-screech when client has sound
+    play sound valve-screech
     phrase valve-left
       Metal screams against metal as you force the valve left. The water
       shudders, then begins to drain — slowly at first, then in a sudden
@@ -570,12 +602,20 @@ define trait drainable
 
   on the player flooding
     it must be idle: valve-already-drained
-    play sound valve-flood when client has sound
+    play sound valve-flood
     kill the player valve-right
   end on
 end trait
 
-define action breaking
+## Standard `attacking` grammar that `smashing` takes for itself.
+
+remove from action attacking
+  break the target
+  smash the target
+  hit the target
+  hit the target with or using the instrument
+
+define action smashing
   grammar
     break the target
     smash the target
@@ -583,7 +623,7 @@ define action breaking
     hit the target
     break the target with the instrument
     smash the target with the instrument
-    hit the target with the instrument
+    hit the target with or using the instrument
   the target must be reachable
   otherwise refuse break-cant
 
@@ -648,7 +688,7 @@ define sequence the spray exposure
   when the Cistern becomes breached
   1 turns later
     change the story to corruption
-    play sound spray-hiss when client has sound
+    play sound spray-hiss
     phrase spray-exposure
 end sequence
 

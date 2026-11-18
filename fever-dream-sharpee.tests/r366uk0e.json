@@ -1,0 +1,41 @@
+{
+  "cards": [
+    {
+      "assertions": {
+        "contains": [
+          "You reach in. It reaches back.",
+          "The treatment is complete."
+        ]
+      },
+      "command": "touch basin",
+      "id": "6mnltrgo",
+      "type": "turn"
+    },
+    {
+      "assertions": {
+        "contains": [
+          "The story restarts."
+        ]
+      },
+      "command": "restart",
+      "id": "c7roh2xy",
+      "type": "turn"
+    },
+    {
+      "assertions": {
+        "contains": [
+          "Receiving Room"
+        ],
+        "notContains": [
+          "The game has ended"
+        ]
+      },
+      "command": "look",
+      "id": "c2fjpilq",
+      "type": "turn"
+    }
+  ],
+  "id": "r366uk0e",
+  "ordinal": 1,
+  "parent": "2c4eblml"
+}

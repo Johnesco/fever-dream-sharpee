@@ -1,0 +1,58 @@
+{
+  "cards": [
+    {
+      "assertions": {
+        "contains": [
+          "Taken."
+        ],
+        "states": [
+          "player.inventory contains spectacles"
+        ]
+      },
+      "command": "take spectacles",
+      "id": "s5ki0xoj",
+      "type": "turn"
+    },
+    {
+      "assertions": {
+        "contains": [
+          "You put on the spectacles.",
+          "details you missed before push forward into clarity."
+        ],
+        "states": [
+          "the trapdoor is revealed"
+        ]
+      },
+      "command": "wear spectacles",
+      "id": "uar7no68",
+      "type": "turn"
+    },
+    {
+      "assertions": {
+        "contains": [
+          "Corridor"
+        ]
+      },
+      "command": "east",
+      "id": "879jze7p",
+      "type": "turn"
+    },
+    {
+      "assertions": {
+        "contains": [
+          "Stairwell",
+          "You can see a pipe wrench here."
+        ],
+        "states": [
+          "player.location = Stairwell"
+        ]
+      },
+      "command": "down",
+      "id": "1nck3cez",
+      "type": "turn"
+    }
+  ],
+  "id": "4n3hz3os",
+  "ordinal": 0,
+  "parent": "wbro4k9z"
+}

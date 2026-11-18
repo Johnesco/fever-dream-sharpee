@@ -1,0 +1,86 @@
+{
+  "cards": [
+    {
+      "assertions": {
+        "contains": [
+          "Patient exhibits reduced perception."
+        ]
+      },
+      "command": "read form",
+      "id": "de164fva",
+      "type": "turn"
+    },
+    {
+      "assertions": {
+        "contains": [
+          "scuffed linoleum",
+          "THEY BUILT DOWN BEFORE THEY BUILT UP."
+        ]
+      },
+      "command": "examine counter",
+      "id": "3cs4j8d8",
+      "type": "turn"
+    },
+    {
+      "assertions": {
+        "contains": [
+          "Corridor",
+          "A long hallway tiled in white."
+        ]
+      },
+      "command": "east",
+      "id": "kvyoifiv",
+      "type": "turn"
+    },
+    {
+      "assertions": {
+        "contains": [
+          "The floor is solid tile. There is no way down."
+        ],
+        "states": [
+          "player.location = Corridor"
+        ]
+      },
+      "command": "down",
+      "id": "ebogw2a9",
+      "type": "turn"
+    },
+    {
+      "assertions": {
+        "contains": [
+          "Treatment Room",
+          "A reclining chair bolted to the floor"
+        ]
+      },
+      "command": "east",
+      "id": "nnznauge",
+      "type": "turn"
+    },
+    {
+      "assertions": {
+        "contains": [
+          "The corrective lenses are not optional."
+        ]
+      },
+      "command": "read note",
+      "id": "xonjslhm",
+      "type": "turn"
+    },
+    {
+      "assertions": {
+        "contains": [
+          "Restraint loops hang from the armrests."
+        ],
+        "notContains": [
+          "Its leather is skin."
+        ]
+      },
+      "command": "examine chair",
+      "id": "wuam8zls",
+      "type": "turn"
+    }
+  ],
+  "id": "26n3bw6t",
+  "ordinal": 1,
+  "parent": "wbro4k9z"
+}

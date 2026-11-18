@@ -12,7 +12,7 @@ This game is built and published from the Sharpee workspace, which holds the sha
 
 ```
 npx sharpee play                                        # play in the terminal
-npx sharpee test                                        # replay fever-dream-sharpee.tests.json
+npx sharpee test                                        # replay fever-dream-sharpee.tests/
 python ../tools/build.py fever-dream-sharpee --force    # gates, build, tests, lay out the hub folder
 python C:/code/ifhub/tools/ship.py fever-dream-sharpee  # publish and list on IF Hub
 ```

@@ -1,0 +1,27 @@
+{
+  "cards": [
+    {
+      "assertions": {
+        "channels": [
+          {
+            "id": "transition.kind",
+            "is": "glass"
+          }
+        ],
+        "contains": [
+          "The glass shatters cleanly. The brass key drops into your hand."
+        ],
+        "states": [
+          "the glass case is shattered",
+          "player.inventory contains brass key"
+        ]
+      },
+      "command": "break glass case with wrench",
+      "id": "z4binoid",
+      "type": "turn"
+    }
+  ],
+  "id": "7tib1vb7",
+  "ordinal": 0,
+  "parent": "ge12yzxa"
+}

@@ -1,0 +1,40 @@
+{
+  "cards": [
+    {
+      "assertions": {
+        "contains": [
+          "The case is already shattered."
+        ]
+      },
+      "command": "break case",
+      "id": "vytypca2",
+      "type": "turn"
+    },
+    {
+      "assertions": {
+        "contains": [
+          "Shattered remains of the display case."
+        ]
+      },
+      "command": "examine case",
+      "id": "ar7p5ktz",
+      "type": "turn"
+    },
+    {
+      "assertions": {
+        "contains": [
+          "You see the shattered remains of the glass case."
+        ],
+        "notContains": [
+          "holds something you missed before"
+        ]
+      },
+      "command": "look",
+      "id": "17olpg4g",
+      "type": "turn"
+    }
+  ],
+  "id": "ilef03fi",
+  "ordinal": 1,
+  "parent": "7tib1vb7"
+}

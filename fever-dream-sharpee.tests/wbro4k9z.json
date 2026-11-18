@@ -1,0 +1,32 @@
+{
+  "cards": [
+    {
+      "assertions": {
+        "channels": [
+          {
+            "id": "info.title",
+            "is": "Fever Dream"
+          },
+          {
+            "id": "info.description",
+            "is": "A perceptual horror. Three items alter your perception. The world stays the same. You do not."
+          }
+        ]
+      },
+      "id": "2mpvb6pu",
+      "type": "opening"
+    },
+    {
+      "assertions": {
+        "contains": [
+          "Receiving Room",
+          "Fluorescent tubes buzz overhead",
+          "You can see spectacles here."
+        ]
+      },
+      "id": "0h9d8cze",
+      "type": "boot"
+    }
+  ],
+  "id": "wbro4k9z"
+}
