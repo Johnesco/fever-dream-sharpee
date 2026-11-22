@@ -3,6 +3,19 @@
     {
       "assertions": {
         "contains": [
+          "You see the shattered remains of the glass case."
+        ],
+        "notContains": [
+          "holds something you missed before"
+        ]
+      },
+      "command": "look",
+      "id": "17olpg4g",
+      "type": "turn"
+    },
+    {
+      "assertions": {
+        "contains": [
           "Cold Storage",
           "marked with a snowflake"
         ]
@@ -77,6 +90,61 @@
       },
       "command": "eat fungus",
       "id": "m9c9eqer",
+      "type": "turn"
+    },
+    {
+      "assertions": {
+        "contains": [
+          "A dark passage descends through it."
+        ]
+      },
+      "command": "look",
+      "id": "p1z7aqll",
+      "type": "turn"
+    },
+    {
+      "assertions": {
+        "contains": [
+          "Stairwell"
+        ]
+      },
+      "command": "north",
+      "id": "wnexacrf",
+      "type": "turn"
+    },
+    {
+      "assertions": {
+        "contains": [
+          "They have never been pipes."
+        ]
+      },
+      "command": "examine pipes",
+      "id": "56dnjhug",
+      "type": "turn"
+    },
+    {
+      "assertions": {
+        "contains": [
+          "Laboratory"
+        ]
+      },
+      "command": "south",
+      "id": "q8m3tvx2",
+      "type": "turn"
+    },
+    {
+      "assertions": {
+        "contains": [
+          "Cistern",
+          "The chamber is alive. The bricks are teeth in a circular jaw."
+        ],
+        "states": [
+          "story.state = clarity",
+          "the Cistern is breached"
+        ]
+      },
+      "command": "south",
+      "id": "n9swyj2s",
       "type": "turn"
     }
   ],

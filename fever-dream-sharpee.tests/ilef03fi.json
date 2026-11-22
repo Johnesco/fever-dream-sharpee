@@ -19,19 +19,6 @@
       "command": "examine case",
       "id": "ar7p5ktz",
       "type": "turn"
-    },
-    {
-      "assertions": {
-        "contains": [
-          "You see the shattered remains of the glass case."
-        ],
-        "notContains": [
-          "holds something you missed before"
-        ]
-      },
-      "command": "look",
-      "id": "17olpg4g",
-      "type": "turn"
     }
   ],
   "id": "ilef03fi",
